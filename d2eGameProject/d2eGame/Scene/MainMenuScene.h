@@ -9,6 +9,8 @@ class MainMenuScene : public IGameScene
 {
 public:
     MainMenuScene();
+
+    void InitGameScene() override;
 };
 
 } // Namespace d2e.

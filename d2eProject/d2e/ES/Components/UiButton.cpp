@@ -1,22 +1,22 @@
 #include "d2ePch.h"
-#include "RectangleSprite.h"
+#include "UiButton.h"
 
-#include "ES/GameObject.h"
+#include <d2e/ES/GameObject.h>
 
 namespace d2e
 {
 
-void RectangleSprite::OnComponentAdded(const WeakRef<GameObject> parent)
+void UiButton::OnComponentAdded(const WeakRef<GameObject> parent)
 {
     IComponent::OnComponentAdded(parent);
 }
 
-void RectangleSprite::Update(const float dt)
+void UiButton::Update(const float dt)
 {
     //mParent->GetComponent<Transform>()->translation = mParent->GetComponent<Transform>()->translation + Vec2{ 10.f * dt, 10.0f * dt };
 }
 
-void RectangleSprite::Render(WeakRef<sf::RenderWindow> window)
+void UiButton::Render(WeakRef<sf::RenderWindow> window)
 {
     const auto transform = mParent->GetComponent<Transform>();
 

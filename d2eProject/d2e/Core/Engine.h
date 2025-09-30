@@ -33,20 +33,27 @@ public:
     [[nodiscard]] WeakRef<Scene> CreateScene();
     bool SetActiveScene(const WeakRef<Scene>&scene);
 
-    static constexpr uint32_t TARGET_FRAMES  = 120;
-    static constexpr float TARGET_FRAME_TIME = 1.0f / TARGET_FRAMES;
+    [[nodiscard]] inline Vec2                       GetWindowSize()     const { return mWindowSize; }
+    [[nodiscard]] inline WeakRef<Scene>             GetActiveScene()    const { return WeakRef{ mActiveScene }; }
+    [[nodiscard]] inline WeakRef<sf::RenderWindow>  GetWindow()         const { return WeakRef{ mWindow.get() }; }
+
+    static constexpr uint32_t   TARGET_FRAMES       = 120;
+    static constexpr float      TARGET_FRAME_TIME   = 1.0f / TARGET_FRAMES;
 private:
     // todo look at making it a shared ptr and then using std::weak_ptr instead of WeakRef.
-    static std::unique_ptr<Engine> mInstance;
+    static std::unique_ptr<Engine>      mInstance;
 
     std::unique_ptr<sf::RenderWindow>   mWindow;
     std::unique_ptr<InputManager>       mInputManager;
 
+    // todo look at changing from raw pointer for scenes.
     std::vector<Scene*> mScenes;
-    Scene* mActiveScene;
+    Scene*              mActiveScene;
 
-    float mDeltaTime = TARGET_FRAME_TIME;
-    sf::Clock mFrameClock;
+    float       mDeltaTime = TARGET_FRAME_TIME;
+    sf::Clock   mFrameClock;
+
+    Vec2 mWindowSize{ 1920.0f, 1080.0f };
 
     void Update();
     void Render() const;

@@ -15,6 +15,8 @@ class IGameScene
 public:
     virtual ~IGameScene() = default;
 
+    virtual void InitGameScene() { }
+
     d2e::WeakRef<d2e::Scene> GetScene() const { return mScene; }
 
 protected:

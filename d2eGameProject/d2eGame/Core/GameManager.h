@@ -26,7 +26,7 @@ public:
     GameManager& operator=(GameManager&&)       = delete;
     GameManager& operator=(const GameManager&)  = delete;
 
-    inline void Init() { ChangeState(GameState::MAIN_MENU); }
+    inline void Init() { ChangeState(GameState::GAME); }
 
     [[nodiscard]] static inline d2e::WeakRef<GameManager> Instance() { return d2e::WeakRef{ mInstance.get() }; }
 
@@ -56,6 +56,9 @@ bool GameManager::SetScene()
 
     delete mCurrentScene;
     mCurrentScene = scene;
+
+    mCurrentScene->InitGameScene();
+
     return true;
 }
 

@@ -13,8 +13,7 @@ std::unique_ptr<Engine> Engine::mInstance = std::make_unique<Engine>();
 
 void Engine::Init()
 {
-    mWindow = std::make_unique<sf::RenderWindow>(sf::VideoMode({ 1920, 1080 }), "d2e");
-    //mWindow->setFramerateLimit(TARGET_FRAMES);
+    mWindow = std::make_unique<sf::RenderWindow>(sf::VideoMode({ static_cast<uint32_t>(mWindowSize.x), static_cast<uint32_t>(mWindowSize.y) }), "d2e");
 
     mInputManager = std::make_unique<InputManager>();
 
@@ -66,6 +65,7 @@ void Engine::Update()
         if (const sf::Event::Resized* resized = event->getIf<sf::Event::Resized>())
         {
             mWindow->setSize(resized->size);
+            mWindowSize = Vec2{ static_cast<float>(resized->size.x), static_cast<float>(resized->size.y) };
         }
 
         if (const sf::Event::KeyPressed* key = event->getIf<sf::Event::KeyPressed>())
@@ -112,14 +112,6 @@ void Engine::Render() const
     {
         Log::Warn("No active scene set to update.");
     }
-
-    //sf::RectangleShape s{ {500.0f, 500.0f} };
-    //s.setFillColor(sf::Color::Blue);
-    //sf::CircleShape circle{ 50.0f };
-    //circle.setFillColor(sf::Color::Green);
-
-    //mWindow->draw(s);
-    //mWindow->draw(circle);
 
     mWindow->display();
 }
