@@ -1,5 +1,7 @@
 #pragma once
 
+#include <d2e/src/d2ePch.h>
+
 namespace sf
 {
 class RenderWindow;
@@ -25,11 +27,14 @@ public:
     Engine& operator=(const Engine&)  = delete;
 
     void Init();
-    void Run() const;
+    void Run();
     void Destroy();
 
     [[nodiscard]] WeakRef<Scene> CreateScene();
     bool SetActiveScene(const WeakRef<Scene>&scene);
+
+    static constexpr uint32_t TARGET_FRAMES  = 120;
+    static constexpr float TARGET_FRAME_TIME = 1.0f / TARGET_FRAMES;
 private:
     // todo look at making it a shared ptr and then using std::weak_ptr instead of WeakRef.
     static std::unique_ptr<Engine> mInstance;
@@ -40,7 +45,10 @@ private:
     std::vector<Scene*> mScenes;
     Scene* mActiveScene;
 
-    void Update() const;
+    float mDeltaTime = TARGET_FRAME_TIME;
+    sf::Clock mFrameClock;
+
+    void Update();
     void Render() const;
 };
 

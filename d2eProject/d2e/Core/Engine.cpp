@@ -1,7 +1,7 @@
 #include "d2ePch.h"
 #include "Engine.h"
 
-#include <sfml/Graphics.hpp>
+#include <thread>
 
 #include "ES/Scene.h"
 #include "Input/InputManager.h"
@@ -14,13 +14,14 @@ std::unique_ptr<Engine> Engine::mInstance = std::make_unique<Engine>();
 void Engine::Init()
 {
     mWindow = std::make_unique<sf::RenderWindow>(sf::VideoMode({ 1920, 1080 }), "d2e");
+    //mWindow->setFramerateLimit(TARGET_FRAMES);
 
     mInputManager = std::make_unique<InputManager>();
 
     Log::Debug("d2e engine initialized.");
 }
 
-void Engine::Run() const
+void Engine::Run()
 {
     while (mWindow->isOpen())
     {
@@ -51,7 +52,7 @@ bool Engine::SetActiveScene(const WeakRef<Scene>& scene)
     return false;
 }
 
-void Engine::Update() const
+void Engine::Update()
 {
     mInputManager->StartFrame();
 
@@ -80,25 +81,45 @@ void Engine::Update() const
 
     if (mActiveScene)
     {
-        mActiveScene->Update();
+        mActiveScene->Update(mDeltaTime);
     }
     else
     {
         Log::Warn("No active scene set to update.");
     }
+
+    mDeltaTime = mFrameClock.restart().asSeconds();
+    const float delta = TARGET_FRAME_TIME - mDeltaTime;
+    if (delta > 0)
+    {
+        std::this_thread::sleep_for(std::chrono::duration<float>(delta));
+    }
+
+#ifdef DEV_CONFIGURATION
+    mWindow->setTitle(std::format("d2e - DEV - {} fps", 1.0f / (mDeltaTime + delta)));
+#endif // DEV_CONFIGURATION.
 }
 
 void Engine::Render() const
 {
     mWindow->clear();
 
-    sf::RectangleShape s{ {500.0f, 500.0f} };
-    s.setFillColor(sf::Color::Blue);
-    sf::CircleShape circle{ 50.0f };
-    circle.setFillColor(sf::Color::Green);
+    if (mActiveScene)
+    {
+        mActiveScene->Render(WeakRef{ mWindow.get() });
+    }
+    else
+    {
+        Log::Warn("No active scene set to update.");
+    }
 
-    mWindow->draw(s);
-    mWindow->draw(circle);
+    //sf::RectangleShape s{ {500.0f, 500.0f} };
+    //s.setFillColor(sf::Color::Blue);
+    //sf::CircleShape circle{ 50.0f };
+    //circle.setFillColor(sf::Color::Green);
+
+    //mWindow->draw(s);
+    //mWindow->draw(circle);
 
     mWindow->display();
 }

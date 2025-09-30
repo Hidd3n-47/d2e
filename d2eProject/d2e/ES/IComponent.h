@@ -3,15 +3,20 @@
 namespace d2e
 {
 
+class GameObject;
+
 class IComponent
 {
 public:
     virtual ~IComponent() = default;
 
-    virtual void OnComponentAdded()     = 0;
-    virtual void OnComponentRemoved()   = 0;
+    virtual void OnComponentAdded(const WeakRef<GameObject> parent) { mParent = parent; }
+    virtual void OnComponentRemoved() { }
 
-    virtual void Update()               = 0;
+    virtual void Update(const float dt) { }
+    virtual void Render(WeakRef<sf::RenderWindow> window) { }
+protected:
+    WeakRef<GameObject> mParent;
 };
 
-}
+} // Namespace d2e.

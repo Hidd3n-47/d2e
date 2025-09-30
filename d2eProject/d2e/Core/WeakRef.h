@@ -15,10 +15,10 @@ public:
     WeakRef()      = default;
     ~WeakRef()     = default;
 
-    WeakRef(const WeakRef&)             = delete;
-    WeakRef(WeakRef&&)                  = delete;
-    WeakRef& operator=(WeakRef&&)       = delete;
-    WeakRef& operator=(const WeakRef&)  = delete;
+    WeakRef(const WeakRef&)             = default;
+    WeakRef(WeakRef&&)                  = default;
+    WeakRef& operator=(WeakRef&&)       = default;
+    WeakRef& operator=(const WeakRef&)  = default;
 
     inline explicit WeakRef(T* reference)
         : mReferencePtr(reference)

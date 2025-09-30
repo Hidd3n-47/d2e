@@ -1,5 +1,9 @@
 #pragma once
 
+#include <d2e/src/d2ePch.h>
+
+#include "d2e/Es/Components/Transform.h"
+
 namespace d2e
 {
 
@@ -8,21 +12,48 @@ class IComponent;
 class GameObject
 {
 public:
-    GameObject()  = default;
+    GameObject();
     ~GameObject(); // todo delete components or change to be unique ptrs.
+
+    void Update(const float dt) const;
+    void Render(const WeakRef<sf::RenderWindow> window) const;
 
     template <typename Component>
     [[nodiscard]] WeakRef<Component> AddComponent();
+
+    template <typename Component>
+    [[nodiscard]] WeakRef<Component> GetComponent();
 private:
-    std::vector<IComponent*> mComponents;
+    std::unique_ptr<Transform>  mTransform;
+    std::vector<IComponent*>    mComponents;
 };
 
-
 template <typename Component>
-WeakRef<Component> GameObject::AddComponent()
+inline WeakRef<Component> GameObject::AddComponent()
 {
     mComponents.emplace_back(new Component());
+    mComponents.back()->OnComponentAdded(WeakRef{ this });
     return WeakRef{ reinterpret_cast<Component*>(mComponents.back()) };
+}
+
+template <typename Component>
+inline WeakRef<Component> GameObject::GetComponent()
+{
+    for (auto* comp : mComponents)
+    {
+        if (const Component* castComponent = dynamic_cast<Component>(comp); comp != nullptr)
+        {
+            return WeakRef{ castComponent };
+        }
+    }
+
+    return WeakRef<Component>{};
+}
+
+template <>
+inline WeakRef<Transform> GameObject::GetComponent()
+{
+    return WeakRef{ mTransform.get() };
 }
 
 } // Namespace d2e.
