@@ -12,4 +12,6 @@ outputPath          = "$(SolutionDir)scratch/bin/" .. outputName .. "/"
 outputIntPath       = "$(SolutionDir)scratch/bin-int/" .. outputName .. "/"
 
 include "d2eProject/"
+include "d2eGameProject/"
+
 include "LogProject/"

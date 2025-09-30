@@ -34,7 +34,7 @@ public:
      */
     inline void Invalidate() { mReferencePtr = nullptr;  }
 
-    //inline T* GetRawPtr() const { return mReferencePtr; }
+    inline T* GetRawPtr() const { return mReferencePtr; }
 
     /**
      * @brief Cast a \c WeakRef to be a \c WeakRef of a different class. Useful when trying to cast for inheritance.

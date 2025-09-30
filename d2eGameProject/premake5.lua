@@ -1,16 +1,13 @@
--- ---------------------------- d2e Project.
-project "d2e"
+-- ---------------------------- d2e Game Project.
+project "d2eGame"
     location "%{prj.name}"
-    kind "StaticLib"
+    kind "ConsoleApp"
     language "C++"
     staticruntime "Off"
     cppdialect "C++latest"
 
     targetdir(outputPath .. "%{prj.name}")
     objdir(outputIntPath .. "%{prj.name}")
-
-    pchheader "d2ePch.h"
-    pchsource "%{prj.name}/src/d2ePch.cpp"
 
     files
     {
@@ -21,7 +18,6 @@ project "d2e"
     includedirs
     {
         "%{prj.name}/",
-        "%{prj.name}/Src/",
         "$(SolutionDir)deps/include/",
 
         "$(SolutionDir)LogProject/",
@@ -35,12 +31,11 @@ project "d2e"
 
     links
     {
-        "Log",
-
+        "d2e",
         "opengl32",
         "freetype",
-        --"winmm",
-        --"gdi32",
+        "winmm",
+        "gdi32",
         "flac",
         "vorbis",
         "vorbisfile"
@@ -51,7 +46,7 @@ project "d2e"
 
     filter "configurations:Dev"
         runtime "Debug"
-        defines { "DEV_CONFIGURATION", "SFML_STATIC" }
+        defines "DEV_CONFIGURATION"
         symbols "on"
         links
         {
@@ -63,7 +58,6 @@ project "d2e"
 
     filter "configurations:Release"
         runtime "Release"
-        defines "SFML_STATIC"
         optimize "on"
         links
         {

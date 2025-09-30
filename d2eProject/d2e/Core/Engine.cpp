@@ -3,6 +3,7 @@
 
 #include <sfml/Graphics.hpp>
 
+#include "ES/Scene.h"
 #include "Input/InputManager.h"
 
 namespace d2e
@@ -33,32 +34,58 @@ void Engine::Destroy()
     Log::Debug("d2e engine destroyed.");
 }
 
+WeakRef<Scene> Engine::CreateScene()
+{
+    mScenes.emplace_back(new Scene());
+    return WeakRef{ mScenes.back() };
+}
+
+bool Engine::SetActiveScene(const WeakRef<Scene>& scene)
+{
+    if (scene.IsRefValid())
+    {
+        mActiveScene = scene.GetRawPtr();
+        return true;
+    }
+
+    return false;
+}
+
 void Engine::Update() const
 {
     mInputManager->StartFrame();
 
-     while (const std::optional event = mWindow->pollEvent())
-     {
-         if (event->is<sf::Event::Closed>() || (event->is<sf::Event::KeyPressed>() && event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape))
-         {
-             mWindow->close();
-         }
+    while (const std::optional event = mWindow->pollEvent())
+    {
+        if (event->is<sf::Event::Closed>() || (event->is<sf::Event::KeyPressed>() && event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape))
+        {
+            mWindow->close();
+        }
 
-         if (const sf::Event::Resized* resized = event->getIf<sf::Event::Resized>())
-         {
-             mWindow->setSize(resized->size);
-         }
+        if (const sf::Event::Resized* resized = event->getIf<sf::Event::Resized>())
+        {
+            mWindow->setSize(resized->size);
+        }
 
-         if (const sf::Event::KeyPressed* key = event->getIf<sf::Event::KeyPressed>())
-         {
-             mInputManager->KeyDown(key->code);
-         }
+        if (const sf::Event::KeyPressed* key = event->getIf<sf::Event::KeyPressed>())
+        {
+            mInputManager->KeyDown(key->code);
+        }
 
-         if (const sf::Event::KeyReleased* key = event->getIf<sf::Event::KeyReleased>())
-         {
-             mInputManager->KeyUp(key->code);
-         }
-     }
+        if (const sf::Event::KeyReleased* key = event->getIf<sf::Event::KeyReleased>())
+        {
+            mInputManager->KeyUp(key->code);
+        }
+    }
+
+    if (mActiveScene)
+    {
+        mActiveScene->Update();
+    }
+    else
+    {
+        Log::Warn("No active scene set to update.");
+    }
 }
 
 void Engine::Render() const
