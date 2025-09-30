@@ -1,0 +1,10 @@
+bin/
+bin-int/
+*pdb
+*.vcxproj
+*.vcxproj.*
+*sln
+.idea/
+p4config.txt
+.git/
+.vs/
