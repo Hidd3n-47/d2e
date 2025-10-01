@@ -1,5 +1,3 @@
-#include <d2e/src/d2ePch.h>
-
 #include "Core/GameManager.h"
 
 int main(int, char**)

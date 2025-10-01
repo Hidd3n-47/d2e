@@ -11,11 +11,6 @@ void RectangleSprite::OnComponentAdded(const WeakRef<GameObject> parent)
     IComponent::OnComponentAdded(parent);
 }
 
-void RectangleSprite::Update(const float dt)
-{
-    //mParent->GetComponent<Transform>()->translation = mParent->GetComponent<Transform>()->translation + Vec2{ 10.f * dt, 10.0f * dt };
-}
-
 void RectangleSprite::Render(WeakRef<sf::RenderWindow> window)
 {
     const auto transform = mParent->GetComponent<Transform>();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IGameScene.h"
+#include "Prefabs/Player.h"
 
 namespace d2eGame
 {
@@ -11,6 +12,9 @@ public:
     GameScene();
 
     void InitGameScene() override;
+
+private:
+    Player mPlayer;
 };
 
 } // Namespace d2e.

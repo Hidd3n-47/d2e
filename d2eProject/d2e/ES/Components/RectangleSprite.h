@@ -12,7 +12,6 @@ class RectangleSprite : public IComponent
 public:
     void OnComponentAdded(const WeakRef<GameObject> parent) override;
 
-    void Update(const float dt) override;
     void Render(WeakRef<sf::RenderWindow> window) override;
 
     inline void SetSize(const Vec2 size) { mSize = size; }

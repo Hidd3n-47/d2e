@@ -43,5 +43,6 @@ void GameScene::InitGameScene()
         floorObject->GetComponent<d2e::Transform>()->translation = windowSize * d2e::Vec2{ 0.0f, 0.975f };
     }
 
+    mPlayer.CreatePrefab(mScene);
 }
 } // Namespace d2eGame.

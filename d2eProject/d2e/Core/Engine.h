@@ -35,6 +35,7 @@ public:
 
     [[nodiscard]] inline Vec2                       GetWindowSize()     const { return mWindowSize; }
     [[nodiscard]] inline WeakRef<Scene>             GetActiveScene()    const { return WeakRef{ mActiveScene }; }
+    [[nodiscard]] inline WeakRef<InputManager>      GetInputManager()   const { return WeakRef{ mInputManager.get() }; }
     [[nodiscard]] inline WeakRef<sf::RenderWindow>  GetWindow()         const { return WeakRef{ mWindow.get() }; }
 
     static constexpr uint32_t   TARGET_FRAMES       = 120;
