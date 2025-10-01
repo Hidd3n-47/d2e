@@ -51,7 +51,7 @@ project "d2e"
 
     filter "configurations:Dev"
         runtime "Debug"
-        defines { "DEV_CONFIGURATION", "SFML_STATIC" }
+        defines { "DEV_CONFIGURATION", "ENGINE_DEBUG", "SFML_STATIC" }
         symbols "on"
         links
         {

@@ -3,29 +3,30 @@
 #include <print>
 #include <string>
 #include <format>
+#include <chrono>
 
 namespace d2e
 {
 
-// todo Christian make it that you can add a name for the logger as well as the timestamp/other settings.
-// todo Christian refine to be better.
 class Log
 {
 public:
+    Log(std::string&& logTitle, const bool displayTimestamp = true);
+
     template <typename... Args>
-    static inline void Debug(const std::string_view msg, Args&&... args)
+    inline void Debug(const std::string_view msg, Args&&... args)
     {
         Print(msg, BLUE, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
-    static inline void Warn(const std::string_view msg, Args&&... args)
+    inline void Warn(const std::string_view msg, Args&&... args)
     {
         Print(msg, ORANGE, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
-    static inline void Error(const std::string_view msg, Args&&... args)
+    inline void Error(const std::string_view msg, Args&&... args)
     {
         Print(msg, RED, std::forward<Args>(args)...);
     }
@@ -36,6 +37,9 @@ private:
     static constexpr const char* ORANGE     = "\033[38;5;208m";
     static constexpr const char* RED        = "\033[31m";
     static constexpr const char* DEFAULT    = "\033[0m";
+
+    std::string mLogTitle   = "Log";
+    bool mDisplayTimestamp  = true;
 
     template <typename T>
     static inline auto ToFormatArg(T&& t)
@@ -51,11 +55,13 @@ private:
     }
 
     template <typename... Args>
-    static inline void Print(const std::string_view msg, const char* color, Args&&... args)
+    inline void Print(const std::string_view msg, const char* color, Args&&... args)
     {
+        const std::string timestamp = mDisplayTimestamp ? std::format(" [{:%H:%M:%S}]", std::chrono::floor<std::chrono::seconds>(std::chrono::system_clock::now())) : "";
+
         if constexpr (sizeof...(args) == 0)
         {
-            std::println("{}{}{}", color, msg, DEFAULT);
+            std::println("{}{}{}: {}{}", color, mLogTitle, timestamp, msg, DEFAULT);
         }
         else
         {
@@ -63,7 +69,7 @@ private:
 
             auto formattedMsg = std::vformat(msg, std::apply([](auto&... vals) { return std::make_format_args(vals...); }, argsTuple));
 
-            std::println("{}{}{}", color, formattedMsg, DEFAULT);
+            std::println("{}{}: {}{}{}",  color, mLogTitle, timestamp, formattedMsg, DEFAULT);
         }
     }
 

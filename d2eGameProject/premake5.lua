@@ -46,7 +46,7 @@ project "d2eGame"
 
     filter "configurations:Dev"
         runtime "Debug"
-        defines { "DEV_CONFIGURATION", "SFML_STATIC" }
+        defines { "DEV_CONFIGURATION", "GAME_DEBUG", "SFML_STATIC" }
         symbols "on"
         links
         {

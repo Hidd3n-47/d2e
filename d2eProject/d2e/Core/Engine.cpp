@@ -16,8 +16,9 @@ void Engine::Init()
     mWindow = std::make_unique<sf::RenderWindow>(sf::VideoMode({ static_cast<uint32_t>(mWindowSize.x), static_cast<uint32_t>(mWindowSize.y) }), "d2e");
 
     mInputManager = std::make_unique<InputManager>();
+    DEBUG(mLog = std::make_unique<Log>("d2e Engine"));
 
-    Log::Debug("d2e engine initialized.");
+    DEBUG_LOG("d2e engine initialized.");
 }
 
 void Engine::Run()
@@ -31,7 +32,7 @@ void Engine::Run()
 
 void Engine::Destroy()
 {
-    Log::Debug("d2e engine destroyed.");
+    DEBUG_LOG("d2e engine destroyed.");
 }
 
 WeakRef<Scene> Engine::CreateScene()
@@ -85,7 +86,8 @@ void Engine::Update()
     }
     else
     {
-        Log::Warn("No active scene set to update.");
+        DEBUG_WARN("No active scene set to update.");
+        DEBUG_BREAK();
     }
 
     mDeltaTime = mFrameClock.restart().asSeconds();
@@ -110,7 +112,8 @@ void Engine::Render() const
     }
     else
     {
-        Log::Warn("No active scene set to update.");
+        DEBUG_WARN("No active scene set to render.");
+        DEBUG_BREAK();
     }
 
     mWindow->display();

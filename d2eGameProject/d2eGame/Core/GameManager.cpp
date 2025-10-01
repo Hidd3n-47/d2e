@@ -9,11 +9,28 @@ namespace d2eGame
 
 std::unique_ptr<GameManager> GameManager::mInstance = std::make_unique<GameManager>();
 
+GameManager::GameManager()
+{
+    DEBUG(mLog = std::make_unique<d2e::Log>("d2e Game"));
+}
+
+GameManager::~GameManager()
+{
+    delete mCurrentScene;
+}
+
+void GameManager::Init()
+{
+    ChangeState(GameState::GAME);
+
+    GAME_DEBUG("Game initialized.");
+}
+
 void GameManager::ChangeState(const GameState newState)
 {
     if (mGameState == newState)
     {
-        d2e::Log::Warn("Trying to change game state to the same state.");
+        GAME_WARN("Trying to change game state to the same state.");
         DEBUG_BREAK();
         return;
     }
@@ -28,11 +45,11 @@ void GameManager::ChangeState(const GameState newState)
         changedScene = SetScene<GameScene>();
         break;
     case GameState::NONE:
-        d2e::Log::Error("Trying to change game state to no state.");
+        GAME_ERROR("Trying to change game state to no state.");
         DEBUG_BREAK();
         break;
     default:
-        d2e::Log::Error("Trying to change game state to an unhandled state with ID: {}", static_cast<uint32_t>(mGameState));
+        GAME_ERROR("Trying to change game state to an unhandled state with ID: {}", static_cast<uint32_t>(mGameState));
         break;
     }
 

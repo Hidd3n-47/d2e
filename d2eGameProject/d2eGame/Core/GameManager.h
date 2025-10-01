@@ -8,6 +8,7 @@
 
 #include "GameState.h"
 #include "Scene/IGameScene.h"
+#include "src/Defines.h"
 
 namespace d2eGame
 {
@@ -18,21 +19,24 @@ class MainMenuScene;
 class GameManager
 {
 public:
-    GameManager() = default;
-    inline ~GameManager() { delete mCurrentScene; }
+    GameManager();
+    ~GameManager();
 
     GameManager(const GameManager&)             = delete;
     GameManager(GameManager&&)                  = delete;
     GameManager& operator=(GameManager&&)       = delete;
     GameManager& operator=(const GameManager&)  = delete;
 
-    inline void Init() { ChangeState(GameState::GAME); }
+    void Init();
 
     [[nodiscard]] static inline d2e::WeakRef<GameManager> Instance() { return d2e::WeakRef{ mInstance.get() }; }
+    DEBUG([[nodiscard]] inline d2e::WeakRef<d2e::Log>     GetLog() const { return d2e::WeakRef{ mLog.get() }; })
 
     void ChangeState(const GameState newState);
 private:
     static std::unique_ptr<GameManager> mInstance;
+
+    DEBUG(std::unique_ptr<d2e::Log> mLog);
 
     GameState   mGameState      = GameState::NONE;
     IGameScene* mCurrentScene   = nullptr;
@@ -49,7 +53,7 @@ bool GameManager::SetScene()
 
     if (!d2e::Engine::Instance()->SetActiveScene(scene->GetScene()))
     {
-        d2e::Log::Error("Failed to set active scene.");
+        GAME_ERROR("Failed to set active scene.");
         delete scene;
         return false;
     }

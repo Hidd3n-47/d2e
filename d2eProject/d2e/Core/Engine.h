@@ -37,6 +37,7 @@ public:
     [[nodiscard]] inline WeakRef<Scene>             GetActiveScene()    const { return WeakRef{ mActiveScene }; }
     [[nodiscard]] inline WeakRef<InputManager>      GetInputManager()   const { return WeakRef{ mInputManager.get() }; }
     [[nodiscard]] inline WeakRef<sf::RenderWindow>  GetWindow()         const { return WeakRef{ mWindow.get() }; }
+    DEBUG([[nodiscard]] inline WeakRef<Log>         GetLog()            const { return WeakRef{ mLog.get() }; })
 
     static constexpr uint32_t   TARGET_FRAMES       = 120;
     static constexpr float      TARGET_FRAME_TIME   = 1.0f / TARGET_FRAMES;
@@ -46,6 +47,7 @@ private:
 
     std::unique_ptr<sf::RenderWindow>   mWindow;
     std::unique_ptr<InputManager>       mInputManager;
+    DEBUG(std::unique_ptr<Log> mLog);
 
     // todo look at changing from raw pointer for scenes.
     std::vector<Scene*> mScenes;
