@@ -1,6 +1,7 @@
 #pragma once
 
 #include "d2e/Es/GameObject.h"
+#include "d2e/Physics/CollisionHandler.h"
 
 namespace d2e
 {
@@ -17,8 +18,12 @@ public:
     void Render(const WeakRef<sf::RenderWindow> window) const;
 
     [[nodiscard]] WeakRef<GameObject> CreateGameObject();
+
+    [[nodiscard]] inline WeakRef<CollisionHandler> GetCollisionHandler() { return WeakRef{ &mCollisionHandler }; }
 private:
     std::vector<GameObject*> mGameObjects;
+
+    CollisionHandler mCollisionHandler;
 };
 
 } // Namespace d2e.

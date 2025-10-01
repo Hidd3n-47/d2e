@@ -9,8 +9,8 @@ class Transform : public IComponent
 {
 public:
     Vec2  translation = Vec2{ 0.0f, 0.0f };
-    float rotation    = { 0.0f };
-    Vec2  scale       = Vec2{ 0.0f, 0.0f};
+    //float rotation    = { 0.0f };
+    //Vec2  scale       = Vec2{ 0.0f, 0.0f};
 };
 
 } // Namespace d2e.

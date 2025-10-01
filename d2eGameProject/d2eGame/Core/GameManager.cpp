@@ -23,7 +23,7 @@ void GameManager::Init()
 {
     ChangeState(GameState::GAME);
 
-    GAME_DEBUG("Game initialized.");
+    GAME_LOG("Game initialized.");
 }
 
 void GameManager::ChangeState(const GameState newState)

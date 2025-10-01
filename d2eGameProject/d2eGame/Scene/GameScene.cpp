@@ -3,6 +3,7 @@
 #include <d2e/ES/Scene.h>
 #include <d2e/core/Engine.h>
 
+#include "d2e/ES/Components/BoxCollider.h"
 #include "d2e/ES/Components/RectangleSprite.h"
 
 namespace d2eGame
@@ -21,26 +22,38 @@ void GameScene::InitGameScene()
         d2e::WeakRef<d2e::GameObject>       leftSideObject = mScene->CreateGameObject();
         d2e::WeakRef<d2e::RectangleSprite>  leftSideSprite = leftSideObject->AddComponent<d2e::RectangleSprite>();
 
+        leftSideSprite->SetHalfExtents(windowSize * d2e::Vec2{ 0.5f, 1.0f } * 0.5f);
         leftSideSprite->SetColor(sf::Color::Cyan);
-        leftSideSprite->SetSize(windowSize * d2e::Vec2{ 0.5f, 1.0f });
+        leftSideObject->GetComponent<d2e::Transform>()->translation = windowSize * d2e::Vec2{ 0.25f, 0.5f };
     }
 
     {
         d2e::WeakRef<d2e::GameObject>       rightSideObject = mScene->CreateGameObject();
         d2e::WeakRef<d2e::RectangleSprite>  rightSideSprite = rightSideObject->AddComponent<d2e::RectangleSprite>();
 
-        rightSideSprite->SetSize(windowSize * d2e::Vec2{ 0.5f, 1.0f });
+        rightSideSprite->SetHalfExtents(windowSize * d2e::Vec2{ 0.5f, 1.0f } * 0.5f);
         rightSideSprite->SetColor(sf::Color::Green);
-        rightSideObject->GetComponent<d2e::Transform>()->translation = windowSize * d2e::Vec2{ 0.5f, 0.0f };
+        rightSideObject->GetComponent<d2e::Transform>()->translation = windowSize * d2e::Vec2{ 0.75f, 0.5f };
     }
 
     {
         d2e::WeakRef<d2e::GameObject>       floorObject = mScene->CreateGameObject();
         d2e::WeakRef<d2e::RectangleSprite>  floorSprite = floorObject->AddComponent<d2e::RectangleSprite>();
 
-        floorSprite->SetSize(windowSize * d2e::Vec2{ 1.0f, 0.05f });
+        floorSprite->SetHalfExtents(windowSize * d2e::Vec2{ 1.0f, 0.05f });
         floorSprite->SetColor(sf::Color::Black);
         floorObject->GetComponent<d2e::Transform>()->translation = windowSize * d2e::Vec2{ 0.0f, 0.975f };
+    }
+
+    {
+        d2e::WeakRef<d2e::GameObject>       floorObject = mScene->CreateGameObject();
+        d2e::WeakRef<d2e::RectangleSprite>  floorSprite = floorObject->AddComponent<d2e::RectangleSprite>();
+
+        floorSprite->SetHalfExtents(windowSize * d2e::Vec2{ 0.2f, 0.05f });
+        floorSprite->SetColor(sf::Color::Black);
+        floorObject->GetComponent<d2e::Transform>()->translation = windowSize * d2e::Vec2{ 0.5f, 0.5f };
+        auto bc = floorObject->AddComponent<d2e::BoxCollider>();
+        bc->SetIsFixed(true);
     }
 
     mPlayer.CreatePrefab(mScene);

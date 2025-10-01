@@ -10,8 +10,10 @@ class GameObject;
 class Movement : public IComponent
 {
 public:
-    void OnComponentAdded(const WeakRef<GameObject> parent) override;
     void Update(const float dt) override;
+
+    [[nodiscard]] inline float GetSpeed() const { return mSpeed; }
+    inline void SetSpeed(const float speed) { mSpeed = speed; }
 private:
     float mSpeed = 1.0f;
 };

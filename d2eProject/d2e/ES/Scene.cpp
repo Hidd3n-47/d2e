@@ -10,6 +10,8 @@ void Scene::Update(const float dt) const
     {
         gameObject->Update(dt);
     }
+
+    mCollisionHandler.Update();
 }
 
 void Scene::Render(const  WeakRef<sf::RenderWindow> window) const
@@ -22,7 +24,7 @@ void Scene::Render(const  WeakRef<sf::RenderWindow> window) const
 
 WeakRef<GameObject> Scene::CreateGameObject()
 {
-    mGameObjects.emplace_back(new GameObject());
+    mGameObjects.emplace_back(new GameObject(WeakRef{ this }));
     return WeakRef{ mGameObjects.back() };
 }
 

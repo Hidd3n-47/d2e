@@ -10,8 +10,6 @@ class GameObject;
 class CircleSprite : public IComponent
 {
 public:
-    void OnComponentAdded(const WeakRef<GameObject> parent) override;
-
     void Render(WeakRef<sf::RenderWindow> window) override;
 
     inline void SetRadius(const float radius) { mRadius = radius; }

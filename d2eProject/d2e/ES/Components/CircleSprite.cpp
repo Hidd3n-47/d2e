@@ -6,16 +6,11 @@
 namespace d2e
 {
 
-void CircleSprite::OnComponentAdded(const WeakRef<GameObject> parent)
-{
-    IComponent::OnComponentAdded(parent);
-}
-
 void CircleSprite::Render(WeakRef<sf::RenderWindow> window)
 {
     const auto transform = mParent->GetComponent<Transform>();
 
-    mCircle.setPosition({ transform->translation.x, transform->translation.y });
+    mCircle.setPosition({ transform->translation.x - mRadius, transform->translation.y -mRadius });
     mCircle.setRadius(mRadius);
     window->draw(mCircle);
 }

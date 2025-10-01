@@ -8,15 +8,18 @@ namespace d2e
 {
 
 class IComponent;
+class Scene;
 
 class GameObject
 {
 public:
-    GameObject();
+    GameObject(const WeakRef<Scene> parent);
     ~GameObject(); // todo delete components or change to be unique ptrs.
 
     void Update(const float dt) const;
     void Render(const WeakRef<sf::RenderWindow> window) const;
+
+    [[nodiscard]] inline WeakRef<Scene> GetScene() const { return mParent; }
 
     template <typename Component>
     [[nodiscard]] WeakRef<Component> AddComponent();
@@ -24,6 +27,8 @@ public:
     template <typename Component>
     [[nodiscard]] WeakRef<Component> GetComponent();
 private:
+    WeakRef<Scene> mParent;
+
     std::unique_ptr<Transform>  mTransform;
     std::vector<IComponent*>    mComponents;
 };
@@ -41,7 +46,7 @@ inline WeakRef<Component> GameObject::GetComponent()
 {
     for (auto* comp : mComponents)
     {
-        if (const Component* castComponent = dynamic_cast<Component>(comp); comp != nullptr)
+        if (Component* castComponent = dynamic_cast<Component*>(comp); castComponent != nullptr)
         {
             return WeakRef{ castComponent };
         }

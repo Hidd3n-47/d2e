@@ -9,7 +9,7 @@
 #endif // ! DEV_CONFIGURATION.
 
 #ifdef GAME_DEBUG
-#define GAME_DEBUG(...)   d2eGame::GameManager::Instance()->GetLog()->Debug(__VA_ARGS__)
+#define GAME_LOG(...)   d2eGame::GameManager::Instance()->GetLog()->Debug(__VA_ARGS__)
 #define GAME_WARN(...)  d2eGame::GameManager::Instance()->GetLog()->Warn(__VA_ARGS__)
 #define GAME_ERROR(...) d2eGame::GameManager::Instance()->GetLog()->Error(__VA_ARGS__)
 #else // GAME_DEBUG.

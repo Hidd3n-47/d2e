@@ -8,9 +8,6 @@ namespace d2e
 class UiButton : public IComponent
 {
 public:
-    void OnComponentAdded(const WeakRef<GameObject> parent) override;
-
-    void Update(const float dt) override;
     void Render(WeakRef<sf::RenderWindow> window) override;
 
     [[nodiscard]] inline Vec2 GetSize() const { return mSize; }

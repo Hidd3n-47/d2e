@@ -8,11 +8,6 @@
 namespace d2e
 {
 
-void Movement::OnComponentAdded(const WeakRef<GameObject> parent)
-{
-    IComponent::OnComponentAdded(parent);
-}
-
 void Movement::Update(const float dt)
 {
     WeakRef<Transform> transform = mParent->GetComponent<Transform>();

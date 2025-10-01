@@ -5,8 +5,9 @@
 
 namespace d2e
 {
-GameObject::GameObject()
-    : mTransform{ std::make_unique<Transform>() }
+GameObject::GameObject(const WeakRef<Scene> parent)
+    : mParent(parent)
+    , mTransform{ std::make_unique<Transform>() }
 {
     // Empty.
 }
