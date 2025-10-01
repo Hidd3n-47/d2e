@@ -39,8 +39,8 @@ public:
     [[nodiscard]] inline WeakRef<sf::RenderWindow>  GetWindow()         const { return WeakRef{ mWindow.get() }; }
     DEBUG([[nodiscard]] inline WeakRef<Log>         GetLog()            const { return WeakRef{ mLog.get() }; })
 
-    static constexpr uint32_t   TARGET_FRAMES       = 120;
-    static constexpr float      TARGET_FRAME_TIME   = 1.0f / TARGET_FRAMES;
+    static constexpr uint32_t TARGET_FRAMES = 120;
+    static constexpr std::chrono::duration<float> TARGET_FRAME_TIME{ 1.0f / TARGET_FRAMES };
 private:
     // todo look at making it a shared ptr and then using std::weak_ptr instead of WeakRef.
     static std::unique_ptr<Engine>      mInstance;
@@ -53,8 +53,7 @@ private:
     std::vector<Scene*> mScenes;
     Scene*              mActiveScene;
 
-    float       mDeltaTime = TARGET_FRAME_TIME;
-    sf::Clock   mFrameClock;
+    float   mDeltaTime = TARGET_FRAME_TIME.count();
 
     Vec2 mWindowSize{ 1920.0f, 1080.0f };
 

@@ -22,7 +22,7 @@ public:
     [[nodiscard]] inline WeakRef<Scene> GetScene() const { return mParent; }
 
     template <typename Component>
-    [[nodiscard]] WeakRef<Component> AddComponent();
+    WeakRef<Component> AddComponent();
 
     template <typename Component>
     [[nodiscard]] WeakRef<Component> GetComponent();

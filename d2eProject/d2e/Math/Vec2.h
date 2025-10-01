@@ -10,7 +10,12 @@ public:
     explicit Vec2(const float scalar) : x{ scalar }, y{ scalar } {}
     explicit Vec2(const float x, const float y) : x{ x }, y{ y } {}
 
-    void Normalize()
+    [[nodiscard]] inline float Magnitude() const
+    {
+        return sqrt(x * x + y * y);
+    }
+
+    inline void Normalize()
     {
         if (const float len = sqrt(x * x + y * y); len != 0.0f)
         {
@@ -53,6 +58,22 @@ public:
     {
         x -= rhs.x;
         y -= rhs.y;
+
+        return *this;
+    }
+
+    Vec2 operator*=(const float scalar)
+    {
+        x *= scalar;
+        y *= scalar;
+
+        return *this;
+    }
+
+    Vec2 operator/=(const float scalar)
+    {
+        x /= scalar;
+        y /= scalar;
 
         return *this;
     }
