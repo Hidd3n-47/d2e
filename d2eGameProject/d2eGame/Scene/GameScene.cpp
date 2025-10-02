@@ -3,9 +3,11 @@
 #include <d2e/ES/Scene.h>
 #include <d2e/core/Engine.h>
 
-#include "d2e/ES/Components/BoxCollider.h"
+#include "d2e/ES/Components/StaticBoxCollider.h"
 #include "d2e/ES/Components/CircleCollider.h"
 #include "d2e/ES/Components/RectangleSprite.h"
+#include "d2e/ES/Components/CircleSprite.h"
+#include "d2e/ES/Components/RigidBody.h"
 
 namespace d2eGame
 {
@@ -53,9 +55,21 @@ void GameScene::InitGameScene()
         floorSprite->SetHalfExtents(windowSize * d2e::Vec2{ 0.2f, 0.05f });
         floorSprite->SetColor(sf::Color::Black);
         floorObject->GetComponent<d2e::Transform>()->translation = windowSize * d2e::Vec2{ 0.5f, 0.5f };
-        auto bc = floorObject->AddComponent<d2e::BoxCollider>();
+        auto bc = floorObject->AddComponent<d2e::StaticBoxCollider>();
         bc->SetHalfExtents(floorSprite->GetHalfExtents());
-        bc->SetIsFixed(true);
+    }
+
+    // Other Ball to test.
+    {
+        d2e::WeakRef<d2e::GameObject>    ballObject = mScene->CreateGameObject();
+        d2e::WeakRef<d2e::CircleSprite>  ballSprite = ballObject->AddComponent<d2e::CircleSprite>();
+
+        ballSprite->SetRadius(10.0f);
+        ballSprite->SetColor(sf::Color::Magenta);
+        ballObject->GetComponent<d2e::Transform>()->translation = windowSize * d2e::Vec2{ 0.4f, 0.4f };
+        auto bc = ballObject->AddComponent<d2e::CircleCollider>();
+        auto rb = ballObject->AddComponent<d2e::RigidBody>();
+        //rb->SetGravity(d2e::Vec2{ 0.0f, 0.2f });
     }
 
     mPlayer.CreatePrefab(mScene);

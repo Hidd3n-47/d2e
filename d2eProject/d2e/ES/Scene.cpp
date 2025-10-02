@@ -19,8 +19,8 @@ void Scene::Update(const float dt) const
         gameObject->Update(dt);
     }
 
-    mPhysicsManager.Update();
     mCollisionHandler.Update();
+    mPhysicsManager.Update();
 }
 
 void Scene::Render(const  WeakRef<sf::RenderWindow> window) const

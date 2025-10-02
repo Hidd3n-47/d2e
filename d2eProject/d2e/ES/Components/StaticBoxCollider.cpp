@@ -1,5 +1,5 @@
 #include "d2ePch.h"
-#include "BoxCollider.h"
+#include "StaticBoxCollider.h"
 
 #include "ES/Scene.h"
 #include "Es/GameObject.h"
@@ -7,20 +7,20 @@
 namespace d2e
 {
 
-void BoxCollider::OnComponentAdded(const WeakRef<GameObject> parent)
+void StaticBoxCollider::OnComponentAdded(const WeakRef<GameObject> parent)
 {
-    parent->GetScene()->GetCollisionHandler()->AddBox(parent);
+    parent->GetScene()->GetCollisionHandler()->AddStaticBox(parent);
 
     IComponent::OnComponentAdded(parent);
 }
 
-void BoxCollider::OnComponentRemoved()
+void StaticBoxCollider::OnComponentRemoved()
 {
     mParent->GetScene()->GetCollisionHandler()->RemoveCircle(mParent);
 }
 
 #ifdef DEV_CONFIGURATION
-void BoxCollider::Render(WeakRef<sf::RenderWindow> window)
+void StaticBoxCollider::Render(WeakRef<sf::RenderWindow> window)
 {
     const auto transform = mParent->GetComponent<Transform>();
 

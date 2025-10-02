@@ -1,6 +1,7 @@
 #include "d2ePch.h"
 #include "Movement.h"
 
+#include "RigidBody.h"
 #include "Core/Engine.h"
 #include "ES/GameObject.h"
 #include "Input/InputManager.h"
@@ -30,6 +31,10 @@ void Movement::Update(const float dt)
     if (inputManager->IsKeyDown(sf::Keyboard::Key::D))
     {
         movement += Vec2{ 1.0f, 0.0f };
+    }
+    if (inputManager->IsKeyDown(sf::Keyboard::Key::Space))
+    {
+        mParent->GetComponent<RigidBody>()->AddVelocity(Vec2{ 0.0f, -0.5f });
     }
 
     movement.Normalize();

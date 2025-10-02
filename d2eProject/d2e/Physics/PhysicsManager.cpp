@@ -14,7 +14,7 @@ void PhysicsManager::Update() const
         WeakRef<Transform> transform = body->GetComponent<Transform>();
         WeakRef<RigidBody> rigidBody = body->GetComponent<RigidBody>();
 
-        const Vec2 acceleration = rigidBody->mFnet / rigidBody->mMass;
+        const Vec2 acceleration = (rigidBody->mForce + rigidBody->mGravity) / rigidBody->mMass;
 
         rigidBody->mVelocity += acceleration;
         transform->translation += rigidBody->mVelocity;

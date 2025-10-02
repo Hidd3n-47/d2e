@@ -27,7 +27,8 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene)
     movement->SetSpeed(3.0f);
 
     auto rb = mGameObject->AddComponent<d2e::RigidBody>();
-    rb->AddForce(d2e::Vec2{ 0.0f, 0.5f });
+    rb->SetGravity(d2e::Vec2{ 0.0f, 0.2f });
+    rb->SetRestitution(0.25f);
 }
 
 } // Namespace d2eGame.

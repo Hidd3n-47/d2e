@@ -26,32 +26,37 @@ public:
 
     float x = 0.0f, y = 0.0f;
 
-    Vec2 operator+(const Vec2 rhs) const
+    static inline float Dot(const Vec2 lhs, const Vec2 rhs)
+    {
+        return lhs.x * rhs.x + lhs.y * rhs.y;
+    }
+
+    inline Vec2 operator+(const Vec2 rhs) const
     {
         return Vec2{ x + rhs.x, y + rhs.y };
     }
 
-    Vec2 operator-(const Vec2 rhs) const
+    inline Vec2 operator-(const Vec2 rhs) const
     {
         return Vec2{ x - rhs.x, y - rhs.y };
     }
 
-    Vec2 operator*(const Vec2 rhs) const
+    inline Vec2 operator*(const Vec2 rhs) const
     {
         return Vec2{ x * rhs.x, y * rhs.y };
     }
 
-    Vec2 operator*(const float scalar) const
+    inline Vec2 operator*(const float scalar) const
     {
         return Vec2{ x * scalar, y * scalar };
     }
 
-    Vec2 operator/(const float scalar) const
+    inline Vec2 operator/(const float scalar) const
     {
         return Vec2{ x / scalar, y / scalar };
     }
 
-    Vec2 operator+=(const Vec2 rhs)
+    inline Vec2 operator+=(const Vec2 rhs)
     {
         x += rhs.x;
         y += rhs.y;
@@ -59,7 +64,7 @@ public:
         return *this;
     }
 
-    Vec2 operator-=(const Vec2 rhs)
+    inline Vec2 operator-=(const Vec2 rhs)
     {
         x -= rhs.x;
         y -= rhs.y;
@@ -67,7 +72,7 @@ public:
         return *this;
     }
 
-    Vec2 operator*=(const float scalar)
+    inline Vec2 operator*=(const float scalar)
     {
         x *= scalar;
         y *= scalar;
@@ -75,7 +80,7 @@ public:
         return *this;
     }
 
-    Vec2 operator/=(const float scalar)
+    inline Vec2 operator/=(const float scalar)
     {
         x /= scalar;
         y /= scalar;
