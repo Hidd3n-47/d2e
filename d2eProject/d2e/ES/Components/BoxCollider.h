@@ -9,7 +9,7 @@ class BoxCollider : public IComponent
 {
 public:
     void OnComponentAdded(const WeakRef<GameObject> parent) override;
-    void OnComponentRemoved() override {}
+    void OnComponentRemoved() override;
 
     [[nodiscard]] inline bool IsFixed() const { return mFixed; }
     [[nodiscard]] inline Vec2 GetHalfExtents() const { return mHalfExtents; }

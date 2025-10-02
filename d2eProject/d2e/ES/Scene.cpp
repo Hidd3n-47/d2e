@@ -4,19 +4,28 @@
 namespace d2e
 {
 
+Scene::~Scene()
+{
+    for (const GameObject* go : mGameObjects)
+    {
+        delete go;
+    }
+}
+
 void Scene::Update(const float dt) const
 {
-    for (const auto* gameObject : mGameObjects)
+    for (const GameObject* gameObject : mGameObjects)
     {
         gameObject->Update(dt);
     }
 
+    mPhysicsManager.Update();
     mCollisionHandler.Update();
 }
 
 void Scene::Render(const  WeakRef<sf::RenderWindow> window) const
 {
-    for (const auto* gameObject : mGameObjects)
+    for (const GameObject* gameObject : mGameObjects)
     {
         gameObject->Render(window);
     }
@@ -24,7 +33,7 @@ void Scene::Render(const  WeakRef<sf::RenderWindow> window) const
 
 WeakRef<GameObject> Scene::CreateGameObject()
 {
-    mGameObjects.emplace_back(new GameObject(WeakRef{ this }));
+    mGameObjects.emplace_back(new GameObject{ WeakRef{ this } });
     return WeakRef{ mGameObjects.back() };
 }
 

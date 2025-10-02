@@ -55,6 +55,30 @@ void CollisionHandler::AddCircle(const WeakRef<GameObject> circle)
     mCircleColliders.emplace_back(circle);
 }
 
+void CollisionHandler::RemoveBox(const WeakRef<GameObject> box)
+{
+    for (auto it{ mBoxColliders.begin() }; it != mBoxColliders.end(); ++it)
+    {
+        if (*it == box)
+        {
+            mBoxColliders.erase(it);
+            return;
+        }
+    }
+}
+
+void CollisionHandler::RemoveCircle(const WeakRef<GameObject> circle)
+{
+    for (auto it{ mCircleColliders.begin() }; it != mCircleColliders.end(); ++it)
+    {
+        if (*it == circle)
+        {
+            mCircleColliders.erase(it);
+            return;
+        }
+    }
+}
+
 void CollisionHandler::ResolveCollisionBetweenBoxes(WeakRef<GameObject> box1, WeakRef<GameObject> box2)
 {
     WeakRef<BoxCollider> box1Collider = box1->GetComponent<BoxCollider>();

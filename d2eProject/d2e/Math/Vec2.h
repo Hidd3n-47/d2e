@@ -46,6 +46,11 @@ public:
         return Vec2{ x * scalar, y * scalar };
     }
 
+    Vec2 operator/(const float scalar) const
+    {
+        return Vec2{ x / scalar, y / scalar };
+    }
+
     Vec2 operator+=(const Vec2 rhs)
     {
         x += rhs.x;

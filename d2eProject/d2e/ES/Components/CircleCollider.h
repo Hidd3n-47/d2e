@@ -11,7 +11,7 @@ class CircleCollider : public IComponent
 {
 public:
     void OnComponentAdded(const WeakRef<GameObject> parent) override;
-    void OnComponentRemoved() override {}
+    void OnComponentRemoved() override;
 
     //[[nodiscard]] inline bool IsFixed() const { return mFixed; }
     [[nodiscard]] inline float GetRadius() const { return mRadius; }

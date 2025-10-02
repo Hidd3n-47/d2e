@@ -1,6 +1,7 @@
 #include "Player.h"
 
 #include <d2e/Es/Components/Movement.h>
+#include <d2e/ES/Components/RigidBody.h>
 #include <d2e/ES/Components/CircleSprite.h>
 #include <d2e/ES/Components/CircleCollider.h>
 
@@ -24,6 +25,9 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene)
 
     auto movement = mGameObject->AddComponent<d2e::Movement>();
     movement->SetSpeed(3.0f);
+
+    auto rb = mGameObject->AddComponent<d2e::RigidBody>();
+    rb->AddForce(d2e::Vec2{ 0.0f, 0.5f });
 }
 
 } // Namespace d2eGame.

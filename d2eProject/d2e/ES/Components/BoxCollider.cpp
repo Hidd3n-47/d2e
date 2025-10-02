@@ -14,6 +14,10 @@ void BoxCollider::OnComponentAdded(const WeakRef<GameObject> parent)
     IComponent::OnComponentAdded(parent);
 }
 
+void BoxCollider::OnComponentRemoved()
+{
+    mParent->GetScene()->GetCollisionHandler()->RemoveCircle(mParent);
+}
 
 #ifdef DEV_CONFIGURATION
 void BoxCollider::Render(WeakRef<sf::RenderWindow> window)

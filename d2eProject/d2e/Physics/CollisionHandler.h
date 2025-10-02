@@ -12,6 +12,9 @@ public:
 
     void AddBox(const WeakRef<GameObject> box);
     void AddCircle(const WeakRef<GameObject> circle);
+
+    void RemoveBox(const WeakRef<GameObject> box);
+    void RemoveCircle(const WeakRef<GameObject> circle);
 private:
     std::vector<WeakRef<GameObject>> mBoxColliders;
     std::vector<WeakRef<GameObject>> mCircleColliders;
