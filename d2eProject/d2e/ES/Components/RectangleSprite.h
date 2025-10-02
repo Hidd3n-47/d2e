@@ -12,6 +12,8 @@ class RectangleSprite : public IComponent
 public:
     void Render(WeakRef<sf::RenderWindow> window) override;
 
+    [[nodiscard]] inline Vec2 GetHalfExtents() const { return mHalfExtents; }
+
     inline void SetHalfExtents(const Vec2 halfExtents) { mHalfExtents = halfExtents; }
     inline void SetColor(const sf::Color color) { mRectangle.setFillColor(color); }
 private:

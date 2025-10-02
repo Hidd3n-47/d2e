@@ -3,6 +3,7 @@
 #include <d2e/ES/Scene.h>
 #include <d2e/core/Engine.h>
 
+#include "d2e/ES/Components/BoxCollider.h"
 #include "d2e/ES/Components/CircleCollider.h"
 #include "d2e/ES/Components/RectangleSprite.h"
 
@@ -52,8 +53,9 @@ void GameScene::InitGameScene()
         floorSprite->SetHalfExtents(windowSize * d2e::Vec2{ 0.2f, 0.05f });
         floorSprite->SetColor(sf::Color::Black);
         floorObject->GetComponent<d2e::Transform>()->translation = windowSize * d2e::Vec2{ 0.5f, 0.5f };
-        auto bc = floorObject->AddComponent<d2e::CircleCollider>();
-        //bc->SetIsFixed(true);
+        auto bc = floorObject->AddComponent<d2e::BoxCollider>();
+        bc->SetHalfExtents(floorSprite->GetHalfExtents());
+        bc->SetIsFixed(true);
     }
 
     mPlayer.CreatePrefab(mScene);

@@ -14,7 +14,7 @@ public:
     void OnComponentRemoved() override {}
 
     //[[nodiscard]] inline bool IsFixed() const { return mFixed; }
-    [[nodiscard]] inline float GetRaidus() const { return mRadius; }
+    [[nodiscard]] inline float GetRadius() const { return mRadius; }
 
     //inline void SetIsFixed(const bool fixed) { mFixed = fixed; }
     inline void SetRadius(const float radius) { mRadius = radius; }
