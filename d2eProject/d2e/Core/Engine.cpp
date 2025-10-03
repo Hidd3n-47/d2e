@@ -110,6 +110,12 @@ void Engine::Update()
 
 void Engine::Render() const
 {
+    static sf::Texture t{ "E:/Programming/d2e/d2eGameProject/d2eGame/Assets/FloorSplatBlur.png" };
+    static sf::Sprite s{ t };
+    s.setColor(sf::Color{ 255, 0, 132, 255 });
+    s.setPosition({ 1000.0f, 485.f });
+    s.setScale({ 0.2, 0.2 });
+
     mWindow->clear();
 
     if (mActiveScene)
@@ -121,7 +127,7 @@ void Engine::Render() const
         DEBUG_WARN("No active scene set to render.");
         DEBUG_BREAK();
     }
-
+    mWindow->draw(s);
     mWindow->display();
 }
 

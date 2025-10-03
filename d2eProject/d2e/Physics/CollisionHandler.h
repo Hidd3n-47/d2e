@@ -20,7 +20,7 @@ private:
     std::vector<WeakRef<GameObject>> mCircleColliders;
 
     static void ResolveCollisionBetweenCircles(WeakRef<GameObject> circle1, WeakRef<GameObject> circle2);
-    static void ResolveCollisionBetweenBoxAndCircle(WeakRef<GameObject> box, WeakRef<GameObject> circle);
+    static bool ResolveCollisionBetweenBoxAndCircle(WeakRef<GameObject> box, WeakRef<GameObject> circle);
 };
 
 } // Namespace d2e.

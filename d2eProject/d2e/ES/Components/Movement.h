@@ -15,7 +15,9 @@ public:
     [[nodiscard]] inline float GetSpeed() const { return mSpeed; }
     inline void SetSpeed(const float speed) { mSpeed = speed; }
 private:
-    float mSpeed = 1.0f;
+    float    mSpeed        = 1.0f;
+    uint16_t mMaxJumpCount = 2;
+    uint16_t mJumpCount    = 0;
 };
 
 } // Namespace d2e.

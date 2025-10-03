@@ -17,7 +17,7 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene)
     mGameObject->GetComponent<d2e::Transform>()->translation = d2e::Vec2{ 1000.0f, 100.0f };
 
     auto visual = mGameObject->AddComponent<d2e::CircleSprite>();
-    visual->SetColor(sf::Color::Yellow);
+    visual->SetColor(sf::Color{255, 0, 132, 255 });
     visual->SetRadius(PLAYER_RADIUS);
 
     auto collider = mGameObject->AddComponent<d2e::CircleCollider>();

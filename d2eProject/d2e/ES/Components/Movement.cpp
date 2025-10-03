@@ -11,44 +11,32 @@ namespace d2e
 
 void Movement::Update(const float dt)
 {
-    WeakRef<Transform> transform = mParent->GetComponent<Transform>();
+    WeakRef<RigidBody> rigidBody = mParent->GetComponent<RigidBody>();
+
+    // If we collided last frame, negate and then multiply the count means we multiply by 0 and hence reset the count.
+    // Else we multiply by 1 and hence have the same jump count.
+    mJumpCount = static_cast<uint16_t>(!rigidBody->GetCollidedLastFrame()) * mJumpCount;
 
     float xAxisDelta = 0.0f;
-    Vec2 movement;
-    WeakRef<InputManager> inputManager = Engine::Instance()->GetInputManager();
 
+    WeakRef<InputManager> inputManager = Engine::Instance()->GetInputManager();
     if (inputManager->IsKeyDown(sf::Keyboard::Key::A))
     {
-        movement += Vec2{ -1.0f, 0.0f };
         xAxisDelta -= 1.0f;
     }
     if (inputManager->IsKeyDown(sf::Keyboard::Key::D))
     {
-        movement += Vec2{ 1.0f, 0.0f };
         xAxisDelta += 1.0f;
     }
-    if (inputManager->IsKeyPressed(sf::Keyboard::Key::Space))
+    if (inputManager->IsKeyPressed(sf::Keyboard::Key::Space) && mJumpCount < mMaxJumpCount)
     {
-        mParent->GetComponent<RigidBody>()->AddVelocity(Vec2{ 0.0f, -7.5f });
+        ++mJumpCount;
+        rigidBody->AddVelocity(Vec2{ 0.0f, -7.5f });
     }
 
-    //movement.Normalize();
+    const float desiredSpeed = xAxisDelta * (mSpeed * 0.02f);
 
-    // inputDir = -1, 0, +1
-    float desiredSpeed = xAxisDelta * (mSpeed * 0.02f);
-    float velocityDelta = std::min(desiredSpeed, mParent->GetComponent<RigidBody>()->GetVelocity().x);
-
-    // accelerationFactor controls responsiveness
-    constexpr float accelerationFactor = 0.2f;
-    float forceX = velocityDelta * accelerationFactor;
-
-    //transform->translation += movement * mSpeed;
-    //mParent->GetComponent<RigidBody>()->AddForce(movement * mSpeed / 100.0f);
     mParent->GetComponent<RigidBody>()->AddForce(Vec2{ desiredSpeed, 0.0f });
-
-    //if (abs(mParent->GetComponent<RigidBody>()->GetVelocity().x) < 0.01f)
-    //    mParent->GetComponent<RigidBody>()->Set();
-
 }
 
 } // Namespace d2e.
