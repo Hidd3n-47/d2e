@@ -10,6 +10,8 @@ public:
     explicit Vec2(const float scalar) : x{ scalar }, y{ scalar } {}
     explicit Vec2(const float x, const float y) : x{ x }, y{ y } {}
 
+    float x = 0.0f, y = 0.0f;
+
     [[nodiscard]] inline float Magnitude() const
     {
         return sqrt(x * x + y * y);
@@ -24,11 +26,15 @@ public:
         }
     }
 
-    float x = 0.0f, y = 0.0f;
-
     static inline float Dot(const Vec2 lhs, const Vec2 rhs)
     {
         return lhs.x * rhs.x + lhs.y * rhs.y;
+    }
+
+    static inline void Min(const float value, Vec2& vector)
+    {
+        vector.x = std::min(vector.x, value);
+        vector.y = std::min(vector.y, value);
     }
 
     inline Vec2 operator+(const Vec2 rhs) const

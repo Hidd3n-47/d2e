@@ -20,7 +20,7 @@ void Scene::Update(const float dt) const
     }
 
     mCollisionHandler.Update();
-    mPhysicsManager.Update();
+    mPhysicsManager.Update(dt);
 }
 
 void Scene::Render(const  WeakRef<sf::RenderWindow> window) const

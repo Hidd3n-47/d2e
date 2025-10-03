@@ -24,11 +24,11 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene)
     collider->SetRadius(PLAYER_RADIUS);
 
     auto movement = mGameObject->AddComponent<d2e::Movement>();
-    movement->SetSpeed(3.0f);
+    movement->SetSpeed(800.0f);
 
     auto rb = mGameObject->AddComponent<d2e::RigidBody>();
-    rb->SetGravity(d2e::Vec2{ 0.0f, 0.2f });
-    rb->SetRestitution(0.25f);
+    rb->SetGravity(d2e::Vec2{ 0.0f, 15.0f });
+    rb->SetRestitution(0.1f);
 }
 
 } // Namespace d2eGame.

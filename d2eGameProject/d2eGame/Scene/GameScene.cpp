@@ -60,17 +60,17 @@ void GameScene::InitGameScene()
     }
 
     // Other Ball to test.
-    {
-        d2e::WeakRef<d2e::GameObject>    ballObject = mScene->CreateGameObject();
-        d2e::WeakRef<d2e::CircleSprite>  ballSprite = ballObject->AddComponent<d2e::CircleSprite>();
+    //{
+    //    d2e::WeakRef<d2e::GameObject>    ballObject = mScene->CreateGameObject();
+    //    d2e::WeakRef<d2e::CircleSprite>  ballSprite = ballObject->AddComponent<d2e::CircleSprite>();
 
-        ballSprite->SetRadius(10.0f);
-        ballSprite->SetColor(sf::Color::Magenta);
-        ballObject->GetComponent<d2e::Transform>()->translation = windowSize * d2e::Vec2{ 0.4f, 0.4f };
-        auto bc = ballObject->AddComponent<d2e::CircleCollider>();
-        auto rb = ballObject->AddComponent<d2e::RigidBody>();
-        //rb->SetGravity(d2e::Vec2{ 0.0f, 0.2f });
-    }
+    //    ballSprite->SetRadius(10.0f);
+    //    ballSprite->SetColor(sf::Color::Magenta);
+    //    ballObject->GetComponent<d2e::Transform>()->translation = windowSize * d2e::Vec2{ 0.4f, 0.4f };
+    //    auto bc = ballObject->AddComponent<d2e::CircleCollider>();
+    //    auto rb = ballObject->AddComponent<d2e::RigidBody>();
+    //    //rb->SetGravity(d2e::Vec2{ 0.0f, 0.2f });
+    //}
 
     mPlayer.CreatePrefab(mScene);
 }

@@ -1,6 +1,7 @@
 #include "d2ePch.h"
 #include "CollisionHandler.h"
 
+#include "Core/Engine.h"
 #include "ES/GameObject.h"
 #include "ES/Components/StaticBoxCollider.h"
 #include "ES/Components/CircleCollider.h"
@@ -156,6 +157,23 @@ void CollisionHandler::ResolveCollisionBetweenBoxAndCircle(WeakRef<GameObject> b
 
     const Vec2 impulse = delta * j;
     rigidBody->AddVelocity(impulse * (1.0f / rigidBody->GetMass()));
+
+    //constexpr float dragCoefficient = 0.01f;
+    //const Vec2 drag = Vec2{ rigidBody->GetVelocity().x, 0.0f } * -dragCoefficient;
+    //rigidBody->AddForce(drag);
+
+    if (abs(rigidBody->GetVelocity().x) <= 0.02f) { rigidBody->SetVelocity(Vec2{ 0.0f, 0.0f }); return; }
+
+    constexpr float mu = 0.6f;
+    const float forceNormalMag = (rigidBody->GetGravity() * rigidBody->GetMass()).Magnitude();
+
+    Vec2 movementDirection = rigidBody->GetVelocity().x >= 0.0f ? Vec2{ 1.0f, 0.0f } : Vec2{ -1.0f, 0.0f };
+    const Vec2 b = movementDirection * mu * forceNormalMag * -1.0f;
+    rigidBody->AddForce(b);
+
+    //float frictionCoeff = 0.2f; // tune this
+    //Vec2 friction = Vec2(rigidBody->GetVelocity().x, 0) * -frictionCoeff;
+    //rigidBody->AddVelocity(friction);
 }
 
 } // Namespace d2e.
