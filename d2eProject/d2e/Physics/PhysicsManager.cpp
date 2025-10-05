@@ -25,7 +25,6 @@ void PhysicsManager::Update(const float dt) const
 
         transform->translation += rigidBody->mVelocity;
 
-        DEBUG_LOG("{}-{}", rigidBody->mVelocity.x, rigidBody->mVelocity.y);
         rigidBody->mForce = Vec2{ 0.0f, 0.0f };
     }
 }

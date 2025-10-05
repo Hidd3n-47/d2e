@@ -3,6 +3,7 @@
 #include <d2e/ES/Scene.h>
 #include <d2e/core/Engine.h>
 
+#include "d2e/ES/Components/Animation.h"
 #include "d2e/ES/Components/StaticBoxCollider.h"
 #include "d2e/ES/Components/CircleCollider.h"
 #include "d2e/ES/Components/RectangleSprite.h"
@@ -77,6 +78,21 @@ void GameScene::InitGameScene()
     //    auto rb = ballObject->AddComponent<d2e::RigidBody>();
     //    //rb->SetGravity(d2e::Vec2{ 0.0f, 0.2f });
     //}
+
+    {
+        d2e::WeakRef<d2e::GameObject>    ballObject = mScene->CreateGameObject();
+        d2e::WeakRef<d2e::Animation> animation = ballObject->AddComponent<d2e::Animation>();
+        const d2e::AnimationDetails details
+        {
+            .framesHorizontal = 4,
+            .frameCount       = 7,
+            .repeatAnimation = true
+        };
+        animation->CreateAnimation("E:/Programming/d2e/d2eGameProject/d2eGame/Assets/SplatAnim/SplatSpritesheet.png", details, 0.03f);
+        ballObject->GetComponent<d2e::Transform>()->translation = windowSize * d2e::Vec2{ 0.4f, 0.4f };
+        ballObject->GetComponent<d2e::Transform>()->scale = d2e::Vec2{ 0.1f, 0.13f };
+        //rb->SetGravity(d2e::Vec2{ 0.0f, 0.2f });
+    }
 
     mPlayer.CreatePrefab(mScene);
 }

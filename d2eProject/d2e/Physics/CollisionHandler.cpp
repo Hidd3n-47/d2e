@@ -146,7 +146,7 @@ bool CollisionHandler::ResolveCollisionBetweenBoxAndCircle(WeakRef<GameObject> b
 
     // Correct the position slightly to prevent jittering.
     constexpr float PERCENT = 0.8f;
-    constexpr float SLOP = 0.01f;
+    constexpr float SLOP    = 0.01f;
 
     circle->GetComponent<Transform>()->translation += delta * (overlap - SLOP) * PERCENT;
 
