@@ -1,6 +1,11 @@
 #include "Player.h"
 
+#include <random>
+
+#include <d2e/Physics/CollisionInfo.h>
+
 #include <d2e/Es/Components/Movement.h>
+#include <d2e/Es/Components/Animation.h>
 #include <d2e/ES/Components/RigidBody.h>
 #include <d2e/ES/Components/CircleSprite.h>
 #include <d2e/ES/Components/CircleCollider.h>
@@ -12,6 +17,7 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene)
 {
     mGameObject = scene->CreateGameObject();
 
+    //todo this should be changed into a percentage and not a pixel based.
     constexpr float PLAYER_RADIUS = 20.0f;
 
     mGameObject->GetComponent<d2e::Transform>()->translation = d2e::Vec2{ 1000.0f, 100.0f };
@@ -22,6 +28,26 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene)
 
     auto collider = mGameObject->AddComponent<d2e::CircleCollider>();
     collider->SetRadius(PLAYER_RADIUS);
+    collider->SetOnCollisionEnterCallback([](const d2e::CollisionInfo& info)
+    {
+        //todo refine the anim comp below and remove rand next line.
+        //todo need to pool this as we cannot have infinite splats.
+        const float r = 0 + (rand() % (1 - 0 + 1)) == 1 ? 1.0f : -1.0f;
+
+        auto object = info.instance->GetScene()->CreateGameObject();
+        auto anim = object->AddComponent<d2e::Animation>(); const d2e::AnimationDetails details
+        {
+            .framesHorizontal = 4,
+            .frameCount = 7,
+            .repeatAnimation = false
+        };
+        anim->CreateAnimation("E:/Programming/d2e/d2eGameProject/d2eGame/Assets/SplatAnim/SplatSpritesheet.png", 
+            details, 0.015f);
+        anim->SetSpriteColor(sf::Color{ 255, 0, 132, 255 });
+        auto transform = object->GetComponent<d2e::Transform>();
+        transform->translation = info.collisionPosition - d2e::Vec2{ 0.0f, -0.5f };
+        transform->scale = d2e::Vec2{ 0.13f * r, 0.13f };
+    });
 
     auto movement = mGameObject->AddComponent<d2e::Movement>();
     movement->SetSpeed(800.0f);

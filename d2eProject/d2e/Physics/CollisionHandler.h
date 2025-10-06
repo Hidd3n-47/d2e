@@ -3,7 +3,11 @@
 namespace d2e
 {
 
+struct CollisionInfo;
+
+class RigidBody;
 class GameObject;
+class CircleCollider;
 
 class CollisionHandler
 {
@@ -20,7 +24,8 @@ private:
     std::vector<WeakRef<GameObject>> mCircleColliders;
 
     static void ResolveCollisionBetweenCircles(WeakRef<GameObject> circle1, WeakRef<GameObject> circle2);
-    static bool ResolveCollisionBetweenBoxAndCircle(WeakRef<GameObject> box, WeakRef<GameObject> circle);
+    static void ResolveCollisionBetweenBoxAndCircle(std::vector<CollisionInfo>& collisionInfos, WeakRef<GameObject> box, 
+                                                    WeakRef<GameObject> circle, WeakRef<CircleCollider> circleCollider);
 };
 
 } // Namespace d2e.

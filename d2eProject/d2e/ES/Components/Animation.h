@@ -22,6 +22,8 @@ public:
 
     void Update(const float dt) override;
     void Render(WeakRef<sf::RenderWindow> window) override;
+
+    inline void SetSpriteColor(const sf::Color color) { mSpriteColor = color; }
 private:
     AnimationDetails mAnimationDetails{};
     uint32_t         mCurrentFrame{0};
@@ -31,6 +33,7 @@ private:
 
     sf::Texture mTexture;
     sf::Sprite  mVisual;
+    sf::Color   mSpriteColor;
 };
 
 } // Namespace d2e.

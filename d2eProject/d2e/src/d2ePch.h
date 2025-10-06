@@ -2,8 +2,11 @@
 
 #include <sfml/Graphics.hpp>
 
+#include <set>
 #include <string>
 #include <vector>
+#include <functional>
+#include <unordered_map>
 
 #include <Log/Log.h>
 

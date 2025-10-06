@@ -38,7 +38,9 @@ project "d2eGame"
         "gdi32",
         "flac",
         "vorbis",
-        "vorbisfile"
+        "vorbisfile",
+        "enet64.lib",
+        "WS2_32.lib"
     }
 
     filter "system:windows"

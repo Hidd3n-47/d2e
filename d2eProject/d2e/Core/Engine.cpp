@@ -2,6 +2,7 @@
 #include "Engine.h"
 
 #include <thread>
+#include <enet/enet.h>
 
 #include "ES/Scene.h"
 #include "Input/InputManager.h"
@@ -14,10 +15,14 @@ std::unique_ptr<Engine> Engine::mInstance = std::make_unique<Engine>();
 void Engine::Init()
 {
     mWindow = std::make_unique<sf::RenderWindow>(sf::VideoMode({ static_cast<uint32_t>(mWindowSize.x), static_cast<uint32_t>(mWindowSize.y) }), "d2e");
-    //mWindow->setFramerateLimit(TARGET_FRAMES);
 
     mInputManager = std::make_unique<InputManager>();
     DEBUG(mLog = std::make_unique<Log>("d2e Engine"));
+
+    if (enet_initialize() < 0)
+    {
+        DEBUG_ERROR("Failed to init enet.");
+    }
 
     DEBUG_LOG("d2e engine initialized.");
 }
@@ -103,19 +108,14 @@ void Engine::Update()
         while (std::chrono::high_resolution_clock::now() - frameStart < TARGET_FRAME_TIME) {}
     }
 
-#ifdef DEV_CONFIGURATION
+//todo uncomment when we get to final build, just want it for stats.
+//#ifdef DEV_CONFIGURATION
     mWindow->setTitle(std::format("d2e - DEV - {} fps", 1.0f / (std::chrono::duration<float>(std::chrono::high_resolution_clock::now() - frameStart).count())));
-#endif // DEV_CONFIGURATION.
+//#endif // DEV_CONFIGURATION.
 }
 
 void Engine::Render() const
 {
-    static sf::Texture t{ "E:/Programming/d2e/d2eGameProject/d2eGame/Assets/s1.png" };
-    static sf::Sprite s{ t };
-    s.setColor(sf::Color{ 255, 0, 132, 255 });
-    s.setPosition({ 1000.0f, 465.f });
-    //s.setScale({ 0.5, 0.5 });
-
     mWindow->clear();
 
     if (mActiveScene)
@@ -127,7 +127,7 @@ void Engine::Render() const
         DEBUG_WARN("No active scene set to render.");
         DEBUG_BREAK();
     }
-    mWindow->draw(s);
+
     mWindow->display();
 }
 

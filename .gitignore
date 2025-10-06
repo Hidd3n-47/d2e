@@ -398,8 +398,7 @@ FodyWeavers.xsd
 .idea/
 
 # Build Binaries and Intermediates
-bin/
-bin-int/
+scratch/
 
 # Solution and project files.
 *.sln

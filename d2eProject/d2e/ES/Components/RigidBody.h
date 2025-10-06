@@ -22,7 +22,6 @@ public:
     [[nodiscard]] inline Vec2  GetVelocity()    const { return mVelocity; }
     [[nodiscard]] inline Vec2  GetFnet()        const { return mForce + mGravity; }
     [[nodiscard]] inline Vec2  GetGravity()     const { return mGravity; }
-    [[nodiscard]] inline bool  GetCollidedLastFrame() const { return mCollidedLastFrame; }
 
     inline void SetMass(const float mass)               { mMass = mass; }
     inline void SetMaxSpeed(const float maxSpeed)       { mMaxSpeed = maxSpeed; }
@@ -40,8 +39,6 @@ private:
     Vec2 mForce;
 
     Vec2 mGravity;
-
-    bool mCollidedLastFrame = false;
 };
 
 } // Namespace d2e.

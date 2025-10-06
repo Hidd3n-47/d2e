@@ -9,6 +9,7 @@ namespace d2e
 Animation::Animation()
     : mTexture("E:/Programming/d2e/d2eGameProject/d2eGame/Assets/InvalidTexture.png")
     , mVisual(mTexture)
+    , mSpriteColor(sf::Color::White)
 {
     // Empty.
 }
@@ -39,8 +40,7 @@ void Animation::Render(WeakRef<sf::RenderWindow> window)
 
     mVisual.setScale({ transform->scale.x, transform->scale.y });
     mVisual.setPosition({ transform->translation.x - 0.5f * mAnimationDetails.textureSize.x * transform->scale.x, transform->translation.y - 0.5f * mAnimationDetails.textureSize.y * transform->scale.y });
-    //mVisual.setOrigin(mVisual.getPosition());
-    //mVisual.setOrigin({});
+    mVisual.setColor(mSpriteColor);
 
     const sf::Vector2i size = { static_cast<int>(mAnimationDetails.textureSize.x), static_cast<int>(mAnimationDetails.textureSize.y) };
 
@@ -50,7 +50,6 @@ void Animation::Render(WeakRef<sf::RenderWindow> window)
         static_cast<int>((mCurrentFrame / mAnimationDetails.framesHorizontal) * size.y)
     };
 
-    const auto f = { static_cast<float>(topLeft.x) + 0.5f * static_cast<float>(size.x), static_cast<float>(topLeft.y) + 0.5f * static_cast<float>(size.y) };
     mVisual.setTextureRect(sf::IntRect { topLeft, size });
     window->draw(mVisual);
 }

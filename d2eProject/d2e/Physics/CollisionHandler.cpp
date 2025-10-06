@@ -1,8 +1,8 @@
 #include "d2ePch.h"
 #include "CollisionHandler.h"
 
-#include "Core/Engine.h"
 #include "ES/GameObject.h"
+#include "Physics/CollisionInfo.h"
 #include "ES/Components/StaticBoxCollider.h"
 #include "ES/Components/CircleCollider.h"
 #include "ES/Components/RigidBody.h"
@@ -12,29 +12,29 @@ namespace d2e
 
 void CollisionHandler::Update() const
 {
-    for (const WeakRef<GameObject> c : mCircleColliders)
+    for (const WeakRef<GameObject> circle1 : mCircleColliders)
     {
-        for (const WeakRef<GameObject> c2 : mCircleColliders)
+        for (const WeakRef<GameObject> circle2 : mCircleColliders)
         {
-            if (c == c2)
+            if (circle1 == circle2)
             {
                 continue;
             }
 
-            ResolveCollisionBetweenCircles(c, c2);
+            ResolveCollisionBetweenCircles(circle1, circle2);
         }
     }
 
-    for (const WeakRef<GameObject> c : mCircleColliders)
+    for (const WeakRef<GameObject> circle : mCircleColliders)
     {
-        auto rb = c->GetComponent<RigidBody>();
+        WeakRef<CircleCollider> circleCollider = circle->GetComponent<CircleCollider>();
 
-        bool collided = false;
-        for (const WeakRef<GameObject> b : mStaticBoxColliders)
+        std::vector<CollisionInfo> collisionInfos;
+        for (const WeakRef<GameObject> box : mStaticBoxColliders)
         {
-            collided |= ResolveCollisionBetweenBoxAndCircle(b, c);
+            ResolveCollisionBetweenBoxAndCircle(collisionInfos, box, circle, circleCollider);
         }
-        rb->mCollidedLastFrame = collided;
+        circleCollider->UpdateObjectsCollidedWith(collisionInfos);
     }
 }
 
@@ -103,10 +103,10 @@ void CollisionHandler::ResolveCollisionBetweenCircles(WeakRef<GameObject> circle
     circle2->GetComponent<Transform>()->translation +=  delta * halfOverlap;
 }
 
-bool CollisionHandler::ResolveCollisionBetweenBoxAndCircle(WeakRef<GameObject> box, WeakRef<GameObject> circle)
+void CollisionHandler::ResolveCollisionBetweenBoxAndCircle(std::vector<CollisionInfo>& collisionInfos, WeakRef<GameObject> box,
+                                                           WeakRef<GameObject> circle, WeakRef<CircleCollider> circleCollider)
 {
     WeakRef<StaticBoxCollider> boxCollider    = box->GetComponent<StaticBoxCollider>();
-    WeakRef<CircleCollider>    circleCollider = circle->GetComponent<CircleCollider>();
     WeakRef<RigidBody>         rigidBody      = circle->GetComponent<RigidBody>();
 
     const Vec2  boxHalfExtents = boxCollider->GetHalfExtents();
@@ -115,7 +115,8 @@ bool CollisionHandler::ResolveCollisionBetweenBoxAndCircle(WeakRef<GameObject> b
     const Vec2 boxCenter    = box->GetComponent<Transform>()->translation;
     const Vec2 circleCenter = circle->GetComponent<Transform>()->translation;
 
-    const Vec2 closestPointOnBox{
+    const Vec2 closestPointOnBox
+	{
         std::clamp(circleCenter.x, boxCenter.x - boxHalfExtents.x, boxCenter.x + boxHalfExtents.x),
         std::clamp(circleCenter.y, boxCenter.y - boxHalfExtents.y, boxCenter.y + boxHalfExtents.y)
     };
@@ -125,7 +126,7 @@ bool CollisionHandler::ResolveCollisionBetweenBoxAndCircle(WeakRef<GameObject> b
 
     if (distanceSquared > circleRadius * circleRadius)
     {
-        return false;
+        return;
     }
 
     // It is possible for the force from physics to push the object such that the circle centre is the closest point on the box.
@@ -154,7 +155,7 @@ bool CollisionHandler::ResolveCollisionBetweenBoxAndCircle(WeakRef<GameObject> b
 
     if (velAlongNormal > 0.0f)
     {
-        return false;
+        return;
     }
 
     float j = -(1.0f + rigidBody->mRestitution) * velAlongNormal;
@@ -167,10 +168,12 @@ bool CollisionHandler::ResolveCollisionBetweenBoxAndCircle(WeakRef<GameObject> b
     //const Vec2 drag = Vec2{ rigidBody->GetVelocity().x, 0.0f } * -dragCoefficient;
     //rigidBody->AddForce(drag);
 
+    collisionInfos.emplace_back(circle, box, closestPointOnBox);
+
     if (abs(rigidBody->mVelocity.x) <= 0.02f)
     {
         rigidBody->SetVelocity(Vec2{ 0.0f, 0.0f });
-        return true;
+        return;
     }
 
     constexpr float mu = 0.6f;
@@ -179,7 +182,7 @@ bool CollisionHandler::ResolveCollisionBetweenBoxAndCircle(WeakRef<GameObject> b
     Vec2 movementDirection = rigidBody->mVelocity.x >= 0.0f ? Vec2{ 1.0f, 0.0f } : Vec2{ -1.0f, 0.0f };
     const Vec2 b = movementDirection * mu * forceNormalMag * -1.0f;
     rigidBody->AddForce(b);
-    return true;
+    return;
 
     //float frictionCoeff = 0.2f; // tune this
     //Vec2 friction = Vec2(rigidBody->GetVelocity().x, 0) * -frictionCoeff;
