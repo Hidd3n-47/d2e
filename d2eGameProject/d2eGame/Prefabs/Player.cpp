@@ -2,6 +2,8 @@
 
 #include <random>
 
+#include <d2e/Core/Random.h>
+
 #include <d2e/Physics/CollisionInfo.h>
 
 #include <d2e/Es/Components/Movement.h>
@@ -9,6 +11,8 @@
 #include <d2e/ES/Components/RigidBody.h>
 #include <d2e/ES/Components/CircleSprite.h>
 #include <d2e/ES/Components/CircleCollider.h>
+
+#include "Components/Tag.h"
 
 namespace d2eGame
 {
@@ -26,23 +30,39 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene)
     visual->SetColor(sf::Color{255, 0, 132, 255 });
     visual->SetRadius(PLAYER_RADIUS);
 
+    static d2e::spriteId spriteId = d2e::SpriteManager::Instance()->LoadTexture("E:/Programming/d2e/d2eGameProject/d2eGame/Assets/SplatAnim/SplatSpritesheet.png");
+
     auto collider = mGameObject->AddComponent<d2e::CircleCollider>();
     collider->SetRadius(PLAYER_RADIUS);
-    collider->SetOnCollisionEnterCallback([](const d2e::CollisionInfo& info)
+    collider->SetOnCollisionEnterCallback([&](const d2e::CollisionInfo& info)
     {
+        // If the player collides with the wall, we don't need to add the splat.
+        if (auto tag = info.other->GetComponent<Tag>(); tag.IsRefValid() && tag->tag == ComponentTag::WALL)
+        {
+            return;
+        }
+
+        // If the player collides with anything other than the top of the floor, don't add the splat.
+        if (info.collisionPosition.y <= info.instance->GetComponent<d2e::Transform>()->translation.y)
+        {
+            return;
+        }
+
         //todo refine the anim comp below and remove rand next line.
         //todo need to pool this as we cannot have infinite splats.
-        const float r = 0 + (rand() % (1 - 0 + 1)) == 1 ? 1.0f : -1.0f;
+        const float r = d2e::Random::GetRandomIntBetween(0, 2) == 1 ? 1.0f : -1.0f;
 
         auto object = info.instance->GetScene()->CreateGameObject();
         auto anim = object->AddComponent<d2e::Animation>(); const d2e::AnimationDetails details
         {
-            .framesHorizontal = 4,
-            .frameCount = 7,
-            .repeatAnimation = false
+            .spriteSheetId      = spriteId,
+            .framesHorizontal   = 4,
+            .frameCount         = 7,
+            .repeatAnimation    = false
         };
-        anim->CreateAnimation("E:/Programming/d2e/d2eGameProject/d2eGame/Assets/SplatAnim/SplatSpritesheet.png", 
-            details, 0.015f);
+
+        //todo change this from taking in a filepath to taking in a sprite id which is obtained from a sprite manager.
+        anim->CreateAnimation(details, 0.015f);
         anim->SetSpriteColor(sf::Color{ 255, 0, 132, 255 });
         auto transform = object->GetComponent<d2e::Transform>();
         transform->translation = info.collisionPosition - d2e::Vec2{ 0.0f, -0.5f };

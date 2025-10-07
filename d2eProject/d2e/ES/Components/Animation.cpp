@@ -7,20 +7,15 @@ namespace d2e
 {
 
 Animation::Animation()
-    : mTexture("E:/Programming/d2e/d2eGameProject/d2eGame/Assets/InvalidTexture.png")
-    , mVisual(mTexture)
-    , mSpriteColor(sf::Color::White)
+    : mSpriteColor(sf::Color::White)
 {
     // Empty.
 }
 
-void Animation::CreateAnimation(const std::string& filepath, const AnimationDetails details, const float timeBetweenFrames)
+void Animation::CreateAnimation(const AnimationDetails& details, const float timeBetweenFrames)
 {
     mAnimationDetails  = details;
     mTimeBetweenFrames = timeBetweenFrames;
-
-    mTexture = sf::Texture{ filepath };
-    mVisual  = sf::Sprite{ mTexture };
 }
 
 void Animation::Update(const float dt)
@@ -38,9 +33,11 @@ void Animation::Render(WeakRef<sf::RenderWindow> window)
 {
     const WeakRef<Transform> transform = mParent->GetComponent<Transform>();
 
-    mVisual.setScale({ transform->scale.x, transform->scale.y });
-    mVisual.setPosition({ transform->translation.x - 0.5f * mAnimationDetails.textureSize.x * transform->scale.x, transform->translation.y - 0.5f * mAnimationDetails.textureSize.y * transform->scale.y });
-    mVisual.setColor(mSpriteColor);
+    sf::Sprite visual = SpriteManager::Instance()->GetSprite(mAnimationDetails.spriteSheetId);
+
+    visual.setScale({ transform->scale.x, transform->scale.y });
+    visual.setPosition({ transform->translation.x - 0.5f * mAnimationDetails.textureSize.x * transform->scale.x, transform->translation.y - 0.5f * mAnimationDetails.textureSize.y * transform->scale.y });
+    visual.setColor(mSpriteColor);
 
     const sf::Vector2i size = { static_cast<int>(mAnimationDetails.textureSize.x), static_cast<int>(mAnimationDetails.textureSize.y) };
 
@@ -50,8 +47,8 @@ void Animation::Render(WeakRef<sf::RenderWindow> window)
         static_cast<int>((mCurrentFrame / mAnimationDetails.framesHorizontal) * size.y)
     };
 
-    mVisual.setTextureRect(sf::IntRect { topLeft, size });
-    window->draw(mVisual);
+    visual.setTextureRect(sf::IntRect { topLeft, size });
+    window->draw(visual);
 }
 
 } // Namespace d2e.

@@ -3,8 +3,10 @@
 #include <d2e/ES/Scene.h>
 #include <d2e/core/Engine.h>
 
-#include "d2e/ES/Components/RectangleSprite.h"
-#include "d2e/ES/Components/StaticBoxCollider.h"
+#include <d2e/ES/Components/RectangleSprite.h>
+#include <d2e/ES/Components/StaticBoxCollider.h>
+
+#include "Components/Tag.h"
 
 namespace d2eGame
 {
@@ -36,6 +38,9 @@ void GameScene::InitGameScene()
         leftWall->GetComponent<d2e::Transform>()->translation = windowSize * d2e::Vec2{ 0.0f, 0.5f };
         auto bc = leftWall->AddComponent<d2e::StaticBoxCollider>();
         bc->SetHalfExtents(d2e::Vec2{5.0f, windowSize.y });
+
+        auto tag = leftWall->AddComponent<Tag>();
+        tag->tag = ComponentTag::WALL;
     }
 
     {
@@ -44,6 +49,9 @@ void GameScene::InitGameScene()
         rightWall->GetComponent<d2e::Transform>()->translation = windowSize * d2e::Vec2{ 1.0f, 0.5f };
         auto bc = rightWall->AddComponent<d2e::StaticBoxCollider>();
         bc->SetHalfExtents(d2e::Vec2{ 5.0f, windowSize.y });
+
+        auto tag = rightWall->AddComponent<Tag>();
+        tag->tag = ComponentTag::WALL;
     }
 
     {
@@ -52,6 +60,9 @@ void GameScene::InitGameScene()
         topWall->GetComponent<d2e::Transform>()->translation = windowSize * d2e::Vec2{ 0.5f, 0.0f };
         auto bc = topWall->AddComponent<d2e::StaticBoxCollider>();
         bc->SetHalfExtents(d2e::Vec2{ windowSize.x, 5.0f });
+
+        auto tag = topWall->AddComponent<Tag>();
+        tag->tag = ComponentTag::WALL;
     }
 
     {
@@ -60,6 +71,9 @@ void GameScene::InitGameScene()
         bottomWall->GetComponent<d2e::Transform>()->translation = windowSize * d2e::Vec2{ 0.5f, 1.0f };
         auto bc = bottomWall->AddComponent<d2e::StaticBoxCollider>();
         bc->SetHalfExtents(d2e::Vec2{ windowSize.x, 5.0f });
+
+        auto tag = bottomWall->AddComponent<Tag>();
+        tag->tag = ComponentTag::WALL;
     }
 
     mPlayer.CreatePrefab(mScene);
