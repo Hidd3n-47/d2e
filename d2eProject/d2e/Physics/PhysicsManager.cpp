@@ -1,7 +1,6 @@
 #include "d2ePch.h"
 #include "PhysicsManager.h"
 
-#include "Core/Engine.h"
 #include "ES/GameObject.h"
 #include "ES/Components/RigidBody.h"
 
@@ -15,13 +14,9 @@ void PhysicsManager::Update(const float dt) const
         WeakRef<Transform> transform = body->GetComponent<Transform>();
         WeakRef<RigidBody> rigidBody = body->GetComponent<RigidBody>();
 
-        //todo remove this if we not going to use drag.
-        constexpr float dragCoefficient = 0.00f;
-        const Vec2 drag = rigidBody->mVelocity * -dragCoefficient;
-        const Vec2 acceleration = (rigidBody->mForce + rigidBody->mGravity + drag) / rigidBody->mMass * dt;
+        const Vec2 acceleration = (rigidBody->mForce + rigidBody->mGravity) / rigidBody->mMass * dt;
 
-        rigidBody->mVelocity += acceleration;
-        Vec2::Min(rigidBody->mMaxSpeed, rigidBody->mVelocity); // todo fix this as this doesn't work when not going in basis vector directions
+        rigidBody->SetVelocity(rigidBody->mVelocity + acceleration);
 
         transform->translation += rigidBody->mVelocity;
 

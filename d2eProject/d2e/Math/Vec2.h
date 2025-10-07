@@ -26,38 +26,37 @@ public:
         }
     }
 
-    static inline float Dot(const Vec2 lhs, const Vec2 rhs)
+    [[nodiscard]] static inline float Dot(const Vec2 lhs, const Vec2 rhs)
     {
         return lhs.x * rhs.x + lhs.y * rhs.y;
     }
 
-    static inline void Min(const float value, Vec2& vector)
-    {
-        vector.x = std::min(vector.x, value);
-        vector.y = std::min(vector.y, value);
-    }
-
-    inline Vec2 operator+(const Vec2 rhs) const
+    [[nodiscard]] inline Vec2 operator+(const Vec2 rhs) const
     {
         return Vec2{ x + rhs.x, y + rhs.y };
     }
 
-    inline Vec2 operator-(const Vec2 rhs) const
+    [[nodiscard]] inline Vec2 operator-(const Vec2 rhs) const
     {
         return Vec2{ x - rhs.x, y - rhs.y };
     }
 
-    inline Vec2 operator*(const Vec2 rhs) const
+    [[nodiscard]] inline Vec2 operator-(const float scalar) const
+    {
+        return Vec2{ x - scalar, y - scalar };
+    }
+
+    [[nodiscard]] inline Vec2 operator*(const Vec2 rhs) const
     {
         return Vec2{ x * rhs.x, y * rhs.y };
     }
 
-    inline Vec2 operator*(const float scalar) const
+    [[nodiscard]] inline Vec2 operator*(const float scalar) const
     {
         return Vec2{ x * scalar, y * scalar };
     }
 
-    inline Vec2 operator/(const float scalar) const
+    [[nodiscard]] inline Vec2 operator/(const float scalar) const
     {
         return Vec2{ x / scalar, y / scalar };
     }
@@ -74,6 +73,14 @@ public:
     {
         x -= rhs.x;
         y -= rhs.y;
+
+        return *this;
+    }
+
+    inline Vec2 operator-=(const float scalar)
+    {
+        x -= scalar;
+        y -= scalar;
 
         return *this;
     }

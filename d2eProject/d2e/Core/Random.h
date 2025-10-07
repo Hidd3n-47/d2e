@@ -8,13 +8,23 @@ namespace d2e
 class Random
 {
 public:
-    static int GetRandomIntBetween(const int lowerBoundInclusive, const int upperBoundExclusive);
-
-    inline static int GetRandomInt() { return static_cast<int>(mRandomEngine()); }
+    template <typename T>
+    static T GetRandomBetween(const T lowerBoundInclusive, const T upperBoundExclusive);
 private:
-    static std::mt19937 mRandomEngine;
-
-    static int mod(const int value, const int mod);
+    inline static std::mt19937 mRandomEngine{ std::random_device{}() };
 };
+
+template <>
+inline int Random::GetRandomBetween(const int lowerBoundInclusive, const int upperBoundExclusive)
+{
+    return static_cast<int>(GetRandomBetween<float>(static_cast<float>(lowerBoundInclusive), static_cast<float>(upperBoundExclusive)));
+}
+
+template <typename T>
+inline T Random::GetRandomBetween(const T lowerBoundInclusive, const T upperBoundExclusive)
+{
+    std::uniform_real_distribution<T> distribution{ lowerBoundInclusive, upperBoundExclusive };
+    return distribution(mRandomEngine);
+}
 
 } // Namespace d2e.

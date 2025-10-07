@@ -50,10 +50,11 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene)
 
         //todo refine the anim comp below and remove rand next line.
         //todo need to pool this as we cannot have infinite splats.
-        const float r = d2e::Random::GetRandomIntBetween(0, 2) == 1 ? 1.0f : -1.0f;
+        const float r = d2e::Random::GetRandomBetween<int>(0, 2) == 1 ? 1.0f : -1.0f;
 
         auto object = info.instance->GetScene()->CreateGameObject();
-        auto anim = object->AddComponent<d2e::Animation>(); const d2e::AnimationDetails details
+        auto anim = object->AddComponent<d2e::Animation>();
+        const d2e::AnimationDetails animDetails
         {
             .spriteSheetId      = spriteId,
             .framesHorizontal   = 4,
@@ -62,7 +63,7 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene)
         };
 
         //todo change this from taking in a filepath to taking in a sprite id which is obtained from a sprite manager.
-        anim->CreateAnimation(details, 0.015f);
+        anim->CreateAnimation(animDetails, 0.015f);
         anim->SetSpriteColor(sf::Color{ 255, 0, 132, 255 });
         auto transform = object->GetComponent<d2e::Transform>();
         transform->translation = info.collisionPosition - d2e::Vec2{ 0.0f, -0.5f };

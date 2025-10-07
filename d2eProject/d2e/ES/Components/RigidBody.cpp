@@ -18,4 +18,12 @@ void RigidBody::OnComponentRemoved()
     mParent->GetScene()->GetPhysicsManager()->RemoveBody(mParent);
 }
 
+void RigidBody::EnsureVelocityIsUnderMaxSpeed()
+{
+    if (const float len = mVelocity.Magnitude(); len > mMaxSpeed)
+    {
+        mVelocity /= len;
+        mVelocity *= mMaxSpeed;
+    }
+}
 } // Namespace d2e.

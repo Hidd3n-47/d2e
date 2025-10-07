@@ -34,9 +34,6 @@ private:
     float mTimeBetweenFrames{ 0.2f };
     float mTimer{ 0.0f };
 
-    //spriteId    mSpriteId;
-    //sf::Texture mTexture;
-    //sf::Sprite  mVisual;
     sf::Color   mSpriteColor;
 };
 

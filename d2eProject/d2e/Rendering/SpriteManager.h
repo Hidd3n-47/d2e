@@ -12,9 +12,6 @@ typedef uint32_t spriteId;
 class SpriteManager
 {
 public:
-    SpriteManager()  = default;
-    ~SpriteManager() = default;
-
     [[nodiscard]] static inline WeakRef<SpriteManager> Instance() { return WeakRef{ mInstance.get() }; }
 
     [[nodiscard]] spriteId LoadTexture(const std::filesystem::path& path);
