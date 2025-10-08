@@ -14,6 +14,12 @@ public:
     Log(std::string&& logTitle, const bool displayTimestamp = true);
 
     template <typename... Args>
+    inline void Info(const std::string_view msg, Args&&... args)
+    {
+        Print(msg, GREEN, std::forward<Args>(args)...);
+    }
+
+    template <typename... Args>
     inline void Debug(const std::string_view msg, Args&&... args)
     {
         Print(msg, BLUE, std::forward<Args>(args)...);
@@ -42,7 +48,7 @@ private:
     bool mDisplayTimestamp  = true;
 
     template <typename T>
-    static inline auto ToFormatArg(T&& t)
+    inline static auto ToFormatArg(T&& t)
     {
         if constexpr (std::is_convertible_v<T, std::string_view>)
         {
@@ -69,7 +75,7 @@ private:
 
             auto formattedMsg = std::vformat(msg, std::apply([](auto&... vals) { return std::make_format_args(vals...); }, argsTuple));
 
-            std::println("{}{}: {}{}{}",  color, mLogTitle, timestamp, formattedMsg, DEFAULT);
+            std::println("{}{}{}: {}{}",  color, mLogTitle, timestamp, formattedMsg, DEFAULT);
         }
     }
 

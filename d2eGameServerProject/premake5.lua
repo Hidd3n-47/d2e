@@ -1,7 +1,7 @@
--- ---------------------------- d2eNet Project.
-project "d2eNet"
+-- ---------------------------- d2eGameServer Project.
+project "d2eGameServer"
     location "%{prj.name}"
-    kind "StaticLib"
+    kind "ConsoleApp"
     language "C++"
     staticruntime "Off"
     cppdialect "C++latest"
@@ -17,6 +17,11 @@ project "d2eNet"
 
     includedirs
     {
+        "%{prj.name}/",
+
+        "$(SolutionDir)LogProject/",
+        "$(SolutionDir)d2eNetProject/",
+
         "$(SolutionDir)deps/include/"
     }
 
@@ -27,6 +32,8 @@ project "d2eNet"
 
     links
     {
+        "Log",
+        "d2eNet",
         "enet64.lib",
         "winmm.lib",
         "WS2_32.lib",

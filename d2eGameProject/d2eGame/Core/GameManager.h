@@ -29,7 +29,7 @@ public:
 
     void Init();
 
-    [[nodiscard]] static inline d2e::WeakRef<GameManager> Instance() { return d2e::WeakRef{ mInstance.get() }; }
+    [[nodiscard]] inline static d2e::WeakRef<GameManager> Instance() { return d2e::WeakRef{ mInstance.get() }; }
     DEBUG([[nodiscard]] inline d2e::WeakRef<d2e::Log>     GetLog() const { return d2e::WeakRef{ mLog.get() }; })
 
     void ChangeState(const GameState newState);

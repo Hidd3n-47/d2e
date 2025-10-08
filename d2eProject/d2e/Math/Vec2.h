@@ -26,7 +26,7 @@ public:
         }
     }
 
-    [[nodiscard]] static inline float Dot(const Vec2 lhs, const Vec2 rhs)
+    [[nodiscard]] inline static float Dot(const Vec2 lhs, const Vec2 rhs)
     {
         return lhs.x * rhs.x + lhs.y * rhs.y;
     }

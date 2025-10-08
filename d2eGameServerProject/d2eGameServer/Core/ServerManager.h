@@ -1,0 +1,33 @@
+#pragma once
+
+#include <memory>
+
+#include <Log/Log.h>
+
+namespace d2eNet
+{
+class Host;
+} // Namespace d2eNet.
+
+namespace d2eServer
+{
+
+class ServerManager
+{
+public:
+    [[nodiscard]] inline static ServerManager* Instance() { return mInstance.get(); }
+
+    bool Init();
+    void Run();
+    void Destroy();
+
+    [[nodiscard]] inline d2e::Log& Log() { return mLog; }
+private:
+    static std::unique_ptr<ServerManager> mInstance;
+
+    d2e::Log mLog{ "d2e Game Server" };
+
+    std::unique_ptr<d2eNet::Host> mHost;
+};
+
+} // Namespace d2eServer.

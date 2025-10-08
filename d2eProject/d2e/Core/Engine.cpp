@@ -19,11 +19,6 @@ void Engine::Init()
     mInputManager = std::make_unique<InputManager>();
     DEBUG(mLog = std::make_unique<Log>("d2e Engine"));
 
-    if (enet_initialize() < 0)
-    {
-        DEBUG_ERROR("Failed to init enet.");
-    }
-
     DEBUG_LOG("d2e engine initialized.");
 }
 
