@@ -13,9 +13,9 @@ public:
     Host() = default;
     ~Host();
 
-    [[nodiscard]] bool Init(const uint8_t ip1, const uint8_t ip2, const uint8_t ip3, const uint8_t ip4, const uint16_t port);
+    [[nodiscard]] bool Init(const uint8_t ip1, const uint8_t ip2, const uint8_t ip3, const uint8_t ip4, const uint16_t port, const bool host = true);
 
-    void Update();
+    void Update(const uint32_t timeout) const;
 
     [[nodiscard]] uint16_t GetNumJoinedClients() const { return mNumJoinedClients; }
 

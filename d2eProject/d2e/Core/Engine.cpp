@@ -81,6 +81,21 @@ void Engine::Update()
         {
             mInputManager->KeyUp(key->code);
         }
+
+        if (const sf::Event::MouseButtonPressed* button = event->getIf<sf::Event::MouseButtonPressed>())
+        {
+            mInputManager->MouseDown(button->button);
+        }
+
+        if (const sf::Event::MouseButtonReleased* button = event->getIf<sf::Event::MouseButtonReleased>())
+        {
+            mInputManager->MouseUp(button->button);
+        }
+
+        if (const sf::Event::MouseMoved* moved = event->getIf<sf::Event::MouseMoved>())
+        {
+            mInputManager->SetMousePosition(Vec2{ static_cast<float>(moved->position.x), static_cast<float>(moved->position.y) });
+        }
     }
 
     if (mActiveScene)

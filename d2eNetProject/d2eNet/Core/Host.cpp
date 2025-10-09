@@ -10,29 +10,57 @@ Host::~Host()
     enet_host_destroy(mHost);
 }
 
-bool Host::Init(const uint8_t ip1, const uint8_t  ip2, const uint8_t ip3, const uint8_t ip4, const uint16_t port)
+bool Host::Init(const uint8_t ip1, const uint8_t  ip2, const uint8_t ip3, const uint8_t ip4, const uint16_t port, const bool host)
 {
     const std::string ip = std::format("{}.{}.{}.{}", ip1, ip2, ip3, ip4);
 
-    enet_address_set_host(&mAddress, ip.c_str());
-    mAddress.port = port;
+    if (host)
+    {
+        enet_address_set_host(&mAddress, ip.c_str());
+        mAddress.port = port;
 
-    mHost = enet_host_create(
-        &mAddress,
-        NUMBER_OF_ALLOWED_CLIENTS /* allow up to 32 clients and/or outgoing connections */,
-        1 /* allow up to 2 channels to be used, 0 and 1 */,
-        0,
-        0);
+        mHost = enet_host_create(
+            &mAddress,
+            NUMBER_OF_ALLOWED_CLIENTS /* allow up to 32 clients and/or outgoing connections */,
+            1 /* allow up to 2 channels to be used, 0 and 1 */,
+            0,
+            0);
+    }
+    else
+    {
+        mHost = enet_host_create(nullptr, 1, 1, 0, 0);
+    }
 
     return mHost != nullptr;
 }
 
-void Host::Update()
+void Host::Update(const uint32_t timeout) const
 {
     ENetEvent event;
-    /* Wait up to 1000 milliseconds for an event. */
-    while (enet_host_service(mHost, &event, 1000) > 0)
+
+    while (enet_host_service(mHost, &event, timeout) > 0)
     {
+        if (event.type == ENET_EVENT_TYPE_RECEIVE)
+        {
+            // todo add some info here.
+
+            return;
+        }
+
+        if (event.type == ENET_EVENT_TYPE_CONNECT)
+        {
+            // todo add.
+
+            return;
+        }
+
+        if (event.type == ENET_EVENT_TYPE_DISCONNECT)
+        {
+            // todo add.
+
+            return;
+        }
+        return;
         switch (event.type)
         {
         case ENET_EVENT_TYPE_CONNECT:
@@ -56,10 +84,10 @@ void Host::Update()
             ENetPacket* packet{ enet_packet_create(data, strlen(data) + 1, ENET_PACKET_FLAG_RELIABLE) };
 
             enet_peer_send(event.peer, 0, packet);
+            //enet_packet_destroy(event.packet);
+            break;
         }
 
-	        //enet_packet_destroy(event.packet);
-	        break;
         }
     }
 }

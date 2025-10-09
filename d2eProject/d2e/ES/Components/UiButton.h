@@ -1,6 +1,7 @@
 #pragma once
 
 #include "d2e/ES/IComponent.h"
+#include "d2e/Rendering/SpriteManager.h"
 
 namespace d2e
 {
@@ -8,14 +9,18 @@ namespace d2e
 class UiButton : public IComponent
 {
 public:
+    UiButton(const spriteId spriteId);
+    UiButton(const spriteId spriteId, const std::function<void()>& callback);
+
+    void Update(const float dt) override;
     void Render(WeakRef<sf::RenderWindow> window) override;
 
-    [[nodiscard]] inline Vec2 GetSize() const { return mSize; }
-    inline void SetSize(const Vec2 size) { mSize = size; }
+    inline void SetOnButtonPressedCallback(const std::function<void()>& callback) { mOnButtonPressed = callback; }
 private:
-    sf::RectangleShape mRectangle{ {10.0f, 10.0f} };
-
+    spriteId mSpriteId;
     Vec2 mSize{ 10.0f, 10.0f };
+
+    std::function<void()> mOnButtonPressed;
 };
 
 } // Namespace d2e.

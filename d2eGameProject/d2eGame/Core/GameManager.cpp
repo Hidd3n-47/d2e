@@ -21,7 +21,7 @@ GameManager::~GameManager()
 
 void GameManager::Init()
 {
-    ChangeState(GameState::GAME);
+    ChangeState(GameState::MAIN_MENU);
 
     GAME_LOG("Game initialized.");
 }

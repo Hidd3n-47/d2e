@@ -33,7 +33,7 @@ void Animation::Render(WeakRef<sf::RenderWindow> window)
 {
     const WeakRef<Transform> transform = mParent->GetComponent<Transform>();
 
-    sf::Sprite visual = SpriteManager::Instance()->GetSprite(mAnimationDetails.spriteSheetId);
+    sf::Sprite visual = SpriteManager::Instance()->GetSprite(mAnimationDetails.spriteSheetId)->sprite;
 
     visual.setScale({ transform->scale.x, transform->scale.y });
     visual.setPosition({ transform->translation.x - 0.5f * mAnimationDetails.textureSize.x * transform->scale.x, transform->translation.y - 0.5f * mAnimationDetails.textureSize.y * transform->scale.y });

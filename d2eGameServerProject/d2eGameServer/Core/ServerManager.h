@@ -27,6 +27,8 @@ private:
 
     d2e::Log mLog{ "d2e Game Server" };
 
+    bool mServerRunning = true;
+
     std::unique_ptr<d2eNet::Host> mHost;
 };
 

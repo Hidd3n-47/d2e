@@ -6,10 +6,23 @@ namespace d2e
 
 std::unique_ptr<SpriteManager> SpriteManager::mInstance = std::make_unique<SpriteManager>();
 
+SpriteManager::~SpriteManager()
+{
+    for (const Sprite* sprite : mLoadedSprites)
+    {
+        delete sprite;
+    }
+}
+
 spriteId SpriteManager::LoadTexture(const std::filesystem::path& path)
 {
-    mLoadedTextures.emplace_back(path.c_str());
-    mLoadedSprites.emplace_back(mLoadedTextures.back());
+    if (mLoadedTextures.contains(path))
+    {
+        DEBUG_WARN("Already loaded in texture at path: {}", path.c_str());
+        return mLoadedTextures[path];
+    }
+
+    mLoadedSprites.emplace_back(new Sprite{ sf::Texture{ path.c_str() } });
     mIdToSpriteIndexMap[mTextureId] = static_cast<uint32_t>(mLoadedSprites.size() - 1);
 
     return mTextureId++;

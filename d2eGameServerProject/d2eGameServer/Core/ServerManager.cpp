@@ -1,8 +1,7 @@
 #include "ServerManager.h"
 
+#include <conio.h>
 #include <iostream>
-
-#include <enet/enet.h>
 
 #include <d2eNet/Core/Host.h>
 #include <d2eNet/Core/d2eNet.h>
@@ -43,20 +42,24 @@ void ServerManager::Run()
 
     // todo need to handle a case of the game being simulated but then player being disconnected.
 
-    while (true)
+    while (mServerRunning)
     {
-        mHost->Update();
-    }
+        // Allow the server to be shutdown with the 'Esc' key.
+        if (_kbhit())
+        {
+            if (_getch() == VK_ESCAPE)
+            {
+                mServerRunning = false;
+            }
+        }
 
-    // Wait for clients to join server.
-    while (mHost->GetNumJoinedClients() < d2eNet::Host::NUMBER_OF_ALLOWED_CLIENTS)
-    {
-    }
+        // Receive info.
+        mHost->Update(3);
 
-    // Since clients have joined, simulate the game.
-    while (true)
-    {
-        
+        // Simulate game.
+
+        // Send info.
+        // the only thing we should need to send is the player info - specifically the rb and transform component.
     }
 }
 
