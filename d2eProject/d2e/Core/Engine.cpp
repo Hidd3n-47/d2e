@@ -2,7 +2,9 @@
 #include "Engine.h"
 
 #include <thread>
-#include <enet/enet.h>
+
+#include <d2eNet/Core/d2eNet.h>
+#include <d2eNet/Core/Client.h>
 
 #include "ES/Scene.h"
 #include "Input/InputManager.h"
@@ -19,20 +21,27 @@ void Engine::Init()
     mInputManager = std::make_unique<InputManager>();
     DEBUG(mLog = std::make_unique<Log>("d2e Engine"));
 
+    d2eNet::d2eNet::Init();
+
     DEBUG_LOG("d2e engine initialized.");
 }
 
 void Engine::Run()
 {
-    while (mWindow->isOpen())
+    while (mWindow->isOpen() && mRunning)
     {
+        Input();
+        SendPackets();
         Update();
         Render();
+        ReceivePackets();
     }
 }
 
 void Engine::Destroy()
 {
+    d2eNet::d2eNet::Destroy();
+
     DEBUG_LOG("d2e engine destroyed.");
 }
 
@@ -53,10 +62,17 @@ bool Engine::SetActiveScene(const WeakRef<Scene>& scene)
     return false;
 }
 
-void Engine::Update()
+void Engine::ConnectClientToServer(const int ip1, const int ip2, const int ip3, const int ip4, const uint16_t port)
 {
-    const std::chrono::time_point frameStart = std::chrono::high_resolution_clock::now();
+    mClient = std::make_unique<d2eNet::Client>();
+    if (!mClient->Init(static_cast<uint8_t>(ip1), static_cast<uint8_t>(ip2), static_cast<uint8_t>(ip3), static_cast<uint8_t>(ip4), port))
+    {
+        DEBUG_ERROR("Failed to connect Host to Client.");
+    }
+}
 
+void Engine::Input()
+{
     mInputManager->StartFrame();
 
     while (const std::optional event = mWindow->pollEvent())
@@ -97,6 +113,21 @@ void Engine::Update()
             mInputManager->SetMousePosition(Vec2{ static_cast<float>(moved->position.x), static_cast<float>(moved->position.y) });
         }
     }
+}
+
+void Engine::SendPackets() const
+{
+    if (!mClient)
+    {
+        return;
+    }
+
+    mClient->Update(3);
+}
+
+void Engine::Update() const
+{
+    const std::chrono::time_point frameStart = std::chrono::high_resolution_clock::now();
 
     if (mActiveScene)
     {
@@ -109,7 +140,7 @@ void Engine::Update()
     }
 
     const std::chrono::duration frameTime = std::chrono::high_resolution_clock::now() - frameStart;
-    if (frameTime < std::chrono::duration<float>(1.0f / 120.0f))
+    if (frameTime < std::chrono::duration<float>(TARGET_FRAME_TIME))
     {
         const std::chrono::duration sleepTime = TARGET_FRAME_TIME - frameTime;
         std::this_thread::sleep_for(sleepTime);
@@ -139,6 +170,16 @@ void Engine::Render() const
     }
 
     mWindow->display();
+}
+
+void Engine::ReceivePackets()
+{
+    if (!mClient)
+    {
+        return;
+    }
+
+    mRunning = mRunning;
 }
 
 } // Namespace d2e.

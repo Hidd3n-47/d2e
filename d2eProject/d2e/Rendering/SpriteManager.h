@@ -26,8 +26,8 @@ private:
     static std::unique_ptr<SpriteManager> mInstance;
 
     std::vector<Sprite*> mLoadedSprites;
-    std::unordered_map<std::filesystem::path, spriteId> mLoadedTextures;
     std::unordered_map<spriteId, uint32_t> mIdToSpriteIndexMap;
+    std::unordered_map<std::filesystem::path, spriteId> mLoadedTextures;
 
     spriteId mTextureId{ 0 };
 };

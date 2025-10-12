@@ -18,7 +18,7 @@ spriteId SpriteManager::LoadTexture(const std::filesystem::path& path)
 {
     if (mLoadedTextures.contains(path))
     {
-        DEBUG_WARN("Already loaded in texture at path: {}", path.c_str());
+        DEBUG_WARN("Already loaded in texture at path: {}", path.string().c_str());
         return mLoadedTextures[path];
     }
 

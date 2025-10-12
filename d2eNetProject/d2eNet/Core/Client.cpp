@@ -1,44 +1,34 @@
-#include "Host.h"
+#include "Client.h"
 
 #include <format>
 
 namespace d2eNet
 {
 
-Host::~Host()
+Client::~Client()
 {
-    enet_host_destroy(mHost);
+    enet_host_destroy(mClient);
 }
 
-bool Host::Init(const uint8_t ip1, const uint8_t  ip2, const uint8_t ip3, const uint8_t ip4, const uint16_t port, const bool host)
+
+bool Client::Init(const uint8_t ip1, const uint8_t  ip2, const uint8_t ip3, const uint8_t ip4, const uint16_t port)
 {
     const std::string ip = std::format("{}.{}.{}.{}", ip1, ip2, ip3, ip4);
 
-    if (host)
-    {
-        enet_address_set_host(&mAddress, ip.c_str());
-        mAddress.port = port;
+    mClient = enet_host_create(nullptr, 1, 1, 0, 0);
 
-        mHost = enet_host_create(
-            &mAddress,
-            NUMBER_OF_ALLOWED_CLIENTS /* allow up to 32 clients and/or outgoing connections */,
-            1 /* allow up to 2 channels to be used, 0 and 1 */,
-            0,
-            0);
-    }
-    else
-    {
-        mHost = enet_host_create(nullptr, 1, 1, 0, 0);
-    }
+    ENetAddress address { .port = 7777 };
+    enet_address_set_host(&address, ip.c_str());
+    mPeer = enet_host_connect(mClient, &address, 1, 0);
 
-    return mHost;
+    return mClient && mPeer;
 }
 
-void Host::Update(const uint32_t timeout) const
+void Client::Update(const uint32_t timeout) const
 {
     ENetEvent event;
 
-    while (enet_host_service(mHost, &event, timeout) > 0)
+    while (enet_host_service(mClient, &event, timeout) > 0)
     {
         if (event.type == ENET_EVENT_TYPE_RECEIVE)
         {
@@ -50,10 +40,10 @@ void Host::Update(const uint32_t timeout) const
         if (event.type == ENET_EVENT_TYPE_CONNECT)
         {
             // todo add.
-
             printf("A new client connected from %x:%u.\n",
                 event.peer->address.host,
                 event.peer->address.port);
+
             return;
         }
 
@@ -93,6 +83,14 @@ void Host::Update(const uint32_t timeout) const
 
         }
     }
+}
+
+void Client::SendPacket(const char* data) const
+{
+    //todo look at where we destroy this packet.
+    ENetPacket* packet{ enet_packet_create(data, strlen(data) + 1, ENET_PACKET_FLAG_RELIABLE) };
+
+    enet_peer_send(mPeer, 0, packet);
 }
 
 } // Namespace d2eNet.

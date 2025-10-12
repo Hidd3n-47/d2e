@@ -27,12 +27,15 @@ public:
     GameManager& operator=(GameManager&&)       = delete;
     GameManager& operator=(const GameManager&)  = delete;
 
+    [[nodiscard]] inline static d2e::WeakRef<GameManager> Instance() { return d2e::WeakRef{ mInstance.get() }; }
+
     void Init();
 
-    [[nodiscard]] inline static d2e::WeakRef<GameManager> Instance() { return d2e::WeakRef{ mInstance.get() }; }
     DEBUG([[nodiscard]] inline d2e::WeakRef<d2e::Log>     GetLog() const { return d2e::WeakRef{ mLog.get() }; })
 
     void ChangeState(const GameState newState);
+
+    void JoinOnlineGame();
 private:
     static std::unique_ptr<GameManager> mInstance;
 

@@ -24,8 +24,9 @@ project "d2e"
         "%{prj.name}/Src/",
         "$(SolutionDir)deps/include/",
 
-        "$(SolutionDir)LogProject/",
         "$(SolutionDir)d2eProject/",
+        "$(SolutionDir)LogProject/",
+        "$(SolutionDir)d2eNetProject/",
     }
 
     libdirs
@@ -36,6 +37,7 @@ project "d2e"
     links
     {
         "Log",
+        "d2eNet",
 
         "opengl32",
         "freetype",

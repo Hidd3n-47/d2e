@@ -1,5 +1,7 @@
 #include "GameManager.h"
 
+#include <iostream>
+
 #include "src/Defines.h"
 #include "Scene/GameScene.h"
 #include "Scene/MainMenuScene.h"
@@ -57,6 +59,16 @@ void GameManager::ChangeState(const GameState newState)
     {
         mGameState = newState;
     }
+}
+
+void GameManager::JoinOnlineGame()
+{
+    std::cout << "Enter the IP of the server: ";
+
+    int ip1, ip2, ip3, ip4;
+    std::cin >> ip1 >> ip2 >> ip3 >> ip4;
+
+    d2e::Engine::Instance()->ConnectClientToServer(ip1, ip2, ip3, ip4, 7777);
 }
 
 } // Namespace d2eGame.
