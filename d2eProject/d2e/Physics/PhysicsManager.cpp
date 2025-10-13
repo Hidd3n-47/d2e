@@ -3,6 +3,7 @@
 
 #include "ES/GameObject.h"
 #include "ES/Components/RigidBody.h"
+#include "Es/Components/Transform.h"
 
 namespace d2e
 {

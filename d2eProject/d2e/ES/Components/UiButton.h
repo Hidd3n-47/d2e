@@ -1,6 +1,8 @@
 #pragma once
 
+#include "d2e/Core/Rtti.h"
 #include "d2e/ES/IComponent.h"
+
 #include "d2e/Rendering/SpriteManager.h"
 
 namespace d2e
@@ -16,6 +18,8 @@ public:
     void Render(WeakRef<sf::RenderWindow> window) override;
 
     inline void SetOnButtonPressedCallback(const std::function<void()>& callback) { mOnButtonPressed = callback; }
+
+    D2E_COMPONENT(UiButton)
 private:
     spriteId mSpriteId;
     Vec2 mSize{ 10.0f, 10.0f };

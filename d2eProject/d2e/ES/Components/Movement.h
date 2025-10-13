@@ -1,5 +1,6 @@
 #pragma once
 
+#include "d2e/Core/Rtti.h"
 #include "d2e/Es/IComponent.h"
 
 namespace d2e
@@ -14,6 +15,8 @@ public:
 
     [[nodiscard]] inline float GetSpeed() const { return mSpeed; }
     inline void SetSpeed(const float speed) { mSpeed = speed; }
+
+    D2E_COMPONENT(Movement)
 private:
     float    mSpeed        = 1.0f;
     uint16_t mMaxJumpCount = 2;

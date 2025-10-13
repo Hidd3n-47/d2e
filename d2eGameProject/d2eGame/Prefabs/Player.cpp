@@ -9,6 +9,7 @@
 #include <d2e/Es/Components/Movement.h>
 #include <d2e/Es/Components/Animation.h>
 #include <d2e/ES/Components/RigidBody.h>
+#include <d2e/ES/Components/Transform.h>
 #include <d2e/ES/Components/CircleSprite.h>
 #include <d2e/ES/Components/CircleCollider.h>
 

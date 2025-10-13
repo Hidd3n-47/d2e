@@ -1,5 +1,6 @@
 #pragma once
 
+#include "d2e/Core/Rtti.h"
 #include "d2e/ES/IComponent.h"
 
 namespace d2e
@@ -28,6 +29,8 @@ public:
     inline void SetRestitution(const float restitution) { mRestitution = restitution; }
     inline void SetVelocity(const Vec2 velocity)        { mVelocity = velocity; EnsureVelocityIsUnderMaxSpeed(); }
     inline void SetGravity(const Vec2 gravity)          { mGravity = gravity; }
+
+    D2E_COMPONENT(RigidBody)
 private:
     float mMass        = 1.0f;
     float mRestitution = 0.1f;

@@ -8,12 +8,13 @@
 namespace d2e
 {
 
-ParticleEffect::ParticleEffect(const uint32_t maxParticles/*, const ParticleEffectDetails& effectDetails*/)
-    : mMaxParticles(maxParticles)
-    //, mEffectDetails(effectDetails)
-{
-    mParticles.resize(mMaxParticles);
-}
+//ParticleEffect::ParticleEffect(const uint32_t maxParticles/*, const ParticleEffectDetails& effectDetails*/)
+//    : ParticleEffect()
+//    , mMaxParticles(maxParticles)
+//    //, mEffectDetails(effectDetails)
+//{
+//    mParticles.resize(mMaxParticles);
+//}
 
 void ParticleEffect::EmitParticles(const uint32_t numParticles, const Vec2 startingPosition, const ParticleEffectDetails& details)
 {

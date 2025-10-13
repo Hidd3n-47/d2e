@@ -3,6 +3,7 @@
 
 #include "ES/Scene.h"
 #include "Es/GameObject.h"
+#include "Es/Components/Transform.h"
 
 namespace d2e
 {

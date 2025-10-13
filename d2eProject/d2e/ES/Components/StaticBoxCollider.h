@@ -1,6 +1,7 @@
 #pragma once
 
-#include <d2e/ES/IComponent.h>
+#include "d2e/Core/Rtti.h"
+#include "d2e/ES/IComponent.h"
 
 namespace d2e
 {
@@ -14,6 +15,9 @@ public:
     [[nodiscard]] inline Vec2 GetHalfExtents() const { return mHalfExtents; }
 
     inline void SetHalfExtents(const Vec2 halfExtents) { mHalfExtents = halfExtents; }
+
+    D2E_COMPONENT(StaticBoxCollider)
+
 #ifdef DEV_CONFIGURATION
 public:
     void Render(WeakRef<sf::RenderWindow> window) override;

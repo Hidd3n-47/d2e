@@ -1,5 +1,6 @@
 #pragma once
 
+#include "d2e/Core/Rtti.h"
 #include "d2e/ES/IComponent.h"
 
 namespace d2e
@@ -24,12 +25,14 @@ struct ParticleEffectDetails
 class ParticleEffect : public IComponent
 {
 public:
-    ParticleEffect(const uint32_t maxParticles = 10/*, const ParticleEffectDetails& effectDetails = {}*/);
+    //ParticleEffect(const uint32_t maxParticles = 10/*, const ParticleEffectDetails& effectDetails = {}*/);
 
     void EmitParticles(const uint32_t numParticles, const Vec2 startingPosition, const ParticleEffectDetails& details = {});
 
     void Update(const float dt) override;
     void Render(const WeakRef<sf::RenderWindow> window) override;
+
+    D2E_COMPONENT(ParticleEffect)
 private:
     uint32_t mMaxParticles;
     //ParticleEffectDetails mEffectDetails;

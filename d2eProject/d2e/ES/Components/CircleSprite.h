@@ -1,5 +1,6 @@
 #pragma once
 
+#include "d2e/Core/Rtti.h"
 #include "d2e/Es/IComponent.h"
 
 namespace d2e
@@ -14,6 +15,8 @@ public:
 
     inline void SetRadius(const float radius) { mRadius = radius; }
     inline void SetColor(const sf::Color color) { mCircle.setFillColor(color); }
+
+    D2E_COMPONENT(CircleSprite)
 private:
     sf::CircleShape mCircle{ 10.0f };
 

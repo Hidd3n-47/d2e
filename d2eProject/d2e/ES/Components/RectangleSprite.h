@@ -1,5 +1,6 @@
 #pragma once
 
+#include "d2e/Core/Rtti.h"
 #include "d2e/Es/IComponent.h"
 
 namespace d2e
@@ -16,6 +17,8 @@ public:
 
     inline void SetHalfExtents(const Vec2 halfExtents) { mHalfExtents = halfExtents; }
     inline void SetColor(const sf::Color color) { mRectangle.setFillColor(color); }
+
+    D2E_COMPONENT(RectangleSprite);
 private:
     sf::RectangleShape mRectangle { { 10.0f, 10.0f } };
 

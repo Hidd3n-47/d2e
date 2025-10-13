@@ -3,6 +3,7 @@
 
 #include "ES/GameObject.h"
 #include "Physics/CollisionInfo.h"
+#include "Es/Components/Transform.h"
 #include "ES/Components/StaticBoxCollider.h"
 #include "ES/Components/CircleCollider.h"
 #include "ES/Components/RigidBody.h"

@@ -3,6 +3,7 @@
 #include <d2e/ES/Scene.h>
 #include <d2e/core/Engine.h>
 #include <d2e/ES/Components/UiButton.h>
+#include <d2e/ES/Components/Transform.h>
 
 #include "Core/GameManager.h"
 
@@ -27,7 +28,7 @@ void MainMenuScene::InitGameScene()
     hostButtonObject->GetComponent<d2e::Transform>()->translation = windowSize * d2e::Vec2{ 0.5f, 0.2f };
 
     d2e::WeakRef<d2e::GameObject>   joinButtonObject = mScene->CreateGameObject();
-    d2e::WeakRef<d2e::UiButton>     joinButton = joinButtonObject->AddComponent<d2e::UiButton>(joinSpriteId, []() { GameManager::JoinOnlineGame(); });
+    d2e::WeakRef<d2e::UiButton>     joinButton = joinButtonObject->AddComponent<d2e::UiButton>(joinSpriteId, []() { GameManager::Instance()->JoinOnlineGame(); });
     joinButtonObject->GetComponent<d2e::Transform>()->translation = windowSize * d2e::Vec2{ 0.5f, 0.4f };
 
     d2e::WeakRef<d2e::GameObject>   exitButtonObject = mScene->CreateGameObject();

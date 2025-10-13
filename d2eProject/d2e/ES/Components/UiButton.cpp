@@ -4,20 +4,21 @@
 #include "Core/Engine.h"
 #include "ES/GameObject.h"
 #include "Input/InputManager.h"
+#include "Es/Components/Transform.h"
 
 namespace d2e
 {
 UiButton::UiButton(const spriteId spriteId)
     : mSpriteId(spriteId)
 {
-    // Empty.
+    UiButton();
 }
 
 UiButton::UiButton(const spriteId spriteId, const std::function<void()>& callback)
     : mSpriteId(spriteId)
     , mOnButtonPressed(callback)
 {
-    // Empty.
+    UiButton();
 }
 
 void UiButton::Update(const float dt)

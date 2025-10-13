@@ -2,6 +2,7 @@
 #include "RectangleSprite.h"
 
 #include "ES/GameObject.h"
+#include "Es/Components/Transform.h"
 
 namespace d2e
 {

@@ -4,6 +4,7 @@
 #include "ES/Scene.h"
 #include "Es/GameObject.h"
 #include "Physics/CollisionInfo.h"
+#include "Es/Components/Transform.h"
 
 namespace d2e
 {

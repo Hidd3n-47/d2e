@@ -3,6 +3,7 @@
 #include <d2e/ES/Scene.h>
 #include <d2e/core/Engine.h>
 
+#include <d2e/ES/Components/Transform.h>
 #include <d2e/ES/Components/RectangleSprite.h>
 #include <d2e/ES/Components/StaticBoxCollider.h>
 

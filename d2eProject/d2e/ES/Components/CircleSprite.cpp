@@ -2,6 +2,7 @@
 #include "CircleSprite.h"
 
 #include "ES/GameObject.h"
+#include "ES/Components/Transform.h"
 
 namespace d2e
 {

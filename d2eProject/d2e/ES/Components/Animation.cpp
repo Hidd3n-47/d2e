@@ -2,15 +2,10 @@
 #include "Animation.h"
 
 #include "ES/GameObject.h"
+#include "Es/Components/Transform.h"
 
 namespace d2e
 {
-
-Animation::Animation()
-    : mSpriteColor(sf::Color::White)
-{
-    // Empty.
-}
 
 void Animation::CreateAnimation(const AnimationDetails& details, const float timeBetweenFrames)
 {

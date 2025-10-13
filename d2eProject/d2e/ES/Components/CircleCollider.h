@@ -1,6 +1,7 @@
 #pragma once
 
-#include <d2e/ES/IComponent.h>
+#include "d2e/Core/Rtti.h"
+#include "d2e/ES/IComponent.h"
 
 namespace d2e
 {
@@ -22,6 +23,9 @@ public:
 
     inline void SetRadius(const float radius) { mRadius = radius; }
     inline void SetOnCollisionEnterCallback(const std::function<void(const CollisionInfo&)>& callback) { mOnCollisionEnterCallback = callback; }
+
+    D2E_COMPONENT(CircleCollider)
+
 #ifdef DEV_CONFIGURATION
 public:
     void Render(WeakRef<sf::RenderWindow> window) override;
