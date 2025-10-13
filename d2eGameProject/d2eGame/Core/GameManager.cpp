@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include <d2eNet/Core/Packet.h>
+
 #include "src/Defines.h"
 #include "Scene/GameScene.h"
 #include "Scene/MainMenuScene.h"

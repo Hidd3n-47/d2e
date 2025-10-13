@@ -6,6 +6,8 @@
 #include <d2eNet/Core/Host.h>
 #include <d2eNet/Core/d2eNet.h>
 
+#include <d2e/Core/Engine.h>
+
 namespace d2eServer
 {
 
@@ -68,6 +70,22 @@ void ServerManager::Destroy()
     d2eNet::d2eNet::Destroy();
 
     mLog.Debug("Server Destroyed.");
+}
+
+void ServerManager::ClientConnected()
+{
+    ++mNumClientsConnected;
+
+    if (mNumClientsConnected != 1)
+    {
+        return;
+    }
+
+    d2e::WeakRef<d2e::Scene> scene = d2e::Engine::Instance()->GetActiveScene();
+    d2e::Engine::Instance()->RemoveScene(scene);
+
+    scene = d2e::Engine::Instance()->CreateScene();
+    d2e::Engine::Instance()->SetActiveScene(scene);
 }
 
 } // Namespace d2eServer.

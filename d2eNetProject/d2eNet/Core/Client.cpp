@@ -2,6 +2,8 @@
 
 #include <format>
 
+#include "Packet.h"
+
 namespace d2eNet
 {
 
@@ -9,7 +11,6 @@ Client::~Client()
 {
     enet_host_destroy(mClient);
 }
-
 
 bool Client::Init(const uint8_t ip1, const uint8_t  ip2, const uint8_t ip3, const uint8_t ip4, const uint16_t port)
 {
@@ -84,6 +85,11 @@ void Client::Update(const uint32_t timeout) const
         }
     }
 }
+
+//void Client::AddPacketToSend(Packet&& packet)
+//{
+//    mPacketsToSend.emplace(std::move(packet));
+//}
 
 void Client::SendPacket(const char* data) const
 {

@@ -36,7 +36,8 @@ public:
     void Destroy();
 
     [[nodiscard]] WeakRef<Scene> CreateScene();
-    bool SetActiveScene(const WeakRef<Scene>&scene);
+    void RemoveScene(WeakRef<Scene>& scene);
+    bool SetActiveScene(const WeakRef<Scene>& scene);
 
     void ConnectClientToServer(const int ip1, const int ip2, const int ip3, const int ip4, const uint16_t port);
 
@@ -50,6 +51,7 @@ public:
     [[nodiscard]] inline WeakRef<Scene>             GetActiveScene()    const { return WeakRef{ mActiveScene }; }
     [[nodiscard]] inline WeakRef<InputManager>      GetInputManager()   const { return WeakRef{ mInputManager.get() }; }
     [[nodiscard]] inline WeakRef<sf::RenderWindow>  GetWindow()         const { return WeakRef{ mWindow.get() }; }
+    [[nodiscard]] inline WeakRef<d2eNet::Client>    GetClient()         const { return WeakRef{ mClient.get() }; }
     DEBUG([[nodiscard]] inline WeakRef<Log>         GetLog()            const { return WeakRef{ mLog.get() }; })
 
     inline void CloseGame() { mRunning = false; }

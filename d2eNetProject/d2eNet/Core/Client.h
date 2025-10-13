@@ -1,11 +1,14 @@
 #pragma once
 
+#include <queue>
 #include <cstdint>
 
 #include <enet/enet.h>
 
 namespace d2eNet
 {
+
+class Packet;
 
 class Client
 {
@@ -17,10 +20,14 @@ public:
 
     void Update(const uint32_t timeout) const;
 
+    //void AddPacketToSend(Packet&& packet);
+
     void SendPacket(const char* data) const;
 private:
     ENetHost* mClient;
     ENetPeer* mPeer;
+
+    //std::queue<Packet> mPacketsToSend;
 };
 
 } // Namespace d2eNet.

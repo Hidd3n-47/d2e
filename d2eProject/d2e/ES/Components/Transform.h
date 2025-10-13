@@ -1,7 +1,7 @@
 #pragma once
 
 #include "d2e/Core/Rtti.h"
-#include "d2e/Es/IComponent.h"
+#include "d2e/ES/IComponent.h"
 
 namespace d2e
 {

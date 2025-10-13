@@ -30,6 +30,9 @@ private:
     bool mServerRunning = true;
 
     std::unique_ptr<d2eNet::Host> mHost;
+
+    uint32_t mNumClientsConnected{ 0 };
+    void ClientConnected();
 };
 
 } // Namespace d2eServer.

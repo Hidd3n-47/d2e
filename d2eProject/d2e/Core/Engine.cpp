@@ -51,6 +51,31 @@ WeakRef<Scene> Engine::CreateScene()
     return WeakRef{ mScenes.back() };
 }
 
+void Engine::RemoveScene(WeakRef<Scene>& scene)
+{
+    if (!scene.IsRefValid())
+    {
+        return;
+    }
+
+    const Scene* sceneToFind = scene.GetRawPtr();
+    for (size_t i{ 0 }; i < mScenes.size(); ++i)
+    {
+        if (mScenes[i] != sceneToFind)
+        {
+            continue;
+        }
+
+        delete mScenes[i];
+        mScenes[i] = mScenes.back();
+        mScenes.pop_back();
+
+        scene.Invalidate();
+
+        return;
+    }
+}
+
 bool Engine::SetActiveScene(const WeakRef<Scene>& scene)
 {
     if (scene.IsRefValid())

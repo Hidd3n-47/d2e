@@ -6,6 +6,7 @@
 
 #include <d2e/Physics/CollisionInfo.h>
 
+#include <d2e/ES/Components/Tag.h>
 #include <d2e/Es/Components/Movement.h>
 #include <d2e/Es/Components/Animation.h>
 #include <d2e/ES/Components/RigidBody.h>
@@ -13,7 +14,6 @@
 #include <d2e/ES/Components/CircleSprite.h>
 #include <d2e/ES/Components/CircleCollider.h>
 
-#include "Components/Tag.h"
 
 namespace d2eGame
 {
@@ -38,7 +38,7 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene)
     collider->SetOnCollisionEnterCallback([&](const d2e::CollisionInfo& info)
     {
         // If the player collides with the wall, we don't need to add the splat.
-        if (auto tag = info.other->GetComponent<Tag>(); tag.IsRefValid() && tag->tag == ComponentTag::WALL)
+        if (auto tag = info.other->GetComponent<d2e::Tag>(); tag.IsRefValid() && tag->tag == d2e::ComponentTag::WALL)
         {
             return;
         }

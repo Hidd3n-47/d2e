@@ -20,6 +20,7 @@ project "d2eGameServer"
         "%{prj.name}/",
 
         "$(SolutionDir)LogProject/",
+        "$(SolutionDir)d2eProject/",
         "$(SolutionDir)d2eNetProject/",
 
         "$(SolutionDir)deps/include/"
@@ -33,6 +34,7 @@ project "d2eGameServer"
     links
     {
         "Log",
+        "d2e",
         "d2eNet",
         "enet64.lib",
         "winmm.lib",

@@ -43,6 +43,11 @@ void Host::Update(const uint32_t timeout) const
         if (event.type == ENET_EVENT_TYPE_RECEIVE)
         {
             // todo add some info here.
+            printf("A packet of length %u containing %s was received from %s on channel %u.\n",
+                event.packet->dataLength,
+                event.packet->data,
+                event.peer->data,
+                event.channelID);
 
             return;
         }

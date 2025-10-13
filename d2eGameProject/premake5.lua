@@ -22,6 +22,7 @@ project "d2eGame"
 
         "$(SolutionDir)LogProject/",
         "$(SolutionDir)d2eProject/",
+        "$(SolutionDir)d2eNetProject/",
     }
 
     libdirs
@@ -32,6 +33,7 @@ project "d2eGame"
     links
     {
         "d2e",
+        "d2eNet",
         "opengl32",
         "freetype",
         "winmm",

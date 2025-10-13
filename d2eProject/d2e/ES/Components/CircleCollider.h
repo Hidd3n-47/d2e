@@ -24,6 +24,9 @@ public:
     inline void SetRadius(const float radius) { mRadius = radius; }
     inline void SetOnCollisionEnterCallback(const std::function<void(const CollisionInfo&)>& callback) { mOnCollisionEnterCallback = callback; }
 
+    std::string Serialize() const { return std::to_string(mCollidedLastFrame) + std::to_string(mRadius); }
+    void Deserialize(const std::string& string) { mCollidedLastFrame = static_cast<bool>(string[0]); mRadius = std::stof(string.substr(1)); }
+
     D2E_COMPONENT(CircleCollider)
 
 #ifdef DEV_CONFIGURATION
