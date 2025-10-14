@@ -1,7 +1,7 @@
 #pragma once
 
-#include "d2e/Core/Rtti.h"
 #include "d2e/ES/IComponent.h"
+#include "d2e/Core/SerializationUtils.h"
 
 namespace d2e
 {
@@ -16,7 +16,10 @@ public:
 
     inline void SetHalfExtents(const Vec2 halfExtents) { mHalfExtents = halfExtents; }
 
-    D2E_COMPONENT(StaticBoxCollider)
+    [[nodiscard]] inline std::string Serialize() const override { return SerializeUtils::Serialize(mHalfExtents); }
+    inline void Deserialize(const std::string& string) override { SerializeUtils::Deserialize(mHalfExtents, string); }
+
+    [[nodiscard]] inline static std::string GetName() { return "StaticBoxCollider"; }
 
 #ifdef DEV_CONFIGURATION
 public:

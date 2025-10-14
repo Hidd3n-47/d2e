@@ -1,7 +1,7 @@
 #pragma once
 
-#include "d2e/Core/Rtti.h"
 #include "d2e/ES/IComponent.h"
+#include "d2e/Core/SerializationUtils.h"
 
 namespace d2e
 {
@@ -16,7 +16,10 @@ public:
     [[nodiscard]] inline float GetSpeed() const { return mSpeed; }
     inline void SetSpeed(const float speed) { mSpeed = speed; }
 
-    D2E_COMPONENT(Movement)
+    [[nodiscard]] std::string Serialize() const override;
+    void Deserialize(const std::string& string) override;
+
+    [[nodiscard]] inline static std::string GetName() { return "Movement"; }
 private:
     float    mSpeed        = 1.0f;
     uint16_t mMaxJumpCount = 2;

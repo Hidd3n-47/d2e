@@ -1,6 +1,5 @@
 #pragma once
 
-#include "d2e/Core/Rtti.h"
 #include "d2e/ES/IComponent.h"
 
 namespace d2e
@@ -32,7 +31,7 @@ public:
     void Update(const float dt) override;
     void Render(const WeakRef<sf::RenderWindow> window) override;
 
-    D2E_COMPONENT(ParticleEffect)
+    [[nodiscard]] inline static std::string GetName() { return "ParticleEffect"; }
 private:
     uint32_t mMaxParticles;
     //ParticleEffectDetails mEffectDetails;

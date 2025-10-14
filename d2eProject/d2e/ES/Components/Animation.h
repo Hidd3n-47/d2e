@@ -1,6 +1,5 @@
 #pragma once
 
-#include "d2e/Core/Rtti.h"
 #include "d2e/ES/IComponent.h"
 
 #include "d2e/Rendering/SpriteManager.h"
@@ -27,7 +26,7 @@ public:
 
     inline void SetSpriteColor(const sf::Color color) { mSpriteColor = color; }
 
-    D2E_COMPONENT(Animation)
+    [[nodiscard]] inline static std::string GetName() { return "Animation"; }
 private:
     AnimationDetails mAnimationDetails{ };
     uint32_t         mCurrentFrame{ 0 };

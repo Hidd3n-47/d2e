@@ -1,7 +1,7 @@
 #pragma once
 
-#include "d2e/Core/Rtti.h"
 #include "d2e/ES/IComponent.h"
+#include "d2e/Core/SerializationUtils.h"
 
 namespace d2e
 {
@@ -24,10 +24,10 @@ public:
     inline void SetRadius(const float radius) { mRadius = radius; }
     inline void SetOnCollisionEnterCallback(const std::function<void(const CollisionInfo&)>& callback) { mOnCollisionEnterCallback = callback; }
 
-    std::string Serialize() const { return std::to_string(mCollidedLastFrame) + std::to_string(mRadius); }
-    void Deserialize(const std::string& string) { mCollidedLastFrame = static_cast<bool>(string[0]); mRadius = std::stof(string.substr(1)); }
+    [[nodiscard]] inline std::string Serialize() const override { return SerializeUtils::Serialize(mCollidedLastFrame) + SerializeUtils::Serialize(mRadius); }
+    inline void Deserialize(const std::string& string) override { SerializeUtils::Deserialize(mCollidedLastFrame, std::string{ string[0] }); SerializeUtils::Deserialize(mRadius, string.substr(1)); }
 
-    D2E_COMPONENT(CircleCollider)
+    [[nodiscard]] inline static std::string GetName() { return "CircleCollider"; }
 
 #ifdef DEV_CONFIGURATION
 public:

@@ -42,4 +42,22 @@ void Movement::Update(const float dt)
     rigidBody->AddForce(Vec2{ desiredSpeed, 0.0f });
 }
 
+std::string Movement::Serialize() const
+{
+    return SerializeUtils::Serialize(mSpeed) + "," + SerializeUtils::Serialize(mMaxJumpCount) + "," + SerializeUtils::Serialize(mJumpCount);
+}
+
+void Movement::Deserialize(const std::string& string)
+{
+    const size_t firstDelimiter  = string.find(',');
+    const size_t secondDelimiter = string.find(',', firstDelimiter + 1);
+
+    const std::string first  = string.substr(0, firstDelimiter);
+    const std::string second = string.substr(firstDelimiter + 1, secondDelimiter - firstDelimiter - 1);
+    const std::string third  = string.substr(secondDelimiter + 1);
+
+    SerializeUtils::Deserialize(mSpeed, first);
+    SerializeUtils::Deserialize(mMaxJumpCount, second);
+    SerializeUtils::Deserialize(mJumpCount, third);
+}
 } // Namespace d2e.

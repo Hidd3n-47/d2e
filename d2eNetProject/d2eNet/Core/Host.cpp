@@ -58,7 +58,7 @@ void Host::Update(const uint32_t timeout)
         if (event.type == ENET_EVENT_TYPE_CONNECT)
         {
             // todo add.
-
+            ++mNumJoinedClients;
             printf("A new client connected from %x:%u.\n",
                 event.peer->address.host,
                 event.peer->address.port);
@@ -68,7 +68,7 @@ void Host::Update(const uint32_t timeout)
         if (event.type == ENET_EVENT_TYPE_DISCONNECT)
         {
             // todo add.
-
+            --mNumJoinedClients;
             printf("A new client disconnected from %x:%u.\n",
                 event.peer->address.host,
                 event.peer->address.port);
@@ -113,18 +113,22 @@ void Host::ProcessPackets()
     {
         Packet p = mPacketsReceived.front();
 
-        std::string packetString = p.GetPacketString();
-
-        switch (p.GetPacketLineType())
+        for (auto it = p.Begin(); it != p.End(); ++it)
         {
-        case PacketLineType::ADD_COMPONENT:
-            printf("added comp");
-            break;
-        case PacketLineType::ADD_GAME_OBJECT:
-            printf("added game object");
-            break;
-        default:
-            break;
+
+            std::string packetString = it.GetPacketLineString();
+
+            switch (it.GetPacketLineType())
+            {
+            case PacketLineType::ADD_COMPONENT:
+                printf("added comp - %s\n", packetString.c_str());
+                break;
+            case PacketLineType::ADD_GAME_OBJECT:
+                printf("added game object\n");
+                break;
+            default:
+                break;
+            }
         }
 
         mPacketsReceived.pop();

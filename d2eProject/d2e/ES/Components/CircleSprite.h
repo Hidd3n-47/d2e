@@ -1,7 +1,7 @@
 #pragma once
 
-#include "d2e/Core/Rtti.h"
 #include "d2e/ES/IComponent.h"
+#include "d2e/Core/SerializationUtils.h"
 
 namespace d2e
 {
@@ -16,7 +16,10 @@ public:
     inline void SetRadius(const float radius) { mRadius = radius; }
     inline void SetColor(const sf::Color color) { mCircle.setFillColor(color); }
 
-    D2E_COMPONENT(CircleSprite)
+    [[nodiscard]] inline std::string Serialize() const override { return SerializeUtils::Serialize(mRadius); }
+    inline void Deserialize(const std::string& string) override { SerializeUtils::Deserialize(mRadius, string.substr(1)); }
+
+    [[nodiscard]] inline static std::string GetName() { return "CircleSprite"; }
 private:
     sf::CircleShape mCircle{ 10.0f };
 

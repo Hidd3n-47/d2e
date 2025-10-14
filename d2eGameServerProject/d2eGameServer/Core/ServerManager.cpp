@@ -6,7 +6,10 @@
 #include <d2eNet/Core/Host.h>
 #include <d2eNet/Core/d2eNet.h>
 
+#include <d2e/Core/Rtti.h>
 #include <d2e/Core/Engine.h>
+
+#include "d2e/ES/Scene.h"
 
 namespace d2eServer
 {
@@ -57,9 +60,46 @@ void ServerManager::Run()
 
         // Receive info.
         mHost->Update(3);
-        mHost->ProcessPackets();
+
+        if (mHost->GetNumJoinedClients() != mNumClientsConnected)
+        {
+            ClientConnected();
+        }
+
+        std::optional<d2eNet::Packet> p = mHost->GetPacket();
+        while (p)
+        {
+            d2e::WeakRef<d2e::GameObject> go;
+            d2e::WeakRef<d2e::IComponent> comp;
+            for (auto it = p->Begin(); it != p->End(); ++it)
+            {
+
+                std::string packetString = it.GetPacketLineString();
+
+                switch (it.GetPacketLineType())
+                {
+                case d2eNet::PacketLineType::ADD_COMPONENT:
+                    printf("added comp - %s\n", packetString.c_str());
+                    comp = go->AddComponent(packetString);
+                    break;
+                case d2eNet::PacketLineType::ADD_GAME_OBJECT:
+                    printf("added game object\n");
+                    go = d2e::Engine::Instance()->GetActiveScene()->CreateGameObject();
+                    break;
+                case d2eNet::PacketLineType::SET_COMPONENT_VALUE:
+                    comp->Deserialize(packetString);
+                    printf("Set values for component\n");
+                    break;
+                default:
+                    break;
+                }
+            }
+
+            p = mHost->GetPacket();
+        }
 
         // Simulate game.
+        d2e::Engine::Instance()->Update();
 
         // Send info.
         // the only thing we should need to send is the player info - specifically the rb and transform component.

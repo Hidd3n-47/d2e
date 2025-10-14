@@ -8,17 +8,18 @@
 
 namespace d2e
 {
+
 UiButton::UiButton(const spriteId spriteId)
     : mSpriteId(spriteId)
 {
-    UiButton();
+    // Empty.
 }
 
 UiButton::UiButton(const spriteId spriteId, const std::function<void()>& callback)
     : mSpriteId(spriteId)
     , mOnButtonPressed(callback)
 {
-    UiButton();
+    // Empty.
 }
 
 void UiButton::Update(const float dt)

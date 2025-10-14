@@ -1,6 +1,8 @@
 #include "d2ePch.h"
 #include "GameObject.h"
 
+#include <d2e/Core/Rtti.h>
+
 #include "Components/Transform.h"
 
 namespace d2e
@@ -35,5 +37,20 @@ void GameObject::Render(const WeakRef<sf::RenderWindow> window) const
         component->Render(window);
     }
 }
+
+WeakRef<IComponent> GameObject::AddComponent(const std::string& component)
+{
+    const auto& map = GetComponentMap();
+
+    const auto it = map.find(component);
+    if (it == map.end())
+    {
+        DEBUG_BREAK();
+        return {};
+    }
+
+    return it->second(WeakRef{ this });
+}
+
 
 } // Namespace d2e.

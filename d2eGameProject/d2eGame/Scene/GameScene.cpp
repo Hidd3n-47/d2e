@@ -26,20 +26,26 @@ void GameScene::InitGameScene()
     auto client = d2e::Engine::Instance()->GetClient();
 
     {
+        d2eNet::Packet packet;
+        packet.AddLineType(d2eNet::PacketLineType::ADD_GAME_OBJECT);
         d2e::WeakRef<d2e::GameObject>       floorObject = mScene->CreateGameObject();
+
+        packet.AddType<d2e::RectangleSprite>();
         d2e::WeakRef<d2e::RectangleSprite>  floorSprite = floorObject->AddComponent<d2e::RectangleSprite>();
 
         floorSprite->SetHalfExtents(windowSize * d2e::Vec2{ 0.2f, 0.05f });
         floorSprite->SetColor(sf::Color::Blue);
-        floorObject->GetComponent<d2e::Transform>()->translation = windowSize * d2e::Vec2{ 0.5f, 0.5f };
-        auto bc = floorObject->AddComponent<d2e::StaticBoxCollider>();
-        bc->SetHalfExtents(floorSprite->GetHalfExtents());
+        packet.AddLineType(d2eNet::PacketLineType::SET_COMPONENT_VALUE, floorSprite->Serialize());
 
-        d2eNet::Packet packet;
-        packet.AddLineType(d2eNet::PacketLineType::ADD_GAME_OBJECT);
-        packet.AddType<d2e::RectangleSprite>();
+        floorObject->GetComponent<d2e::Transform>()->translation = windowSize * d2e::Vec2{ 0.5f, 0.5f };
+        //todo transform set.
+
+        packet.AddType<d2e::StaticBoxCollider>();
+        d2e::WeakRef<d2e::StaticBoxCollider> bc = floorObject->AddComponent<d2e::StaticBoxCollider>();
+        bc->SetHalfExtents(floorSprite->GetHalfExtents());
+        packet.AddLineType(d2eNet::PacketLineType::SET_COMPONENT_VALUE, bc->Serialize());
+
         client->AddPacketToSend(packet);
-        //client->SendPacket(packet.GetPacketString().c_str());
     }
 
     // Wall boundaries.
@@ -56,6 +62,7 @@ void GameScene::InitGameScene()
         d2eNet::Packet packet;
         packet.AddLineType(d2eNet::PacketLineType::ADD_GAME_OBJECT);
         packet.AddType<d2e::StaticBoxCollider>();
+        client->AddPacketToSend(packet);
     }
 
     {
@@ -71,6 +78,7 @@ void GameScene::InitGameScene()
         d2eNet::Packet packet;
         packet.AddLineType(d2eNet::PacketLineType::ADD_GAME_OBJECT);
         packet.AddType<d2e::StaticBoxCollider>();
+        client->AddPacketToSend(packet);
     }
 
     {
@@ -86,6 +94,7 @@ void GameScene::InitGameScene()
         d2eNet::Packet packet;
         packet.AddLineType(d2eNet::PacketLineType::ADD_GAME_OBJECT);
         packet.AddType<d2e::StaticBoxCollider>();
+        client->AddPacketToSend(packet);
     }
 
     {
@@ -101,6 +110,7 @@ void GameScene::InitGameScene()
         d2eNet::Packet packet;
         packet.AddLineType(d2eNet::PacketLineType::ADD_GAME_OBJECT);
         packet.AddType<d2e::StaticBoxCollider>();
+        client->AddPacketToSend(packet);
     }
 
     mPlayer.CreatePrefab(mScene);

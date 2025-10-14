@@ -20,6 +20,8 @@ public:
 
     [[nodiscard]] inline WeakRef<Scene> GetScene() const { return mParent; }
 
+    WeakRef<IComponent> AddComponent(const std::string& component);
+
     template <typename Component>
     WeakRef<Component> AddComponent();
 

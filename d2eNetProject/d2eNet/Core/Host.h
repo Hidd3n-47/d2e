@@ -2,6 +2,7 @@
 
 #include <queue>
 #include <cstdint>
+#include <optional>
 
 #include <enet/enet.h>
 
@@ -20,6 +21,7 @@ public:
 
     void Update(const uint32_t timeout);
 
+    std::optional<Packet> GetPacket() { if (mPacketsReceived.empty()) return {}; Packet front = mPacketsReceived.front(); mPacketsReceived.pop(); return { front }; }
     void ProcessPackets();
 
     [[nodiscard]] uint16_t GetNumJoinedClients() const { return mNumJoinedClients; }

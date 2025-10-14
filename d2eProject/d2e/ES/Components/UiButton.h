@@ -1,6 +1,5 @@
 #pragma once
 
-#include "d2e/Core/Rtti.h"
 #include "d2e/ES/IComponent.h"
 
 #include "d2e/Rendering/SpriteManager.h"
@@ -11,6 +10,7 @@ namespace d2e
 class UiButton : public IComponent
 {
 public:
+    UiButton() = default;
     UiButton(const spriteId spriteId);
     UiButton(const spriteId spriteId, const std::function<void()>& callback);
 
@@ -19,7 +19,7 @@ public:
 
     inline void SetOnButtonPressedCallback(const std::function<void()>& callback) { mOnButtonPressed = callback; }
 
-    D2E_COMPONENT(UiButton)
+    [[nodiscard]] inline static std::string GetName() { return "Tag"; }
 private:
     spriteId mSpriteId;
     Vec2 mSize{ 10.0f, 10.0f };

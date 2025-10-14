@@ -160,11 +160,6 @@ void Engine::Update() const
     {
         mActiveScene->Update(mDeltaTime);
     }
-    else
-    {
-        DEBUG_WARN("No active scene set to update.");
-        DEBUG_BREAK();
-    }
 
     const std::chrono::duration frameTime = std::chrono::high_resolution_clock::now() - frameStart;
     if (frameTime < std::chrono::duration<float>(TARGET_FRAME_TIME))
@@ -178,7 +173,7 @@ void Engine::Update() const
 
 //todo uncomment when we get to final build, just want it for stats.
 //#ifdef DEV_CONFIGURATION
-    mWindow->setTitle(std::format("d2e - DEV - {} fps", 1.0f / (std::chrono::duration<float>(std::chrono::high_resolution_clock::now() - frameStart).count())));
+    //mWindow->setTitle(std::format("d2e - DEV - {} fps", 1.0f / (std::chrono::duration<float>(std::chrono::high_resolution_clock::now() - frameStart).count())));
 //#endif // DEV_CONFIGURATION.
 }
 
