@@ -57,6 +57,7 @@ void ServerManager::Run()
 
         // Receive info.
         mHost->Update(3);
+        mHost->ProcessPackets();
 
         // Simulate game.
 

@@ -38,7 +38,8 @@ void GameScene::InitGameScene()
         d2eNet::Packet packet;
         packet.AddLineType(d2eNet::PacketLineType::ADD_GAME_OBJECT);
         packet.AddType<d2e::RectangleSprite>();
-        client->SendPacket(packet.GetPacketString().c_str());
+        client->AddPacketToSend(packet);
+        //client->SendPacket(packet.GetPacketString().c_str());
     }
 
     // Wall boundaries.

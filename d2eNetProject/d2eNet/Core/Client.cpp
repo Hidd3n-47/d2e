@@ -1,6 +1,7 @@
 #include "Client.h"
 
 #include <format>
+#include <iostream>
 
 #include "Packet.h"
 
@@ -54,47 +55,68 @@ void Client::Update(const uint32_t timeout) const
 
             return;
         }
-        return;
-        switch (event.type)
-        {
-        case ENET_EVENT_TYPE_CONNECT:
-            printf("A new client connected from %x:%u.\n",
-                event.peer->address.host,
-                event.peer->address.port);
+        //return;
+        //switch (event.type)
+        //{
+        //case ENET_EVENT_TYPE_CONNECT:
+        //    printf("A new client connected from %x:%u.\n",
+        //        event.peer->address.host,
+        //        event.peer->address.port);
 
-            //e.peer->data = "Client information";
-            break;
-        case ENET_EVENT_TYPE_DISCONNECT:
-            printf("%s disconnected.\n", static_cast<char*>(event.peer->data));
-            break;
-        case ENET_EVENT_TYPE_RECEIVE:
-        {
-            printf("A packet of length %u containing %s was received from %s on channel %u.\n",
-                event.packet->dataLength,
-                event.packet->data,
-                event.peer->data,
-                event.channelID);
-            const char* data = "packet received";
-            ENetPacket* packet{ enet_packet_create(data, strlen(data) + 1, ENET_PACKET_FLAG_RELIABLE) };
+        //    //e.peer->data = "Client information";
+        //    break;
+        //case ENET_EVENT_TYPE_DISCONNECT:
+        //    printf("%s disconnected.\n", static_cast<char*>(event.peer->data));
+        //    break;
+        //case ENET_EVENT_TYPE_RECEIVE:
+        //{
+        //    printf("A packet of length %u containing %s was received from %s on channel %u.\n",
+        //        event.packet->dataLength,
+        //        event.packet->data,
+        //        event.peer->data,
+        //        event.channelID);
+        //    const char* data = "packet received";
+        //    ENetPacket* packet{ enet_packet_create(data, strlen(data) + 1, ENET_PACKET_FLAG_RELIABLE) };
 
-            enet_peer_send(event.peer, 0, packet);
-            //enet_packet_destroy(event.packet);
-            break;
-        }
+        //    enet_peer_send(event.peer, 0, packet);
+        //    //enet_packet_destroy(event.packet);
+        //    break;
+        //}
 
-        }
+        //}
     }
 }
 
-//void Client::AddPacketToSend(Packet&& packet)
-//{
-//    mPacketsToSend.emplace(std::move(packet));
-//}
+void Client::AddPacketToSend(Packet& packet)
+{
+    mPacketsToSend.emplace(std::move(packet));
+}
+
+void Client::SendPackets()
+{
+    while (!mPacketsToSend.empty())
+    {
+        const Packet packet = mPacketsToSend.front();
+        std::string value = packet.GetPacketString();
+        SendPacket(packet.GetData(), packet.GetCount());
+        mPacketsToSend.pop();
+    }
+}
 
 void Client::SendPacket(const char* data) const
 {
+    std::cout << "Trying to send packet of: <" + std::string{ data } + ">\n";
     //todo look at where we destroy this packet.
     ENetPacket* packet{ enet_packet_create(data, strlen(data) + 1, ENET_PACKET_FLAG_RELIABLE) };
+
+    enet_peer_send(mPeer, 0, packet);
+}
+
+void Client::SendPacket(const void* data, const uint32_t count) const
+{
+    //std::cout << "Trying to send packet of: <" + std::string{ data } + ">\n";
+    //todo look at where we destroy this packet.
+    ENetPacket* packet{ enet_packet_create(data, count, ENET_PACKET_FLAG_RELIABLE) };
 
     enet_peer_send(mPeer, 0, packet);
 }

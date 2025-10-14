@@ -5,6 +5,8 @@
 
 #include <enet/enet.h>
 
+#include "d2eNet/Core/Packet.h"
+
 namespace d2eNet
 {
 
@@ -20,14 +22,16 @@ public:
 
     void Update(const uint32_t timeout) const;
 
-    //void AddPacketToSend(Packet&& packet);
+    void AddPacketToSend(Packet& packet);
 
+    void SendPackets();
     void SendPacket(const char* data) const;
+    void SendPacket(const void* data, const uint32_t count) const;
 private:
     ENetHost* mClient;
     ENetPeer* mPeer;
 
-    //std::queue<Packet> mPacketsToSend;
+    std::queue<Packet> mPacketsToSend;
 };
 
 } // Namespace d2eNet.

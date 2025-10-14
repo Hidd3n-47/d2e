@@ -17,7 +17,9 @@ project "d2eNet"
 
     includedirs
     {
-        "$(SolutionDir)deps/include/"
+        "$(SolutionDir)deps/include/",
+
+        "$(SolutionDir)d2eNetProject/",
     }
 
     libdirs

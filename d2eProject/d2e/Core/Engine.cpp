@@ -148,6 +148,8 @@ void Engine::SendPackets() const
     }
 
     mClient->Update(3);
+
+    mClient->SendPackets();
 }
 
 void Engine::Update() const

@@ -1,8 +1,11 @@
 #pragma once
 
+#include <queue>
 #include <cstdint>
 
 #include <enet/enet.h>
+
+#include "d2eNet/Core/Packet.h"
 
 namespace d2eNet
 {
@@ -15,7 +18,9 @@ public:
 
     [[nodiscard]] bool Init(const uint8_t ip1, const uint8_t ip2, const uint8_t ip3, const uint8_t ip4, const uint16_t port, const bool host = true);
 
-    void Update(const uint32_t timeout) const;
+    void Update(const uint32_t timeout);
+
+    void ProcessPackets();
 
     [[nodiscard]] uint16_t GetNumJoinedClients() const { return mNumJoinedClients; }
 
@@ -25,6 +30,8 @@ private:
     ENetAddress mAddress;
 
     uint16_t mNumJoinedClients{ 0 };
+
+    std::queue<Packet> mPacketsReceived;
 };
 
 } // Namespace d2eNet.

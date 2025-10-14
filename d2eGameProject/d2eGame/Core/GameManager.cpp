@@ -71,6 +71,8 @@ void GameManager::JoinOnlineGame()
     std::cin >> ip1 >> ip2 >> ip3 >> ip4;
 
     d2e::Engine::Instance()->ConnectClientToServer(ip1, ip2, ip3, ip4, 7777);
+
+    ChangeState(GameState::GAME);
 }
 
 } // Namespace d2eGame.

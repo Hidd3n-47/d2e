@@ -34,7 +34,7 @@ bool Host::Init(const uint8_t ip1, const uint8_t  ip2, const uint8_t ip3, const 
     return mHost;
 }
 
-void Host::Update(const uint32_t timeout) const
+void Host::Update(const uint32_t timeout)
 {
     ENetEvent event;
 
@@ -45,9 +45,12 @@ void Host::Update(const uint32_t timeout) const
             // todo add some info here.
             printf("A packet of length %u containing %s was received from %s on channel %u.\n",
                 event.packet->dataLength,
-                event.packet->data,
+                reinterpret_cast<const char*>(event.packet->data),
                 event.peer->data,
                 event.channelID);
+
+            //mPacketsReceived.emplace(std::string{ reinterpret_cast<const char*>(event.packet->data), event.packet->dataLength });
+            mPacketsReceived.emplace(event.packet->data, event.packet->dataLength);
 
             return;
         }
@@ -65,6 +68,10 @@ void Host::Update(const uint32_t timeout) const
         if (event.type == ENET_EVENT_TYPE_DISCONNECT)
         {
             // todo add.
+
+            printf("A new client disconnected from %x:%u.\n",
+                event.peer->address.host,
+                event.peer->address.port);
 
             return;
         }
@@ -99,6 +106,31 @@ void Host::Update(const uint32_t timeout) const
         }
     }
 }
+
+void Host::ProcessPackets()
+{
+    while (!mPacketsReceived.empty())
+    {
+        Packet p = mPacketsReceived.front();
+
+        std::string packetString = p.GetPacketString();
+
+        switch (p.GetPacketLineType())
+        {
+        case PacketLineType::ADD_COMPONENT:
+            printf("added comp");
+            break;
+        case PacketLineType::ADD_GAME_OBJECT:
+            printf("added game object");
+            break;
+        default:
+            break;
+        }
+
+        mPacketsReceived.pop();
+    }
+}
+
 
 } // Namespace d2eNet.
 
