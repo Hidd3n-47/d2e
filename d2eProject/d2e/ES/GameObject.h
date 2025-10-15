@@ -12,7 +12,7 @@ class Transform;
 class GameObject
 {
 public:
-    GameObject(const WeakRef<Scene> parent);
+    GameObject(const uint32_t id, const WeakRef<Scene> parent);
     ~GameObject();
 
     void Update(const float dt) const;
@@ -33,7 +33,11 @@ public:
 
     template <typename Component>
     [[nodiscard]] WeakRef<Component> GetComponent() const;
+
+    [[nodiscard]] inline uint32_t GetId() const { return mId; }
+    inline void SetId(const uint32_t id) { mId = id; }
 private:
+    uint32_t mId;
     WeakRef<Scene> mParent;
 
     std::unique_ptr<Transform>  mTransform;

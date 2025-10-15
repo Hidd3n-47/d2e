@@ -30,6 +30,8 @@ public:
         SerializeUtils::Deserialize(translation, first);
         SerializeUtils::Deserialize(scale, second);
     }
+
+    [[nodiscard]] inline static std::string GetName() { return "Transform"; }
 };
 
 } // Namespace d2e.

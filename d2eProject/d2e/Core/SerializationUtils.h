@@ -23,6 +23,12 @@ inline std::string Serialize(const uint16_t value)
 }
 
 template<>
+inline std::string Serialize(const uint32_t value)
+{
+    return std::to_string(value);
+}
+
+template<>
 inline std::string Serialize(const float value)
 {
     return std::to_string(value);
@@ -56,6 +62,12 @@ template<>
 inline void Deserialize(uint16_t& value, const std::string& str)
 {
     value = static_cast<uint16_t>(std::stoul(str));
+}
+
+template<>
+inline void Deserialize(uint32_t& value, const std::string& str)
+{
+    value = static_cast<uint32_t>(std::stoul(str));
 }
 
 template<>

@@ -8,8 +8,7 @@ namespace d2eNet
 enum class PacketLineType : uint8_t
 {
     ADD_GAME_OBJECT = 1,
-    ADD_COMPONENT,
-    SET_COMPONENT_VALUE
+    ADD_COMPONENT
 };
 
 class Packet
@@ -37,6 +36,7 @@ friend class Iterator;
             }
             return testing;
 
+            //todo look at this.
             return std::string{
                 &mPtr->mBuffer[mIndex + 2],
                 &mPtr->mBuffer[mIndex + 2 + GetPacketLineLength() - 1] };
@@ -77,15 +77,20 @@ public:
     [[nodiscard]] inline void* GetData() const { return (void*)mBuffer.data(); }
     [[nodiscard]] inline uint32_t GetCount() const { return static_cast<uint32_t>(mBuffer.size()); }
 
-    inline void AddLineType(const PacketLineType lineType, const std::string& string = "")
+    inline void AddLineWithId(const uint32_t id)
     {
-        AddStringToPacket(lineType, string);
+        const std::string line = std::to_string(id);
+
+        AddStringToPacket(PacketLineType::ADD_GAME_OBJECT, line);
     }
 
     template<typename T>
-    inline void AddType()
+    inline void AddType(const uint32_t id, const std::string& value)
     {
-        AddStringToPacket(PacketLineType::ADD_COMPONENT, T::GetName());
+        // ID | Component | ComponentValues.
+        const std::string line = std::to_string(id) + '|' + T::GetName() + '|' + value;
+
+        AddStringToPacket(PacketLineType::ADD_COMPONENT, line);
     }
 
     Iterator Begin() const { return Iterator{ this, 0 }; }
@@ -95,7 +100,7 @@ private:
 
     inline void AddStringToPacket(const PacketLineType lineType, const std::string& string)
     {
-        mBuffer.push_back(static_cast<uint8_t>(lineType));
+        mBuffer.emplace_back(static_cast<uint8_t>(lineType));
         mBuffer.emplace_back(static_cast<uint8_t>(string.length()));
         mBuffer.insert(mBuffer.end(), string.begin(), string.end());
     }

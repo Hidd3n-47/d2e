@@ -10,6 +10,7 @@
 #include "d2e/ES/Components/RigidBody.h"
 #include "d2e/ES/Components/StaticBoxCollider.h"
 #include "d2e/ES/Components/Tag.h"
+#include "d2e/ES/Components/Transform.h"
 #include "d2e/ES/Components/UiButton.h"
 
 namespace d2e
@@ -29,6 +30,7 @@ inline static auto& GetComponentMap()
         m["StaticBoxCollider"] = [](auto go) { return WeakRef{ go->AddComponent<d2e::StaticBoxCollider>() }.Cast<IComponent>(); };
         m["Tag"]               = [](auto go) { return WeakRef{ go->AddComponent<d2e::Tag>()               }.Cast<IComponent>(); };
         m["UiButton"]          = [](auto go) { return WeakRef{ go->AddComponent<d2e::UiButton>()          }.Cast<IComponent>(); };
+        m["Transform"]         = [](auto go) { return go->GetComponent<d2e::Transform>().Cast<IComponent>();                    };
         return m;
         }();
     return map;

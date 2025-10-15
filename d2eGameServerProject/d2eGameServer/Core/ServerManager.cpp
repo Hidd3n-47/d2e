@@ -6,10 +6,9 @@
 #include <d2eNet/Core/Host.h>
 #include <d2eNet/Core/d2eNet.h>
 
+#include <d2e/ES/Scene.h>
 #include <d2e/Core/Rtti.h>
 #include <d2e/Core/Engine.h>
-
-#include "d2e/ES/Scene.h"
 
 namespace d2eServer
 {
@@ -69,28 +68,41 @@ void ServerManager::Run()
         std::optional<d2eNet::Packet> p = mHost->GetPacket();
         while (p)
         {
-            d2e::WeakRef<d2e::GameObject> go;
-            d2e::WeakRef<d2e::IComponent> comp;
-            for (auto it = p->Begin(); it != p->End(); ++it)
+            for (d2eNet::Packet::Iterator it = p->Begin(); it != p->End(); ++it)
             {
-
-                std::string packetString = it.GetPacketLineString();
+                const std::string packetString = it.GetPacketLineString();
 
                 switch (it.GetPacketLineType())
                 {
                 case d2eNet::PacketLineType::ADD_COMPONENT:
-                    printf("added comp - %s\n", packetString.c_str());
-                    comp = go->AddComponent(packetString);
+                {
+                    const size_t firstDelimiter  = packetString.find('|');
+                    const size_t secondDelimiter = packetString.find('|', firstDelimiter + 1);
+
+                    const uint32_t id = std::stoul(packetString.substr(0, firstDelimiter));
+                    const std::string componentName  = packetString.substr(firstDelimiter + 1, secondDelimiter - firstDelimiter - 1);
+                    const std::string componentValue = packetString.substr(secondDelimiter + 1);
+
+                    d2e::WeakRef<d2e::GameObject> gameObject = d2e::Engine::Instance()->GetActiveScene()->GetGameObject(id);
+                    d2e::WeakRef<d2e::IComponent> component  = gameObject->AddComponent(componentName);
+                    component->Deserialize(componentValue);
+
+                    mLog.Debug("Added Component [{}] to game object with ID: {} | <{}>", componentName, id, componentValue);
                     break;
+                }
                 case d2eNet::PacketLineType::ADD_GAME_OBJECT:
-                    printf("added game object\n");
-                    go = d2e::Engine::Instance()->GetActiveScene()->CreateGameObject();
+                {
+                    uint32_t id;
+                    d2e::SerializeUtils::Deserialize(id, packetString);
+
+                    d2e::WeakRef<d2e::GameObject> go = d2e::Engine::Instance()->GetActiveScene()->CreateGameObject();
+                    go->SetId(id);
+
+                    mLog.Debug("Created game object (ID: {})", packetString, id);
                     break;
-                case d2eNet::PacketLineType::SET_COMPONENT_VALUE:
-                    comp->Deserialize(packetString);
-                    printf("Set values for component\n");
-                    break;
+                }
                 default:
+                    mLog.Warn("Received packet that is not processed: <{}>", packetString);
                     break;
                 }
             }

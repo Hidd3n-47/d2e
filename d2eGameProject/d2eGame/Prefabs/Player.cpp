@@ -25,21 +25,21 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene)
 {
     d2eNet::Packet packet;
     mGameObject = scene->CreateGameObject();
-    packet.AddLineType(d2eNet::PacketLineType::ADD_GAME_OBJECT);
+    const uint32_t id = mGameObject->GetId();
+    packet.AddLineWithId(id);
 
     //todo this should be changed into a percentage and not a pixel based.
     constexpr float PLAYER_RADIUS = 20.0f;
 
     mGameObject->GetComponent<d2e::Transform>()->translation = d2e::Vec2{ 1000.0f, 100.0f };
 
-    packet.AddType<d2e::CircleSprite>();
     auto visual = mGameObject->AddComponent<d2e::CircleSprite>();
     visual->SetColor(sf::Color{255, 0, 132, 255 });
     visual->SetRadius(PLAYER_RADIUS);
+    packet.AddType<d2e::CircleSprite>(id, visual->Serialize());
 
     static d2e::spriteId spriteId = d2e::SpriteManager::Instance()->LoadTexture("E:/Programming/d2e/d2eGameProject/d2eGame/Assets/SplatAnim/SplatSpritesheet.png");
 
-    packet.AddType<d2e::CircleCollider>();
     auto collider = mGameObject->AddComponent<d2e::CircleCollider>();
     collider->SetRadius(PLAYER_RADIUS);
     collider->SetOnCollisionEnterCallback([&](const d2e::CollisionInfo& info)
@@ -77,15 +77,16 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene)
         transform->translation = info.collisionPosition - d2e::Vec2{ 0.0f, -0.5f };
         transform->scale = d2e::Vec2{ 0.13f * r, 0.13f };
     });
+    packet.AddType<d2e::CircleCollider>(id, collider->Serialize());
 
     //packet.AddType<d2e::Movement>();
     auto movement = mGameObject->AddComponent<d2e::Movement>();
     movement->SetSpeed(800.0f);
 
-    packet.AddType<d2e::RigidBody>();
     auto rb = mGameObject->AddComponent<d2e::RigidBody>();
     rb->SetGravity(d2e::Vec2{ 0.0f, 15.0f });
     rb->SetRestitution(0.1f);
+    packet.AddType<d2e::RigidBody>(id, rb->Serialize());
 
     d2e::Engine::Instance()->GetClient()->AddPacketToSend(packet);
 }
