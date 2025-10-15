@@ -32,7 +32,7 @@ public:
     [[nodiscard]] std::string Serialize() const override;
     void Deserialize(const std::string& string) override;
 
-    [[nodiscard]] inline static std::string GetName() { return "RigidBody"; }
+    D2E_COMPONENT("RigidBody")
 private:
     float mMass        = 1.0f;
     float mRestitution = 0.1f;

@@ -19,7 +19,7 @@ struct Tag : public IComponent
     [[nodiscard]] inline std::string Serialize() const override { return SerializeUtils::Serialize(static_cast<uint8_t>(tag)); }
     inline void Deserialize(const std::string& string) override { uint8_t value;  SerializeUtils::Deserialize(value, string); tag = static_cast<ComponentTag>(value); }
 
-    [[nodiscard]] inline static std::string GetName() { return "Tag"; }
+    D2E_COMPONENT("Tag")
 };
 
 } // Namespace d2e.

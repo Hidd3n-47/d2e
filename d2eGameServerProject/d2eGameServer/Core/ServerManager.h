@@ -33,6 +33,8 @@ private:
 
     uint32_t mNumClientsConnected{ 0 };
     void ClientConnected();
+
+    std::vector<uint32_t> mGameObjectsToSyncAcrossNetwork;
 };
 
 } // Namespace d2eServer.

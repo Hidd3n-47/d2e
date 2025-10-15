@@ -31,7 +31,7 @@ public:
     void Update(const float dt) override;
     void Render(const WeakRef<sf::RenderWindow> window) override;
 
-    [[nodiscard]] inline static std::string GetName() { return "ParticleEffect"; }
+    D2E_COMPONENT("ParticleEffect")
 private:
     uint32_t mMaxParticles;
     //ParticleEffectDetails mEffectDetails;

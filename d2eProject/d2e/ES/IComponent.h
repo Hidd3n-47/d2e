@@ -3,6 +3,10 @@
 namespace d2e
 {
 
+#define D2E_COMPONENT(X) \
+    [[nodiscard]] inline std::string GetName() const override { return GetNameStatic(); } \
+    [[nodiscard]] inline static std::string GetNameStatic() { return ##X; }
+
 class GameObject;
 
 class IComponent
@@ -18,6 +22,8 @@ public:
 
     [[nodiscard]] virtual std::string Serialize() const { return ""; }
     virtual void Deserialize(const std::string& string) { }
+
+    virtual std::string GetName() const { return "component"; }
 protected:
     WeakRef<GameObject> mParent;
 };

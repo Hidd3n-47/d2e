@@ -31,8 +31,12 @@ public:
     template <typename Component>
     void RemoveComponent();
 
+    WeakRef<IComponent> GetComponent(const std::string& component);
+
     template <typename Component>
     [[nodiscard]] WeakRef<Component> GetComponent() const;
+
+    [[nodiscard]] inline const std::vector<IComponent*>& GetComponents() const { return mComponents; }
 
     [[nodiscard]] inline uint32_t GetId() const { return mId; }
     inline void SetId(const uint32_t id) { mId = id; }
@@ -40,8 +44,9 @@ private:
     uint32_t mId;
     WeakRef<Scene> mParent;
 
-    std::unique_ptr<Transform>  mTransform;
-    std::vector<IComponent*>    mComponents;
+    //std::unique_ptr<Transform>  mTransform;
+    std::vector<IComponent*> mComponents;
+    std::unordered_map<std::string, IComponent*> mNameToComponentMap;
 };
 
 template <typename Component>
@@ -49,6 +54,7 @@ inline WeakRef<Component> GameObject::AddComponent()
 {
     mComponents.emplace_back(new Component());
     mComponents.back()->OnComponentAdded(WeakRef{ this });
+    mNameToComponentMap[Component::GetNameStatic()] = mComponents.back();
     return WeakRef{ reinterpret_cast<Component*>(mComponents.back()) };
 }
 
@@ -57,12 +63,15 @@ inline WeakRef<Component> GameObject::AddComponent(Args ...args)
 {
     mComponents.emplace_back(new Component(std::forward<Args>(args)...));
     mComponents.back()->OnComponentAdded(WeakRef{ this });
+    mNameToComponentMap[Component::GetNameStatic()] = mComponents.back();
     return WeakRef{ reinterpret_cast<Component*>(mComponents.back()) };
 }
 
 template <typename Component>
 void GameObject::RemoveComponent()
 {
+    mNameToComponentMap.erase(Component::GetNameStatic());
+
     for (auto it{ mComponents.begin() }; it != mComponents.end(); ++it)
     {
         if (Component* castComponent = dynamic_cast<Component*>(*it); castComponent != nullptr)
@@ -94,7 +103,7 @@ inline WeakRef<Component> GameObject::GetComponent() const
 template <>
 inline WeakRef<Transform> GameObject::GetComponent() const
 {
-    return WeakRef{ mTransform.get() };
+    return WeakRef{ reinterpret_cast<Transform*>(mComponents[0]) };
 }
 
 } // Namespace d2e.

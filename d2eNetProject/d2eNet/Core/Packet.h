@@ -8,7 +8,8 @@ namespace d2eNet
 enum class PacketLineType : uint8_t
 {
     ADD_GAME_OBJECT = 1,
-    ADD_COMPONENT
+    ADD_COMPONENT,
+    SYNC_GAME_OBJECT_ACROSS_NETWORK
 };
 
 class Packet
@@ -84,13 +85,25 @@ public:
         AddStringToPacket(PacketLineType::ADD_GAME_OBJECT, line);
     }
 
+    inline void AddSyncObject(const uint32_t id)
+    {
+        const std::string line = std::to_string(id);
+
+        AddStringToPacket(PacketLineType::SYNC_GAME_OBJECT_ACROSS_NETWORK, line);
+    }
+
+    inline void AddType(const uint32_t id, const std::string& component, const std::string& value)
+    {
+        // ID | Component | ComponentValues.
+        const std::string line = std::to_string(id) + '|' + component + '|' + value;
+
+        AddStringToPacket(PacketLineType::ADD_COMPONENT, line);
+    }
+
     template<typename T>
     inline void AddType(const uint32_t id, const std::string& value)
     {
-        // ID | Component | ComponentValues.
-        const std::string line = std::to_string(id) + '|' + T::GetName() + '|' + value;
-
-        AddStringToPacket(PacketLineType::ADD_COMPONENT, line);
+        AddType(id, T::GetNameStatic(), value);
     }
 
     Iterator Begin() const { return Iterator{ this, 0 }; }

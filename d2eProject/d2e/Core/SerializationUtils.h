@@ -3,6 +3,8 @@
 namespace d2e::SerializeUtils
 {
 
+inline static const std::string DELIMITER{ '|' };
+
 template <typename T>
 [[nodiscard]] inline std::string Serialize(const T value)
 {

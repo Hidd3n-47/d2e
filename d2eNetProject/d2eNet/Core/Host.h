@@ -24,6 +24,8 @@ public:
     std::optional<Packet> GetPacket() { if (mPacketsReceived.empty()) return {}; Packet front = mPacketsReceived.front(); mPacketsReceived.pop(); return { front }; }
     void ProcessPackets();
 
+    void BroadcastPacket(const Packet& packet) const;
+
     [[nodiscard]] uint16_t GetNumJoinedClients() const { return mNumJoinedClients; }
 
     static constexpr uint16_t NUMBER_OF_ALLOWED_CLIENTS = 1;

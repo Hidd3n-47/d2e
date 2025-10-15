@@ -65,10 +65,12 @@ void ServerManager::Run()
             ClientConnected();
         }
 
-        std::optional<d2eNet::Packet> p = mHost->GetPacket();
-        while (p)
+        d2e::WeakRef<d2e::Scene> activeScene = d2e::Engine::Instance()->GetActiveScene();
+
+        std::optional<d2eNet::Packet> packet = mHost->GetPacket();
+        while (packet)
         {
-            for (d2eNet::Packet::Iterator it = p->Begin(); it != p->End(); ++it)
+            for (d2eNet::Packet::Iterator it = packet->Begin(); it != packet->End(); ++it)
             {
                 const std::string packetString = it.GetPacketLineString();
 
@@ -76,16 +78,15 @@ void ServerManager::Run()
                 {
                 case d2eNet::PacketLineType::ADD_COMPONENT:
                 {
-                    const size_t firstDelimiter  = packetString.find('|');
-                    const size_t secondDelimiter = packetString.find('|', firstDelimiter + 1);
+                    const size_t firstDelimiter  = packetString.find(d2e::SerializeUtils::DELIMITER);
+                    const size_t secondDelimiter = packetString.find(d2e::SerializeUtils::DELIMITER, firstDelimiter + 1);
 
                     const uint32_t id = std::stoul(packetString.substr(0, firstDelimiter));
                     const std::string componentName  = packetString.substr(firstDelimiter + 1, secondDelimiter - firstDelimiter - 1);
                     const std::string componentValue = packetString.substr(secondDelimiter + 1);
 
                     d2e::WeakRef<d2e::GameObject> gameObject = d2e::Engine::Instance()->GetActiveScene()->GetGameObject(id);
-                    d2e::WeakRef<d2e::IComponent> component  = gameObject->AddComponent(componentName);
-                    component->Deserialize(componentValue);
+                    gameObject->AddComponent(componentName)->Deserialize(componentValue);
 
                     mLog.Debug("Added Component [{}] to game object with ID: {} | <{}>", componentName, id, componentValue);
                     break;
@@ -95,10 +96,15 @@ void ServerManager::Run()
                     uint32_t id;
                     d2e::SerializeUtils::Deserialize(id, packetString);
 
-                    d2e::WeakRef<d2e::GameObject> go = d2e::Engine::Instance()->GetActiveScene()->CreateGameObject();
-                    go->SetId(id);
+                    activeScene->CreateGameObject()->SetId(id);
 
                     mLog.Debug("Created game object (ID: {})", packetString, id);
+                    break;
+                }
+                case d2eNet::PacketLineType::SYNC_GAME_OBJECT_ACROSS_NETWORK:
+                {
+                    mGameObjectsToSyncAcrossNetwork.emplace_back(std::stoul(packetString));
+                    mLog.Debug("Registered game object (ID: {}) to be synced across networks.", packetString);
                     break;
                 }
                 default:
@@ -107,7 +113,7 @@ void ServerManager::Run()
                 }
             }
 
-            p = mHost->GetPacket();
+            packet = mHost->GetPacket();
         }
 
         // Simulate game.
@@ -115,6 +121,19 @@ void ServerManager::Run()
 
         // Send info.
         // the only thing we should need to send is the player info - specifically the rb and transform component.
+        for (const uint32_t id : mGameObjectsToSyncAcrossNetwork)
+        {
+            d2e::WeakRef<d2e::GameObject> gameObject = activeScene->GetGameObject(id);
+
+            d2eNet::Packet packet;
+            packet.AddType<d2e::Transform>(id, gameObject->GetComponent<d2e::Transform>()->Serialize());
+            for (const d2e::IComponent* comp : gameObject->GetComponents())
+            {
+                packet.AddType(id, comp->GetName(), comp->Serialize());
+            }
+
+            mHost->BroadcastPacket(packet);
+        }
     }
 }
 

@@ -26,7 +26,7 @@ bool Client::Init(const uint8_t ip1, const uint8_t  ip2, const uint8_t ip3, cons
     return mClient && mPeer;
 }
 
-void Client::Update(const uint32_t timeout) const
+void Client::Update(const uint32_t timeout)
 {
     ENetEvent event;
 
@@ -35,7 +35,12 @@ void Client::Update(const uint32_t timeout) const
         if (event.type == ENET_EVENT_TYPE_RECEIVE)
         {
             // todo add some info here.
-
+                printf("A packet of length %u containing %s was received from %s on channel %u from host.\n",
+                    event.packet->dataLength,
+                    reinterpret_cast<const char*>(event.packet->data),
+                    event.peer->data,
+                    event.channelID);
+            mPacketsReceived.emplace(event.packet->data, event.packet->dataLength);
             return;
         }
 
@@ -58,9 +63,15 @@ void Client::Update(const uint32_t timeout) const
     }
 }
 
-void Client::AddPacketToSend(Packet& packet)
+std::optional<Packet> Client::GetPacketReceived()
 {
-    mPacketsToSend.emplace(std::move(packet));
+    if (mPacketsReceived.empty())
+    {
+        return {};
+    }
+
+    Packet front = mPacketsReceived.front(); mPacketsReceived.pop();
+    return { front }; 
 }
 
 void Client::SendPackets()
@@ -71,15 +82,6 @@ void Client::SendPackets()
         SendPacket(packet.GetData(), packet.GetCount());
         mPacketsToSend.pop();
     }
-}
-
-void Client::SendPacket(const char* data) const
-{
-    std::cout << "Trying to send packet of: <" + std::string{ data } + ">\n";
-    //todo look at where we destroy this packet.
-    ENetPacket* packet{ enet_packet_create(data, strlen(data) + 1, ENET_PACKET_FLAG_RELIABLE) };
-
-    enet_peer_send(mPeer, 0, packet);
 }
 
 void Client::SendPacket(const void* data, const uint32_t count) const

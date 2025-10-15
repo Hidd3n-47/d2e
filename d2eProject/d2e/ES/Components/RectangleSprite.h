@@ -17,7 +17,7 @@ public:
     inline void SetHalfExtents(const Vec2 halfExtents) { mHalfExtents = halfExtents; }
     inline void SetColor(const sf::Color color) { mRectangle.setFillColor(color); }
 
-    [[nodiscard]] inline static std::string GetName() { return "RectangleSprite"; }
+    D2E_COMPONENT("RectangleSprite")
 private:
     sf::RectangleShape mRectangle { { 10.0f, 10.0f } };
 

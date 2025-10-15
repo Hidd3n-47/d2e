@@ -42,7 +42,7 @@ public:
      * @return A \c WeakRef that has been cast to the type \c CastType. Note, this \c WeakRef could be invalid if the cast failed, and hence should be checked if its is valid before use.
      */
     template <typename CastType>
-    [[nodiscard]] inline WeakRef<CastType> Cast() { return WeakRef<CastType>{ dynamic_cast<CastType*>(mReferencePtr) }; }
+    [[nodiscard]] inline WeakRef<CastType> Cast() { return WeakRef<CastType>{ reinterpret_cast<CastType*>(mReferencePtr) }; }
 
     inline T* operator->()              { return mReferencePtr; }
     inline const T* operator->() const  { return mReferencePtr; }

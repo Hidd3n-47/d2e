@@ -27,7 +27,7 @@ public:
     [[nodiscard]] inline std::string Serialize() const override { return SerializeUtils::Serialize(mCollidedLastFrame) + SerializeUtils::Serialize(mRadius); }
     inline void Deserialize(const std::string& string) override { SerializeUtils::Deserialize(mCollidedLastFrame, std::string{ string[0] }); SerializeUtils::Deserialize(mRadius, string.substr(1)); }
 
-    [[nodiscard]] inline static std::string GetName() { return "CircleCollider"; }
+    D2E_COMPONENT("CircleCollider")
 
 #ifdef DEV_CONFIGURATION
 public:

@@ -19,7 +19,7 @@ public:
 
     inline void SetOnButtonPressedCallback(const std::function<void()>& callback) { mOnButtonPressed = callback; }
 
-    [[nodiscard]] inline static std::string GetName() { return "Tag"; }
+    D2E_COMPONENT("UiButton")
 private:
     spriteId mSpriteId;
     Vec2 mSize{ 10.0f, 10.0f };

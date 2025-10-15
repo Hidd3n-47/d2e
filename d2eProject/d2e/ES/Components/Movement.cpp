@@ -44,12 +44,14 @@ void Movement::Update(const float dt)
 
 std::string Movement::Serialize() const
 {
-    return SerializeUtils::Serialize(mSpeed) + "," + SerializeUtils::Serialize(mMaxJumpCount) + "," + SerializeUtils::Serialize(mJumpCount);
+    return SerializeUtils::Serialize(mSpeed)        + SerializeUtils::DELIMITER
+         + SerializeUtils::Serialize(mMaxJumpCount) + SerializeUtils::DELIMITER
+         + SerializeUtils::Serialize(mJumpCount);
 }
 
 void Movement::Deserialize(const std::string& string)
 {
-    const size_t firstDelimiter  = string.find(',');
+    const size_t firstDelimiter  = string.find(SerializeUtils::DELIMITER);
     const size_t secondDelimiter = string.find(',', firstDelimiter + 1);
 
     const std::string first  = string.substr(0, firstDelimiter);

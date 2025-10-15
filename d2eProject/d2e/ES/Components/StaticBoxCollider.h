@@ -19,7 +19,7 @@ public:
     [[nodiscard]] inline std::string Serialize() const override { return SerializeUtils::Serialize(mHalfExtents); }
     inline void Deserialize(const std::string& string) override { SerializeUtils::Deserialize(mHalfExtents, string); }
 
-    [[nodiscard]] inline static std::string GetName() { return "StaticBoxCollider"; }
+    D2E_COMPONENT("StaticBoxCollider")
 
 #ifdef DEV_CONFIGURATION
 public:

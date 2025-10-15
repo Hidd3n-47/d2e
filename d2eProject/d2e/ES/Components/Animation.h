@@ -26,7 +26,7 @@ public:
 
     inline void SetSpriteColor(const sf::Color color) { mSpriteColor = color; }
 
-    [[nodiscard]] inline static std::string GetName() { return "Animation"; }
+    D2E_COMPONENT("Animation")
 private:
     AnimationDetails mAnimationDetails{ };
     uint32_t         mCurrentFrame{ 0 };

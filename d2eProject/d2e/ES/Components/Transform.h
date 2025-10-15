@@ -31,7 +31,7 @@ public:
         SerializeUtils::Deserialize(scale, second);
     }
 
-    [[nodiscard]] inline static std::string GetName() { return "Transform"; }
+    D2E_COMPONENT("Transform")
 };
 
 } // Namespace d2e.

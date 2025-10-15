@@ -19,7 +19,7 @@ public:
     [[nodiscard]] inline std::string Serialize() const override { return SerializeUtils::Serialize(mRadius); }
     inline void Deserialize(const std::string& string) override { SerializeUtils::Deserialize(mRadius, string.substr(1)); }
 
-    [[nodiscard]] inline static std::string GetName() { return "CircleSprite"; }
+    D2E_COMPONENT("CircleSprite")
 private:
     sf::CircleShape mCircle{ 10.0f };
 

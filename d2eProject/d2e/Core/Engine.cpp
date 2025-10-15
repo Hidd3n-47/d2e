@@ -6,6 +6,7 @@
 #include <d2eNet/Core/d2eNet.h>
 #include <d2eNet/Core/Client.h>
 
+#include "SerializationUtils.h"
 #include "ES/Scene.h"
 #include "Input/InputManager.h"
 
@@ -201,7 +202,39 @@ void Engine::ReceivePackets()
         return;
     }
 
-    mRunning = mRunning;
+    std::optional<d2eNet::Packet> packet = mClient->GetPacketReceived();
+    while (packet)
+    {
+        for (d2eNet::Packet::Iterator it = packet->Begin(); it != packet->End(); ++it)
+        {
+            const std::string packetString = it.GetPacketLineString();
+
+            switch (it.GetPacketLineType())
+            {
+            case d2eNet::PacketLineType::ADD_COMPONENT:
+            {
+                const size_t firstDelimiter = packetString.find(SerializeUtils::DELIMITER);
+                const size_t secondDelimiter = packetString.find(SerializeUtils::DELIMITER, firstDelimiter + 1);
+
+                const uint32_t id = std::stoul(packetString.substr(0, firstDelimiter));
+                const std::string componentName = packetString.substr(firstDelimiter + 1, secondDelimiter - firstDelimiter - 1);
+                const std::string componentValue = packetString.substr(secondDelimiter + 1);
+
+                mActiveScene->GetGameObject(id)->GetComponent(componentName)->Deserialize(componentValue);
+
+                DEBUG_LOG("Updated Component [{}] to game object with ID: {} | <{}>", componentName, id, componentValue);
+                break;
+            }
+            case d2eNet::PacketLineType::ADD_GAME_OBJECT:
+            case d2eNet::PacketLineType::SYNC_GAME_OBJECT_ACROSS_NETWORK:
+            default:
+                DEBUG_WARN("Received packet that is not processed: <{}>", packetString);
+                break;
+            }
+        }
+
+        packet = mClient->GetPacketReceived();
+    }
 }
 
 } // Namespace d2e.

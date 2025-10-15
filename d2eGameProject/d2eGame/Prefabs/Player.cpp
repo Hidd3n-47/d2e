@@ -31,7 +31,9 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene)
     //todo this should be changed into a percentage and not a pixel based.
     constexpr float PLAYER_RADIUS = 20.0f;
 
-    mGameObject->GetComponent<d2e::Transform>()->translation = d2e::Vec2{ 1000.0f, 100.0f };
+    auto transform = mGameObject->GetComponent<d2e::Transform>();
+    transform->translation = d2e::Vec2{ 1000.0f, 100.0f };
+    packet.AddType<d2e::Transform>(id, transform->Serialize());
 
     auto visual = mGameObject->AddComponent<d2e::CircleSprite>();
     visual->SetColor(sf::Color{255, 0, 132, 255 });
@@ -87,6 +89,8 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene)
     rb->SetGravity(d2e::Vec2{ 0.0f, 15.0f });
     rb->SetRestitution(0.1f);
     packet.AddType<d2e::RigidBody>(id, rb->Serialize());
+
+    packet.AddSyncObject(id);
 
     d2e::Engine::Instance()->GetClient()->AddPacketToSend(packet);
 }
