@@ -10,11 +10,8 @@ namespace d2e
 GameObject::GameObject(const uint32_t id, const WeakRef<Scene> parent)
     : mId(id)
     , mParent(parent)
-    //, mTransform{ std::make_unique<Transform>() }
 {
     AddComponent<Transform>();
-    //mNameToComponentMap[Transform::GetNameStatic()] = dynamic_cast<IComponent*>(mTransform.get());
-    // Empty.
 }
 
 GameObject::~GameObject()

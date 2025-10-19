@@ -32,32 +32,32 @@ void Client::Update(const uint32_t timeout)
 
     while (enet_host_service(mClient, &event, timeout) > 0)
     {
-        if (event.type == ENET_EVENT_TYPE_RECEIVE)
-        {
-            // todo add some info here.
-                printf("A packet of length %u containing %s was received from %s on channel %u from host.\n",
-                    event.packet->dataLength,
-                    reinterpret_cast<const char*>(event.packet->data),
-                    event.peer->data,
-                    event.channelID);
-            mPacketsReceived.emplace(event.packet->data, event.packet->dataLength);
-            return;
-        }
-
         if (event.type == ENET_EVENT_TYPE_CONNECT)
         {
             // todo add.
             printf("A new client connected from %x:%u.\n",
                 event.peer->address.host,
                 event.peer->address.port);
-
+            mConnected = true;
             return;
         }
 
         if (event.type == ENET_EVENT_TYPE_DISCONNECT)
         {
             // todo add.
+            mConnected = false;
+            return;
+        }
 
+        if (event.type == ENET_EVENT_TYPE_RECEIVE)
+        {
+            // todo add some info here.
+                /*printf("A packet of length %u containing %s was received from %s on channel %u from host.\n",
+                    event.packet->dataLength,
+                    reinterpret_cast<const char*>(event.packet->data),
+                    event.peer->data,
+                    event.channelID);*/
+            mPacketsReceived.emplace(event.packet->data, event.packet->dataLength);
             return;
         }
     }
@@ -71,24 +71,29 @@ std::optional<Packet> Client::GetPacketReceived()
     }
 
     Packet front = mPacketsReceived.front(); mPacketsReceived.pop();
-    return { front }; 
+    return { front };
 }
 
 void Client::SendPackets()
 {
+    if (!mConnected)
+    {
+        return;
+    }
+
     while (!mPacketsToSend.empty())
     {
         const Packet packet = mPacketsToSend.front();
-        SendPacket(packet.GetData(), packet.GetCount());
+        //std::cout << "Trying to send packet of: <" + std::string{ packet.BufBegin(), packet.BufEnd() } + ">\n";
+        SendPacket(packet.GetData(), packet.GetCount(), packet.IsReliable());
         mPacketsToSend.pop();
     }
 }
 
-void Client::SendPacket(const void* data, const uint32_t count) const
+void Client::SendPacket(const void* data, const uint32_t count, const bool reliable) const
 {
-    //std::cout << "Trying to send packet of: <" + std::string{ data } + ">\n";
     //todo look at where we destroy this packet.
-    ENetPacket* packet{ enet_packet_create(data, count, ENET_PACKET_FLAG_RELIABLE) };
+    ENetPacket* packet{ enet_packet_create(data, count, reliable ? ENET_PACKET_FLAG_RELIABLE : ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT) };
 
     enet_peer_send(mPeer, 0, packet);
 }

@@ -37,15 +37,22 @@ public:
 
     [[nodiscard]] WeakRef<Scene> CreateScene();
     void RemoveScene(WeakRef<Scene>& scene);
-    bool SetActiveScene(const WeakRef<Scene>& scene);
+    inline void ChangeActiveScene(Scene* scene) { mSceneToChangeTo = scene; };
 
     void ConnectClientToServer(const int ip1, const int ip2, const int ip3, const int ip4, const uint16_t port);
 
+    void StartFrame();
+    void EndFrame() const;
+
     void Input();
+    void SceneUpdate() const;
     void SendPackets() const;
     void Update() const;
+    void PostUpdate();
     void Render() const;
-    void ReceivePackets();
+    void ReceivePackets() const;
+
+    inline void SetOnLevelLoadCompleteCallback(const std::function<void()>& callback) { mOnLevelLoadCompleteCallback = callback; }
 
     [[nodiscard]] inline Vec2                       GetWindowSize()     const { return mWindowSize; }
     [[nodiscard]] inline WeakRef<Scene>             GetActiveScene()    const { return WeakRef{ mActiveScene }; }
@@ -56,10 +63,9 @@ public:
 
     inline void CloseGame() { mRunning = false; }
 
-    static constexpr uint32_t TARGET_FRAMES = 120;
+    static constexpr uint32_t TARGET_FRAMES = 60;
     static constexpr std::chrono::duration<float> TARGET_FRAME_TIME{ 1.0f / TARGET_FRAMES };
 private:
-    // todo look at making it a shared ptr and then using std::weak_ptr instead of WeakRef.
     static std::unique_ptr<Engine>      mInstance;
 
     bool mRunning = true;
@@ -71,10 +77,14 @@ private:
     // todo look at changing from raw pointer for scenes.
     std::vector<Scene*> mScenes;
     Scene*              mActiveScene;
+    Scene* mSceneToChangeTo = nullptr;
 
     float mDeltaTime = TARGET_FRAME_TIME.count();
+    std::chrono::time_point<std::chrono::steady_clock> mFrameStart;
 
     Vec2 mWindowSize{ 1920.0f, 1080.0f };
+
+    std::function<void()> mOnLevelLoadCompleteCallback;
 };
 
 } // Namespace d2e.

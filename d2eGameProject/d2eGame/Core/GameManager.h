@@ -7,8 +7,6 @@
 #include <d2e/Core/WeakRef.h>
 
 #include "GameState.h"
-#include "Scene/IGameScene.h"
-#include "src/Defines.h"
 
 namespace d2eGame
 {
@@ -31,7 +29,7 @@ public:
 
     void Init();
 
-    DEBUG([[nodiscard]] inline d2e::WeakRef<d2e::Log>     GetLog() const { return d2e::WeakRef{ mLog.get() }; })
+    DEBUG([[nodiscard]] inline d2e::WeakRef<d2e::Log> GetLog() const { return d2e::WeakRef{ mLog.get() }; })
 
     void ChangeState(const GameState newState);
 
@@ -42,31 +40,21 @@ private:
     DEBUG(std::unique_ptr<d2e::Log> mLog);
 
     GameState   mGameState      = GameState::NONE;
-    IGameScene* mCurrentScene   = nullptr;
+    d2e::Scene* mCurrentScene   = nullptr;
 
     template <typename Scene>
-    [[nodiscard]] bool SetScene();
+    void SetScene();
 };
 
 template <typename Scene>
-bool GameManager::SetScene()
+void GameManager::SetScene()
 {
-    static_assert(std::is_base_of_v<IGameScene, Scene>);
-    IGameScene* scene = new Scene();
+    static_assert(std::is_base_of_v<d2e::Scene, Scene>);
+    d2e::Scene* scene = new Scene();
 
-    if (!d2e::Engine::Instance()->SetActiveScene(scene->GetScene()))
-    {
-        GAME_ERROR("Failed to set active scene.");
-        delete scene;
-        return false;
-    }
+    d2e::Engine::Instance()->ChangeActiveScene(scene);
 
-    delete mCurrentScene;
     mCurrentScene = scene;
-
-    mCurrentScene->InitGameScene();
-
-    return true;
 }
 
 } // Namespace d2eGame.

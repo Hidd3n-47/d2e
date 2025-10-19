@@ -22,7 +22,6 @@ public:
     void Update(const uint32_t timeout);
 
     std::optional<Packet> GetPacket() { if (mPacketsReceived.empty()) return {}; Packet front = mPacketsReceived.front(); mPacketsReceived.pop(); return { front }; }
-    void ProcessPackets();
 
     void BroadcastPacket(const Packet& packet) const;
 

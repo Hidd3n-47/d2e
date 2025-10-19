@@ -23,16 +23,17 @@ public:
 
     void Update(const uint32_t timeout);
 
-    inline void AddPacketToSend(Packet& packet)   { mPacketsToSend.emplace(std::move(packet)); }
+    inline void AddPacketToSend(Packet& packet) { mPacketsToSend.emplace(std::move(packet)); }
     inline void AddPacketReceived(Packet& packet) { mPacketsReceived.emplace(std::move(packet)); }
 
     std::optional<Packet> GetPacketReceived();
 
     void SendPackets();
-    void SendPacket(const void* data, const uint32_t count) const;
+    void SendPacket(const void* data, const uint32_t count, const bool reliable) const;
 private:
     ENetHost* mClient;
     ENetPeer* mPeer;
+    bool mConnected;
 
     std::queue<Packet> mPacketsToSend;
     std::queue<Packet> mPacketsReceived;

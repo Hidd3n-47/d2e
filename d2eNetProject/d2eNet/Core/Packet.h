@@ -9,7 +9,9 @@ enum class PacketLineType : uint8_t
 {
     ADD_GAME_OBJECT = 1,
     ADD_COMPONENT,
-    SYNC_GAME_OBJECT_ACROSS_NETWORK
+    UPDATE_COMPONENT,
+    SYNC_GAME_OBJECT_ACROSS_NETWORK,
+    LEVEL_LOAD_COMPLETE
 };
 
 class Packet
@@ -71,12 +73,14 @@ friend class Iterator;
 
 public:
     Packet() = default;
+    Packet(const bool reliable) : mReliable(reliable) { }
     inline Packet(const uint8_t* data, const uint16_t size) {
         mBuffer.insert(mBuffer.begin(), data, data + size * sizeof(uint8_t)); }
 
     [[nodiscard]] inline PacketLineType GetPacketLineType() const { return static_cast<PacketLineType>(mBuffer[0]); }
     [[nodiscard]] inline void* GetData() const { return (void*)mBuffer.data(); }
     [[nodiscard]] inline uint32_t GetCount() const { return static_cast<uint32_t>(mBuffer.size()); }
+    [[nodiscard]] inline bool IsReliable() const { return mReliable; }
 
     inline void AddLineWithId(const uint32_t id)
     {
@@ -90,6 +94,20 @@ public:
         const std::string line = std::to_string(id);
 
         AddStringToPacket(PacketLineType::SYNC_GAME_OBJECT_ACROSS_NETWORK, line);
+    }
+
+    inline void UpdateType(const uint32_t id, const std::string& component, const std::string& value)
+    {
+        // ID | Component | ComponentValues.
+        const std::string line = std::to_string(id) + '|' + component + '|' + value;
+
+        AddStringToPacket(PacketLineType::UPDATE_COMPONENT, line);
+    }
+
+    template<typename T>
+    inline void UpdateType(const uint32_t id, const std::string& value)
+    {
+        UpdateType(id, T::GetNameStatic(), value);
     }
 
     inline void AddType(const uint32_t id, const std::string& component, const std::string& value)
@@ -106,17 +124,21 @@ public:
         AddType(id, T::GetNameStatic(), value);
     }
 
-    Iterator Begin() const { return Iterator{ this, 0 }; }
-    Iterator End()   const { return Iterator{ this, static_cast<uint32_t>(mBuffer.size()) }; }
-private:
-    std::vector<uint8_t> mBuffer;
-
     inline void AddStringToPacket(const PacketLineType lineType, const std::string& string)
     {
         mBuffer.emplace_back(static_cast<uint8_t>(lineType));
         mBuffer.emplace_back(static_cast<uint8_t>(string.length()));
         mBuffer.insert(mBuffer.end(), string.begin(), string.end());
     }
+
+    Iterator Begin() const { return Iterator{ this, 0 }; }
+    Iterator End()   const { return Iterator{ this, static_cast<uint32_t>(mBuffer.size()) }; }
+
+    auto BufBegin() const { return mBuffer.begin(); }
+    auto BufEnd()   const { return mBuffer.end(); }
+private:
+    std::vector<uint8_t> mBuffer;
+    bool mReliable = true;
 };
 
 } // Namespace d2eNet.

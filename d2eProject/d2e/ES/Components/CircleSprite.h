@@ -14,7 +14,7 @@ public:
     void Render(WeakRef<sf::RenderWindow> window) override;
 
     inline void SetRadius(const float radius) { mRadius = radius; }
-    inline void SetColor(const sf::Color color) { mCircle.setFillColor(color); }
+    inline void SetColor(const sf::Color color) { mColor = color; }
 
     [[nodiscard]] inline std::string Serialize() const override { return SerializeUtils::Serialize(mRadius); }
     inline void Deserialize(const std::string& string) override { SerializeUtils::Deserialize(mRadius, string.substr(1)); }
@@ -22,6 +22,7 @@ public:
     D2E_COMPONENT("CircleSprite")
 private:
     sf::CircleShape mCircle{ 10.0f };
+    sf::Color mColor;
 
     float mRadius = 10.0f;
 };

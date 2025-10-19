@@ -1,7 +1,5 @@
 #include "Player.h"
 
-#include <random>
-
 #include <d2e/Core/Random.h>
 
 #include <d2e/Physics/CollisionInfo.h>
@@ -81,9 +79,9 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene)
     });
     packet.AddType<d2e::CircleCollider>(id, collider->Serialize());
 
-    //packet.AddType<d2e::Movement>();
     auto movement = mGameObject->AddComponent<d2e::Movement>();
-    movement->SetSpeed(800.0f);
+    movement->speed = 800.0f;
+    packet.AddType<d2e::Movement>(id, movement->Serialize());
 
     auto rb = mGameObject->AddComponent<d2e::RigidBody>();
     rb->SetGravity(d2e::Vec2{ 0.0f, 15.0f });

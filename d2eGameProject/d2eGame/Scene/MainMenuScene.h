@@ -1,16 +1,15 @@
 #pragma once
 
-#include "IGameScene.h"
+#include <d2e/ES/Scene.h>
+
 
 namespace d2eGame
 {
 
-class MainMenuScene : public IGameScene
+class MainMenuScene : public d2e::Scene
 {
 public:
-    MainMenuScene();
-
-    void InitGameScene() override;
+    void InitScene() override;
 };
 
 } // Namespace d2e.

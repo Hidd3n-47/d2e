@@ -6,9 +6,14 @@
 #include <d2eNet/Core/d2eNet.h>
 #include <d2eNet/Core/Client.h>
 
-#include "SerializationUtils.h"
-#include "ES/Scene.h"
 #include "Input/InputManager.h"
+
+#include "SerializationUtils.h"
+
+#include "ES/Scene.h"
+#include "ES/Components/Transform.h"
+#include "ES/Components/CircleSprite.h"
+#include "ES/Components/Movement.h"
 
 namespace d2e
 {
@@ -31,11 +36,26 @@ void Engine::Run()
 {
     while (mWindow->isOpen() && mRunning)
     {
+        StartFrame();
         Input();
+
+        if (mActiveScene && mActiveScene->IsSceneLoaded())
+        {
+            SceneUpdate();
+        }
         SendPackets();
-        Update();
+        if (mActiveScene && mActiveScene->IsSceneLoaded())
+        {
+            Update();
+        }
+        PostUpdate();
         Render();
         ReceivePackets();
+        EndFrame();
+
+#ifdef DEV_CONFIGURATION
+        mWindow->setTitle(std::format("d2e - DEV - {} fps", 1.0f / (std::chrono::duration<float>(std::chrono::high_resolution_clock::now() - mFrameStart).count())));
+#endif // DEV_CONFIGURATION.
     }
 }
 
@@ -77,23 +97,30 @@ void Engine::RemoveScene(WeakRef<Scene>& scene)
     }
 }
 
-bool Engine::SetActiveScene(const WeakRef<Scene>& scene)
-{
-    if (scene.IsRefValid())
-    {
-        mActiveScene = scene.GetRawPtr();
-        return true;
-    }
-
-    return false;
-}
-
 void Engine::ConnectClientToServer(const int ip1, const int ip2, const int ip3, const int ip4, const uint16_t port)
 {
     mClient = std::make_unique<d2eNet::Client>();
     if (!mClient->Init(static_cast<uint8_t>(ip1), static_cast<uint8_t>(ip2), static_cast<uint8_t>(ip3), static_cast<uint8_t>(ip4), port))
     {
         DEBUG_ERROR("Failed to connect Host to Client.");
+    }
+}
+
+void Engine::StartFrame()
+{
+    mFrameStart = std::chrono::high_resolution_clock::now();
+}
+
+void Engine::EndFrame() const
+{
+    const std::chrono::duration frameTime = std::chrono::high_resolution_clock::now() - mFrameStart;
+    if (frameTime < std::chrono::duration<float>(TARGET_FRAME_TIME))
+    {
+        const std::chrono::duration sleepTime = TARGET_FRAME_TIME - frameTime;
+        std::this_thread::sleep_for(sleepTime);
+
+        // Since sleep_for is not precise, it is possible it didn't sleep for enough time, therefore manually stall with a while loop.
+        while (std::chrono::high_resolution_clock::now() - mFrameStart < TARGET_FRAME_TIME) {}
     }
 }
 
@@ -141,6 +168,14 @@ void Engine::Input()
     }
 }
 
+void Engine::SceneUpdate() const
+{
+    if (mActiveScene != nullptr)
+    {
+        mActiveScene->SceneUpdate();
+    }
+}
+
 void Engine::SendPackets() const
 {
     if (!mClient)
@@ -150,33 +185,31 @@ void Engine::SendPackets() const
 
     mClient->Update(3);
 
+    DEBUG_LOG("Sending Packets.");
     mClient->SendPackets();
 }
 
 void Engine::Update() const
 {
-    const std::chrono::time_point frameStart = std::chrono::high_resolution_clock::now();
-
     if (mActiveScene)
     {
         mActiveScene->Update(mDeltaTime);
     }
-
-    const std::chrono::duration frameTime = std::chrono::high_resolution_clock::now() - frameStart;
-    if (frameTime < std::chrono::duration<float>(TARGET_FRAME_TIME))
-    {
-        const std::chrono::duration sleepTime = TARGET_FRAME_TIME - frameTime;
-        std::this_thread::sleep_for(sleepTime);
-
-        // Since sleep_for is not precise, it is possible it didn't sleep for enough time, therefore manually stall with a while loop.
-        while (std::chrono::high_resolution_clock::now() - frameStart < TARGET_FRAME_TIME) {}
-    }
-
-//todo uncomment when we get to final build, just want it for stats.
-//#ifdef DEV_CONFIGURATION
-    //mWindow->setTitle(std::format("d2e - DEV - {} fps", 1.0f / (std::chrono::duration<float>(std::chrono::high_resolution_clock::now() - frameStart).count())));
-//#endif // DEV_CONFIGURATION.
 }
+
+void Engine::PostUpdate()
+{
+    if (mSceneToChangeTo)
+    {
+        delete mActiveScene;
+
+        mActiveScene = mSceneToChangeTo;
+        mActiveScene->InitScene();
+
+        mSceneToChangeTo = nullptr;
+    }
+}
+
 
 void Engine::Render() const
 {
@@ -195,7 +228,7 @@ void Engine::Render() const
     mWindow->display();
 }
 
-void Engine::ReceivePackets()
+void Engine::ReceivePackets() const
 {
     if (!mClient)
     {
@@ -205,26 +238,47 @@ void Engine::ReceivePackets()
     std::optional<d2eNet::Packet> packet = mClient->GetPacketReceived();
     while (packet)
     {
+        DEBUG_LOG("Processed Packet: {}", std::string{ packet->BufBegin(), packet->BufEnd() });
         for (d2eNet::Packet::Iterator it = packet->Begin(); it != packet->End(); ++it)
         {
             const std::string packetString = it.GetPacketLineString();
 
             switch (it.GetPacketLineType())
             {
-            case d2eNet::PacketLineType::ADD_COMPONENT:
+            case d2eNet::PacketLineType::UPDATE_COMPONENT:
             {
-                const size_t firstDelimiter = packetString.find(SerializeUtils::DELIMITER);
+                const size_t firstDelimiter  = packetString.find(SerializeUtils::DELIMITER);
                 const size_t secondDelimiter = packetString.find(SerializeUtils::DELIMITER, firstDelimiter + 1);
 
                 const uint32_t id = std::stoul(packetString.substr(0, firstDelimiter));
-                const std::string componentName = packetString.substr(firstDelimiter + 1, secondDelimiter - firstDelimiter - 1);
+                const std::string componentName  = packetString.substr(firstDelimiter + 1, secondDelimiter - firstDelimiter - 1);
                 const std::string componentValue = packetString.substr(secondDelimiter + 1);
 
+                //todo, find out why this doesn't work.
+                if (componentName == CircleSprite::GetNameStatic())
+                {
+                    continue;
+                }
+
+                const std::string before = mActiveScene->GetGameObject(id)->GetComponent(componentName)->Serialize();
                 mActiveScene->GetGameObject(id)->GetComponent(componentName)->Deserialize(componentValue);
 
-                DEBUG_LOG("Updated Component [{}] to game object with ID: {} | <{}>", componentName, id, componentValue);
+                //if (componentName == Movement::GetNameStatic())
+                {
+                    //DEBUG_WARN("Before Update [{}] to game object with ID: {} | <{}>", componentName, id, before);
+                    //DEBUG_LOG("Updated Component [{}] to game object with ID: {} | <{}>", componentName, id, componentValue);
+                }
                 break;
             }
+            case d2eNet::PacketLineType::LEVEL_LOAD_COMPLETE:
+            {
+                if (mOnLevelLoadCompleteCallback)
+                {
+                    mOnLevelLoadCompleteCallback();
+                }
+                break;
+            }
+            case d2eNet::PacketLineType::ADD_COMPONENT:
             case d2eNet::PacketLineType::ADD_GAME_OBJECT:
             case d2eNet::PacketLineType::SYNC_GAME_OBJECT_ACROSS_NETWORK:
             default:

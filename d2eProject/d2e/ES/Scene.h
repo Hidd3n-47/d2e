@@ -11,7 +11,10 @@ class Scene
 {
 public:
     Scene() = default;
-    ~Scene();
+    virtual ~Scene();
+
+    inline virtual void InitScene() { mSceneLoaded = true; }
+    inline virtual void SceneUpdate() const { }
 
     void Update(const float dt) const;
     void Render(const WeakRef<sf::RenderWindow> window) const;
@@ -22,6 +25,11 @@ public:
 
     [[nodiscard]] inline WeakRef<PhysicsManager>    GetPhysicsManager()     { return WeakRef{ &mPhysicsManager }; }
     [[nodiscard]] inline WeakRef<CollisionHandler>  GetCollisionHandler()   { return WeakRef{ &mCollisionHandler }; }
+
+    [[nodiscard]] inline bool IsSceneLoaded() const { return mSceneLoaded; }
+    void SetSceneLoaded(const bool loaded) { mSceneLoaded = loaded; }
+protected:
+    bool mSceneLoaded = false;
 private:
     std::vector<GameObject*> mGameObjects;
     uint32_t mGameObjectId{0};

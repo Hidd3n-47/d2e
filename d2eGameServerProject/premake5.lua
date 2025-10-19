@@ -46,7 +46,7 @@ project "d2eGameServer"
 
     filter "configurations:Dev"
         runtime "Debug"
-        defines "DEV_CONFIGURATION"
+        defines { "DEV_CONFIGURATION", "D2E_SERVER" }
         symbols "on"
 
     filter "configurations:Release"

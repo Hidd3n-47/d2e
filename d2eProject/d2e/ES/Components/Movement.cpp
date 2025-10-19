@@ -13,53 +13,50 @@ namespace d2e
 
 void Movement::Update(const float dt)
 {
-    WeakRef<RigidBody> rigidBody = mParent->GetComponent<RigidBody>();
+    WeakRef<RigidBody> rigidBody = mParent->GetComponent<d2e::RigidBody>();
     const WeakRef<CircleCollider> circleCollider = mParent->GetComponent<CircleCollider>();
 
     // If we collided last frame, negate and then multiply the count means we multiply by 0 and hence reset the count.
     // Else we multiply by 1 and hence have the same jump count.
-    mJumpCount = static_cast<uint16_t>(!circleCollider->GetCollidedLastFrame()) * mJumpCount;
+    jumpCount = static_cast<uint16_t>(!circleCollider->GetCollidedLastFrame()) * jumpCount;
 
-    float xAxisDelta = 0.0f;
-
-    const WeakRef<InputManager> inputManager = Engine::Instance()->GetInputManager();
-    if (inputManager->IsKeyDown(sf::Keyboard::Key::A))
+    if (jumped && jumpCount < 2)
     {
-        xAxisDelta -= 1.0f;
-    }
-    if (inputManager->IsKeyDown(sf::Keyboard::Key::D))
-    {
-        xAxisDelta += 1.0f;
-    }
-    if (inputManager->IsKeyPressed(sf::Keyboard::Key::Space) && mJumpCount < mMaxJumpCount)
-    {
-        ++mJumpCount;
+        ++jumpCount;
         rigidBody->AddVelocity(Vec2{ 0.0f, -7.5f });
     }
 
-    const float desiredSpeed = xAxisDelta * (mSpeed * 0.02f);
+    //todo fix why we multiplying by that value.
+    const float desiredSpeed = xAxisDelta * (speed * 0.02f);
 
     rigidBody->AddForce(Vec2{ desiredSpeed, 0.0f });
 }
 
 std::string Movement::Serialize() const
 {
-    return SerializeUtils::Serialize(mSpeed)        + SerializeUtils::DELIMITER
-         + SerializeUtils::Serialize(mMaxJumpCount) + SerializeUtils::DELIMITER
-         + SerializeUtils::Serialize(mJumpCount);
+    return SerializeUtils::Serialize(jumped)
+         + SerializeUtils::Serialize(xAxisDelta)   + SerializeUtils::DELIMITER
+         + SerializeUtils::Serialize(speed)        + SerializeUtils::DELIMITER
+         + SerializeUtils::Serialize(maxJumpCount) + SerializeUtils::DELIMITER
+         + SerializeUtils::Serialize(jumpCount);
 }
 
 void Movement::Deserialize(const std::string& string)
 {
+    SerializeUtils::Deserialize(jumped, std::string{ string[0] });
+
     const size_t firstDelimiter  = string.find(SerializeUtils::DELIMITER);
     const size_t secondDelimiter = string.find(',', firstDelimiter + 1);
+    const size_t thirdDelimiter  = string.find(',', secondDelimiter + 1);
 
-    const std::string first  = string.substr(0, firstDelimiter);
+    const std::string first  = string.substr(1, firstDelimiter);
     const std::string second = string.substr(firstDelimiter + 1, secondDelimiter - firstDelimiter - 1);
-    const std::string third  = string.substr(secondDelimiter + 1);
+    const std::string third  = string.substr(secondDelimiter + 1, thirdDelimiter - secondDelimiter - 1);
+    const std::string fourth = string.substr(thirdDelimiter + 1);
 
-    SerializeUtils::Deserialize(mSpeed, first);
-    SerializeUtils::Deserialize(mMaxJumpCount, second);
-    SerializeUtils::Deserialize(mJumpCount, third);
+    SerializeUtils::Deserialize(xAxisDelta, first);
+    SerializeUtils::Deserialize(speed, second);
+    SerializeUtils::Deserialize(maxJumpCount, third);
+    SerializeUtils::Deserialize(jumpCount, fourth);
 }
 } // Namespace d2e.

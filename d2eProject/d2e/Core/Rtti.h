@@ -6,6 +6,7 @@
 #include "d2e/ES/Components/CircleCollider.h"
 #include "d2e/ES/Components/CircleSprite.h"
 #include "d2e/ES/Components/Movement.h"
+#include "d2e/ES/Components/PingDisplay.h"
 #include "d2e/ES/Components/RectangleSprite.h"
 #include "d2e/ES/Components/RigidBody.h"
 #include "d2e/ES/Components/StaticBoxCollider.h"
@@ -25,6 +26,7 @@ inline static auto& GetComponentMap()
         m["CircleCollider"]    = [](auto go) { return WeakRef{ go->AddComponent<d2e::CircleCollider>()    }.Cast<IComponent>(); };
         m["CircleSprite"]      = [](auto go) { return WeakRef{ go->AddComponent<d2e::CircleSprite>()      }.Cast<IComponent>(); };
         m["Movement"]          = [](auto go) { return WeakRef{ go->AddComponent<d2e::Movement>()          }.Cast<IComponent>(); };
+        m["PingDisplay"]       = [](auto go) { return WeakRef{ go->AddComponent<d2e::PingDisplay>()       }.Cast<IComponent>(); };
         m["RectangleSprite"]   = [](auto go) { return WeakRef{ go->AddComponent<d2e::RectangleSprite>()   }.Cast<IComponent>(); };
         m["RigidBody"]         = [](auto go) { return WeakRef{ go->AddComponent<d2e::RigidBody>()         }.Cast<IComponent>(); };
         m["StaticBoxCollider"] = [](auto go) { return WeakRef{ go->AddComponent<d2e::StaticBoxCollider>() }.Cast<IComponent>(); };

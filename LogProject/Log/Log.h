@@ -14,25 +14,25 @@ public:
     Log(std::string&& logTitle, const bool displayTimestamp = true);
 
     template <typename... Args>
-    inline void Info(const std::string_view msg, Args&&... args)
+    inline void Info(const std::string_view msg, Args&&... args) const
     {
         Print(msg, GREEN, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
-    inline void Debug(const std::string_view msg, Args&&... args)
+    inline void Debug(const std::string_view msg, Args&&... args) const
     {
         Print(msg, BLUE, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
-    inline void Warn(const std::string_view msg, Args&&... args)
+    inline void Warn(const std::string_view msg, Args&&... args) const
     {
         Print(msg, ORANGE, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
-    inline void Error(const std::string_view msg, Args&&... args)
+    inline void Error(const std::string_view msg, Args&&... args) const
     {
         Print(msg, RED, std::forward<Args>(args)...);
     }
@@ -61,9 +61,9 @@ private:
     }
 
     template <typename... Args>
-    inline void Print(const std::string_view msg, const char* color, Args&&... args)
+    inline void Print(const std::string_view msg, const char* color, Args&&... args) const
     {
-        const std::string timestamp = mDisplayTimestamp ? std::format(" [{:%H:%M:%S}]", std::chrono::floor<std::chrono::seconds>(std::chrono::system_clock::now())) : "";
+        const std::string timestamp = mDisplayTimestamp ? std::format(" [{:%H:%M:%S:%MS}]", std::chrono::floor<std::chrono::milliseconds>(std::chrono::system_clock::now())) : "";
 
         if constexpr (sizeof...(args) == 0)
         {
@@ -78,7 +78,6 @@ private:
             std::println("{}{}{}: {}{}",  color, mLogTitle, timestamp, formattedMsg, DEFAULT);
         }
     }
-
 
 };
 

@@ -13,6 +13,7 @@ void CircleSprite::Render(WeakRef<sf::RenderWindow> window)
 
     mCircle.setPosition({ transform->translation.x - mRadius, transform->translation.y -mRadius });
     mCircle.setRadius(mRadius);
+    mCircle.setFillColor(mColor);
     window->draw(mCircle);
 }
 
