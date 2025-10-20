@@ -30,10 +30,13 @@ public:
 
     void SendPackets();
     void SendPacket(const void* data, const uint32_t count, const bool reliable) const;
+
+    [[nodiscard]] inline uint16_t GetId() const { return mClientId; }
 private:
     ENetHost* mClient;
     ENetPeer* mPeer;
     bool mConnected;
+    uint16_t mClientId;
 
     std::queue<Packet> mPacketsToSend;
     std::queue<Packet> mPacketsReceived;

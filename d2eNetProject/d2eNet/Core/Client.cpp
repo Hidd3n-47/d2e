@@ -24,6 +24,60 @@ bool Client::Init(const uint8_t ip1, const uint8_t  ip2, const uint8_t ip3, cons
     enet_address_set_host(&address, ip.c_str());
     mPeer = enet_host_connect(mClient, &address, 1, 0);
 
+    bool setId = false;
+    ENetEvent event;
+    while (enet_host_service(mClient, &event, 500) > 0 && !setId)
+    {
+        switch (event.type)
+        {
+        case ENET_EVENT_TYPE_CONNECT:
+            mConnected = true;
+            break;
+        case ENET_EVENT_TYPE_DISCONNECT:
+            mConnected = false;
+            break;
+        case ENET_EVENT_TYPE_RECEIVE:
+        {
+            const std::string idStr{ reinterpret_cast<char*>(event.packet->data) };
+            mClientId = static_cast<uint16_t>(std::stoi(idStr));
+            enet_packet_destroy(event.packet);
+
+            setId = true;
+            break;
+        }
+        }
+
+        //if (event.type == ENET_EVENT_TYPE_CONNECT)
+        //{
+        //    // todo add.
+        //    printf("A new client connected from %x:%u.\n",
+        //        event.peer->address.host,
+        //        event.peer->address.port);
+        //    mConnected = true;
+        //    //return;
+        //}
+
+        //if (event.type == ENET_EVENT_TYPE_DISCONNECT)
+        //{
+        //    // todo add.
+        //    mConnected = false;
+        //    //return;
+        //}
+
+        //if (event.type == ENET_EVENT_TYPE_RECEIVE)
+        //{
+        //    // todo add some info here.
+        //        /*printf("A packet of length %u containing %s was received from %s on channel %u from host.\n",
+        //            event.packet->dataLength,
+        //            reinterpret_cast<const char*>(event.packet->data),
+        //            event.peer->data,
+        //            event.channelID);*/
+        //    mPacketsReceived.emplace(event.packet->data, event.packet->dataLength);
+        //    enet_packet_destroy(event.packet);
+        //    //return;
+        //}
+    }
+
     return mClient && mPeer;
 }
 
@@ -35,9 +89,6 @@ void Client::Update(const uint32_t timeout)
     {
         switch (event.type)
         {
-        case ENET_EVENT_TYPE_CONNECT:
-            mConnected = true;
-            break;
         case ENET_EVENT_TYPE_DISCONNECT:
             mConnected = false;
             break;
@@ -111,6 +162,7 @@ void Client::SendPacket(const void* data, const uint32_t count, const bool relia
     ENetPacket* packet{ enet_packet_create(data, count, reliable ? ENET_PACKET_FLAG_RELIABLE : ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT) };
 
     enet_peer_send(mPeer, 0, packet);
+    enet_host_flush(mClient);
 }
 
 } // Namespace d2eNet.

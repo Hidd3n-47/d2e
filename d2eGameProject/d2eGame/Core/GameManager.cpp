@@ -35,7 +35,6 @@ void GameManager::ChangeState(const GameState newState)
     if (mGameState == newState)
     {
         GAME_WARN("Trying to change game state to the same state.");
-        DEBUG_BREAK();
         return;
     }
 

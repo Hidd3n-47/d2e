@@ -23,8 +23,9 @@ void GameScene::InitScene()
 {
     const d2e::Vec2 windowSize = d2e::Engine::Instance()->GetWindowSize();
 
-    auto client = d2e::Engine::Instance()->GetClient();
+    d2e::WeakRef<d2eNet::Client> client = d2e::Engine::Instance()->GetClient();
 
+    // Testing floor.
     {
         d2eNet::Packet packet;
 
@@ -49,95 +50,12 @@ void GameScene::InitScene()
     }
 
     // Wall boundaries.
-    {
-        d2eNet::Packet packet;
+    CreateWall(client, windowSize * d2e::Vec2{ 0.0f, 0.5f }, d2e::Vec2{ 5.0f, windowSize.y });
+    CreateWall(client, windowSize * d2e::Vec2{ 1.0f, 0.5f }, d2e::Vec2{ 5.0f, windowSize.y });
+    CreateWall(client, windowSize * d2e::Vec2{ 0.5f, 0.0f }, d2e::Vec2{ windowSize.x, 5.0f });
+    CreateWall(client, windowSize * d2e::Vec2{ 0.5f, 1.0f }, d2e::Vec2{ windowSize.x, 5.0f });
 
-        d2e::WeakRef<d2e::GameObject> leftWall = CreateGameObject();
-        const uint32_t id = leftWall->GetId();
-        packet.AddLineWithId(id);
-
-        auto transform = leftWall->GetComponent<d2e::Transform>();
-        transform->translation = windowSize * d2e::Vec2{ 0.0f, 0.5f };
-        packet.AddType<d2e::Transform>(id, transform->Serialize());
-
-        auto bc = leftWall->AddComponent<d2e::StaticBoxCollider>();
-        bc->SetHalfExtents(d2e::Vec2{5.0f, windowSize.y });
-        packet.AddType<d2e::StaticBoxCollider>(id, bc->Serialize());
-
-        auto tag = leftWall->AddComponent<d2e::Tag>();
-        tag->tag = d2e::ComponentTag::WALL;
-        packet.AddType<d2e::Tag>(id, tag->Serialize());
-
-        client->AddPacketToSend(packet);
-    }
-
-    {
-        d2eNet::Packet packet;
-
-        d2e::WeakRef<d2e::GameObject> rightWall = CreateGameObject();
-        const uint32_t id = rightWall->GetId();
-        packet.AddLineWithId(id);
-
-        auto transform = rightWall->GetComponent<d2e::Transform>();
-        transform->translation = windowSize * d2e::Vec2{ 1.0f, 0.5f };
-        packet.AddType<d2e::Transform>(id, transform->Serialize());
-
-        auto bc = rightWall->AddComponent<d2e::StaticBoxCollider>();
-        bc->SetHalfExtents(d2e::Vec2{ 5.0f, windowSize.y });
-        packet.AddType<d2e::StaticBoxCollider>(id, bc->Serialize());
-
-        auto tag = rightWall->AddComponent<d2e::Tag>();
-        tag->tag = d2e::ComponentTag::WALL;
-        packet.AddType<d2e::Tag>(id, tag->Serialize());
-
-        client->AddPacketToSend(packet);
-    }
-
-    {
-        d2eNet::Packet packet;
-
-        d2e::WeakRef<d2e::GameObject> topWall = CreateGameObject();
-        const uint32_t id = topWall->GetId();
-        packet.AddLineWithId(id);
-
-        auto transform = topWall->GetComponent<d2e::Transform>();
-        transform->translation = windowSize * d2e::Vec2{ 0.5f, 0.0f };
-        packet.AddType<d2e::Transform>(id, transform->Serialize());
-
-        auto bc = topWall->AddComponent<d2e::StaticBoxCollider>();
-        bc->SetHalfExtents(d2e::Vec2{ windowSize.x, 5.0f });
-        packet.AddType<d2e::StaticBoxCollider>(id, bc->Serialize());
-
-        auto tag = topWall->AddComponent<d2e::Tag>();
-        tag->tag = d2e::ComponentTag::WALL;
-        packet.AddType<d2e::StaticBoxCollider>(id, bc->Serialize());
-
-        client->AddPacketToSend(packet);
-    }
-
-    //todo can extract this into a function.
-    {
-        d2eNet::Packet packet;
-
-        d2e::WeakRef<d2e::GameObject> bottomWall = CreateGameObject();
-        const uint32_t id = bottomWall->GetId();
-        packet.AddLineWithId(id);
-
-        auto transform = bottomWall->GetComponent<d2e::Transform>();
-        transform->translation = windowSize * d2e::Vec2{ 0.5f, 1.0f };
-        packet.AddType<d2e::Transform>(id, transform->Serialize());
-
-        auto bc = bottomWall->AddComponent<d2e::StaticBoxCollider>();
-        bc->SetHalfExtents(d2e::Vec2{ windowSize.x, 5.0f });
-        packet.AddType<d2e::StaticBoxCollider>(id, bc->Serialize());
-
-        auto tag = bottomWall->AddComponent<d2e::Tag>();
-        tag->tag = d2e::ComponentTag::WALL;
-        packet.AddType<d2e::Tag>(id, tag->Serialize());
-
-        client->AddPacketToSend(packet);
-    }
-
+    // Ping display.
     {
         d2eNet::Packet packet;
 
@@ -157,7 +75,21 @@ void GameScene::InitScene()
         client->AddPacketToSend(packet);
     }
 
-    mPlayer.CreatePrefab(d2e::WeakRef{ this }.Cast<d2e::Scene>());
+    const d2e::WeakRef sceneWeakRef{ d2e::WeakRef{ this }.Cast<d2e::Scene>()};
+    if (const bool isPlayer1 = client->GetId() == 1; isPlayer1)
+    {
+        mPlayer.CreatePrefab(sceneWeakRef, isPlayer1);
+
+        Player otherPlayer;
+        otherPlayer.CreatePrefab(sceneWeakRef, !isPlayer1);
+    }
+    else
+    {
+        Player otherPlayer;
+        otherPlayer.CreatePrefab(sceneWeakRef, !isPlayer1);
+
+        mPlayer.CreatePrefab(sceneWeakRef, isPlayer1);
+    }
 
     d2eNet::Packet loadCompleted;
     loadCompleted.AddStringToPacket(d2eNet::PacketLineType::LEVEL_LOAD_COMPLETE, "");
@@ -167,7 +99,7 @@ void GameScene::InitScene()
 void GameScene::SceneUpdate() const
 {
     d2e::WeakRef<d2e::GameObject> playerGameObject = mPlayer.GetGameObject();
-    d2e::WeakRef<d2e::Movement>  movement = playerGameObject->GetComponent<d2e::Movement>();
+    d2e::WeakRef<d2e::Movement>   movement = playerGameObject->GetComponent<d2e::Movement>();
 
     float xAxisDelta = 0.0f;
     bool jumped = false;
@@ -198,6 +130,29 @@ void GameScene::SceneUpdate() const
         counter = 0;
     }
 
+}
+
+void GameScene::CreateWall(d2e::WeakRef<d2eNet::Client> client, const d2e::Vec2 translation, const d2e::Vec2 halfExtents)
+{
+    d2eNet::Packet packet;
+
+    d2e::WeakRef<d2e::GameObject> wall = CreateGameObject();
+    const uint32_t id = wall->GetId();
+    packet.AddLineWithId(id);
+
+    d2e::WeakRef<d2e::Transform> transform = wall->GetComponent<d2e::Transform>();
+    transform->translation = translation;
+    packet.AddType<d2e::Transform>(id, transform->Serialize());
+
+    d2e::WeakRef<d2e::StaticBoxCollider> bc = wall->AddComponent<d2e::StaticBoxCollider>();
+    bc->SetHalfExtents(halfExtents);
+    packet.AddType<d2e::StaticBoxCollider>(id, bc->Serialize());
+
+    d2e::WeakRef<d2e::Tag> tag = wall->AddComponent<d2e::Tag>();
+    tag->tag = d2e::ComponentTag::WALL;
+    packet.AddType<d2e::Tag>(id, tag->Serialize());
+
+    client->AddPacketToSend(packet);
 }
 
 } // Namespace d2eGame.

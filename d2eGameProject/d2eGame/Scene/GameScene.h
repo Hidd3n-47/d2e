@@ -2,6 +2,11 @@
 
 #include "Prefabs/Player.h"
 
+namespace d2eNet
+{
+class Client;
+} // Namespace d2eNet.
+
 namespace d2eGame
 {
 
@@ -13,6 +18,8 @@ public:
 
 private:
     Player mPlayer;
+
+    void CreateWall(d2e::WeakRef<d2eNet::Client> client, const d2e::Vec2 translation, const d2e::Vec2 halfExtents);
 };
 
 } // Namespace d2e.

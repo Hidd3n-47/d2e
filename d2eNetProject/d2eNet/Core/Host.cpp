@@ -32,8 +32,16 @@ void Host::Update(const uint32_t timeout)
         switch (event.type)
         {
         case ENET_EVENT_TYPE_CONNECT:
+        {
             ++mNumJoinedClients;
+
+            const std::string idString = std::to_string(mNumJoinedClients);
+            const char* idStringCStr = idString.c_str();
+            ENetPacket* packet{ enet_packet_create(idStringCStr, strlen(idStringCStr) + 1, ENET_PACKET_FLAG_RELIABLE) };
+            enet_peer_send(event.peer, 0, packet);
+            enet_host_flush(mHost);
             break;
+        }
         case ENET_EVENT_TYPE_DISCONNECT:
             --mNumJoinedClients;
             break;
@@ -87,6 +95,7 @@ void Host::BroadcastPacket(const Packet& packet) const
     ENetPacket* enetPacket{ enet_packet_create(packet.GetData(), packet.GetCount(), packet.IsReliable() ? ENET_PACKET_FLAG_RELIABLE : ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT) };
 
     enet_host_broadcast(mHost, 0, enetPacket);
+    enet_host_flush(mHost);
 }
 
 } // Namespace d2eNet.
