@@ -138,7 +138,7 @@ void GameScene::InitScene()
         client->AddPacketToSend(packet);
     }
 
-    /*{
+    {
         d2eNet::Packet packet;
 
         d2e::WeakRef<d2e::GameObject> ping = CreateGameObject();
@@ -155,7 +155,7 @@ void GameScene::InitScene()
         packet.AddType<d2e::Transform>(id, transform->Serialize());
 
         client->AddPacketToSend(packet);
-    }*/
+    }
 
     mPlayer.CreatePrefab(d2e::WeakRef{ this }.Cast<d2e::Scene>());
 

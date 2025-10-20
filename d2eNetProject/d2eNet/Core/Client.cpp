@@ -17,9 +17,10 @@ bool Client::Init(const uint8_t ip1, const uint8_t  ip2, const uint8_t ip3, cons
 {
     const std::string ip = std::format("{}.{}.{}.{}", ip1, ip2, ip3, ip4);
 
-    mClient = enet_host_create(nullptr, 1, 1, 0, 0);
+    mClient = enet_host_create(nullptr, 1, 2, 0, 0);
 
-    ENetAddress address { .port = 7777 };
+    ENetAddress address { .host = ENET_HOST_ANY, .port = 7777 };
+
     enet_address_set_host(&address, ip.c_str());
     mPeer = enet_host_connect(mClient, &address, 1, 0);
 
@@ -32,34 +33,49 @@ void Client::Update(const uint32_t timeout)
 
     while (enet_host_service(mClient, &event, timeout) > 0)
     {
-        if (event.type == ENET_EVENT_TYPE_CONNECT)
+        switch (event.type)
         {
-            // todo add.
-            printf("A new client connected from %x:%u.\n",
-                event.peer->address.host,
-                event.peer->address.port);
+        case ENET_EVENT_TYPE_CONNECT:
             mConnected = true;
-            return;
-        }
-
-        if (event.type == ENET_EVENT_TYPE_DISCONNECT)
-        {
-            // todo add.
+            break;
+        case ENET_EVENT_TYPE_DISCONNECT:
             mConnected = false;
-            return;
+            break;
+        case ENET_EVENT_TYPE_RECEIVE:
+            mPacketsReceived.emplace(event.packet->data, event.packet->dataLength);
+            enet_packet_destroy(event.packet);
+            break;
         }
 
-        if (event.type == ENET_EVENT_TYPE_RECEIVE)
-        {
-            // todo add some info here.
-                /*printf("A packet of length %u containing %s was received from %s on channel %u from host.\n",
-                    event.packet->dataLength,
-                    reinterpret_cast<const char*>(event.packet->data),
-                    event.peer->data,
-                    event.channelID);*/
-            mPacketsReceived.emplace(event.packet->data, event.packet->dataLength);
-            return;
-        }
+        //if (event.type == ENET_EVENT_TYPE_CONNECT)
+        //{
+        //    // todo add.
+        //    printf("A new client connected from %x:%u.\n",
+        //        event.peer->address.host,
+        //        event.peer->address.port);
+        //    mConnected = true;
+        //    //return;
+        //}
+
+        //if (event.type == ENET_EVENT_TYPE_DISCONNECT)
+        //{
+        //    // todo add.
+        //    mConnected = false;
+        //    //return;
+        //}
+
+        //if (event.type == ENET_EVENT_TYPE_RECEIVE)
+        //{
+        //    // todo add some info here.
+        //        /*printf("A packet of length %u containing %s was received from %s on channel %u from host.\n",
+        //            event.packet->dataLength,
+        //            reinterpret_cast<const char*>(event.packet->data),
+        //            event.peer->data,
+        //            event.channelID);*/
+        //    mPacketsReceived.emplace(event.packet->data, event.packet->dataLength);
+        //    enet_packet_destroy(event.packet);
+        //    //return;
+        //}
     }
 }
 
@@ -92,7 +108,6 @@ void Client::SendPackets()
 
 void Client::SendPacket(const void* data, const uint32_t count, const bool reliable) const
 {
-    //todo look at where we destroy this packet.
     ENetPacket* packet{ enet_packet_create(data, count, reliable ? ENET_PACKET_FLAG_RELIABLE : ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT) };
 
     enet_peer_send(mPeer, 0, packet);

@@ -17,7 +17,7 @@ public:
     Host() = default;
     ~Host();
 
-    [[nodiscard]] bool Init(const uint8_t ip1, const uint8_t ip2, const uint8_t ip3, const uint8_t ip4, const uint16_t port, const bool host = true);
+    [[nodiscard]] bool Init(const uint8_t ip1, const uint8_t ip2, const uint8_t ip3, const uint8_t ip4, const uint16_t port);
 
     void Update(const uint32_t timeout);
 
@@ -27,7 +27,7 @@ public:
 
     [[nodiscard]] uint16_t GetNumJoinedClients() const { return mNumJoinedClients; }
 
-    static constexpr uint16_t NUMBER_OF_ALLOWED_CLIENTS = 1;
+    static constexpr uint16_t NUMBER_OF_ALLOWED_CLIENTS = 2;
 private:
     ENetHost*   mHost;
     ENetAddress mAddress;

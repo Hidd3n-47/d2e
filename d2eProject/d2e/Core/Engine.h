@@ -63,7 +63,7 @@ public:
 
     inline void CloseGame() { mRunning = false; }
 
-    static constexpr uint32_t TARGET_FRAMES = 60;
+    static constexpr uint32_t TARGET_FRAMES = 120;
     static constexpr std::chrono::duration<float> TARGET_FRAME_TIME{ 1.0f / TARGET_FRAMES };
 private:
     static std::unique_ptr<Engine>      mInstance;
