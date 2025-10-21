@@ -23,14 +23,14 @@ GameManager::~GameManager()
 
 void GameManager::Init()
 {
-    ChangeState(GameState::MAIN_MENU);
+    ChangeState(ApplicationState::MAIN_MENU);
 
-    d2e::Engine::Instance()->SetOnLevelLoadCompleteCallback([] { Instance()->ChangeState(GameState::GAME); });
+    d2e::Engine::Instance()->SetOnLevelLoadCompleteCallback([] { Instance()->ChangeState(ApplicationState::GAME); });
 
     GAME_LOG("Game initialized.");
 }
 
-void GameManager::ChangeState(const GameState newState)
+void GameManager::ChangeState(const ApplicationState newState)
 {
     if (mGameState == newState)
     {
@@ -40,18 +40,14 @@ void GameManager::ChangeState(const GameState newState)
 
     switch (newState)
     {
-    case GameState::MAIN_MENU:
+    case ApplicationState::MAIN_MENU:
         SetScene<MainMenuScene>();
         break;
-    case GameState::LOADING_GAME:
+    case ApplicationState::GAME:
         GAME_LOG("Loading game.");
         SetScene<GameScene>();
         break;
-    case GameState::GAME:
-        GAME_LOG("Game successfully loaded.");
-        mCurrentScene->SetSceneLoaded(true);
-        break;
-    case GameState::NONE:
+    case ApplicationState::NONE:
         GAME_ERROR("Trying to change game state to no state.");
         DEBUG_BREAK();
         break;
@@ -72,7 +68,7 @@ void GameManager::JoinOnlineGame()
 
     d2e::Engine::Instance()->ConnectClientToServer(ip1, ip2, ip3, ip4, 7777);
 
-    ChangeState(GameState::LOADING_GAME);
+    ChangeState(ApplicationState::GAME);
 }
 
 } // Namespace d2eGame.

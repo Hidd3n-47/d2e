@@ -3,11 +3,10 @@
 namespace d2eGame
 {
 
-enum class GameState
+enum class ApplicationState
 {
     NONE = -1,
     MAIN_MENU,
-    LOADING_GAME,
     GAME
 };
 

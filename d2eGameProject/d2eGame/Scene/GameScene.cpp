@@ -79,7 +79,7 @@ void GameScene::InitScene()
     const d2e::WeakRef sceneWeakRef{ d2e::WeakRef{ this }.Cast<d2e::Scene>()};
 
     // For two players.
-//#define TWO_PLAYERS
+#define TWO_PLAYERS
 #ifdef TWO_PLAYERS
     if (const bool isPlayer1 = client->GetId() == 1; isPlayer1)
     {
@@ -133,6 +133,23 @@ void GameScene::SceneUpdate() const
     packet.UpdateType<d2e::Movement>(playerGameObject->GetId(), movement->Serialize());
     d2e::Engine::Instance()->GetClient()->AddPacketToSend(packet);
 
+}
+
+void GameScene::ChangeGameState(const GameState state)
+{
+    switch (state)
+    {
+    case GameState::LOADING_LEVEL:
+        break;
+    case GameState::WAITING_FOR_PLAYERS:
+        break;
+    case GameState::LOADING_PLAYERS:
+        break;
+    case GameState::PLAYING:
+        break;
+    }
+
+    mGameState = state;
 }
 
 void GameScene::CreateWall(d2e::WeakRef<d2eNet::Client> client, const d2e::Vec2 translation, const d2e::Vec2 halfExtents)
