@@ -59,9 +59,6 @@ void ServerManager::Run()
             }
         }
 
-        // Receive info.
-        mHost->Update(3);
-
         if (mHost->GetNumJoinedClients() > mNumClientsConnected)
         {
             ClientConnected();
@@ -101,7 +98,7 @@ void ServerManager::ProcessIncomingPackets(d2e::WeakRef<d2e::Scene> activeScene)
     std::optional<d2eNet::Packet> packet = mHost->GetPacket();
     while (packet)
     {
-        mLog.Info("Processed Packet: {}", std::string{ packet->BufBegin(), packet->BufEnd() });
+        //mLog.Info("Processed Packet: {}", std::string{ packet->BufBegin(), packet->BufEnd() });
         for (d2eNet::Packet::Iterator it = packet->Begin(); it != packet->End(); ++it)
         {
             const std::string packetString = it.GetPacketLineString();
@@ -158,7 +155,7 @@ void ServerManager::ProcessIncomingPackets(d2e::WeakRef<d2e::Scene> activeScene)
             {
                 d2eNet::Packet p;
                 p.AddStringToPacket(d2eNet::PacketLineType::LEVEL_LOAD_COMPLETE, "");
-                mHost->BroadcastPacket(p);
+                mHost->AddPacketToBroadcast(p);
                 break;
             }
             default:
@@ -188,10 +185,13 @@ void ServerManager::SendPacketsToClients(d2e::WeakRef<d2e::Scene> activeScene) c
         for (const d2e::IComponent* comp : gameObject->GetComponents())
         {
             //std::cout << "Component <" + comp->GetName() + "> " + comp->Serialize() << std::endl;
-            packet.UpdateType(id, comp->GetName(), comp->Serialize());
+            if (comp->SyncValuesOnUpdate())
+            {
+                packet.UpdateType(id, comp->GetName(), comp->Serialize());
+            }
         }
 
-        mHost->BroadcastPacket(packet);
+        mHost->AddPacketToBroadcast(packet);
     }
 }
 

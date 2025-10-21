@@ -4,6 +4,9 @@
 #include <cstdint>
 #include <optional>
 
+#include <mutex>
+#include <thread>
+
 #include <enet/enet.h>
 
 #include "d2eNet/Core/Packet.h"
@@ -19,27 +22,31 @@ public:
     Client() = default;
     ~Client();
 
-    [[nodiscard]] bool Init(const uint8_t ip1, const uint8_t ip2, const uint8_t ip3, const uint8_t ip4, const uint16_t port);
+    [[nodiscard]] bool Init(const uint8_t ip1, const uint8_t ip2, const uint8_t ip3, const uint8_t ip4, const uint16_t port, const uint32_t timeout = 5);
 
     void Update(const uint32_t timeout);
 
-    inline void AddPacketToSend(Packet& packet) { mPacketsToSend.emplace(std::move(packet)); }
-    inline void AddPacketReceived(Packet& packet) { mPacketsReceived.emplace(std::move(packet)); }
+    inline void AddPacketToSend(Packet& packet)   { std::lock_guard lock(mPacketsToSendMutex); mPacketsToSend.emplace(std::move(packet)); }
+    inline void AddPacketReceived(Packet& packet) { std::lock_guard lock(mPacketsReceivedMutex); mPacketsReceived.emplace(std::move(packet)); }
 
     std::optional<Packet> GetPacketReceived();
 
     void SendPackets();
-    void SendPacket(const void* data, const uint32_t count, const bool reliable) const;
+    void SendPacket(const Packet& packet) const;
 
     [[nodiscard]] inline uint16_t GetId() const { return mClientId; }
 private:
     ENetHost* mClient;
     ENetPeer* mPeer;
-    bool mConnected;
+    std::atomic<bool> mConnected;
     uint16_t mClientId;
 
     std::queue<Packet> mPacketsToSend;
     std::queue<Packet> mPacketsReceived;
+
+    std::thread mClientThread;
+    std::mutex mPacketsToSendMutex;
+    std::mutex mPacketsReceivedMutex;
 };
 
 } // Namespace d2eNet.

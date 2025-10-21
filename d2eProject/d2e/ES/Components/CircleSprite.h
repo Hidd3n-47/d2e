@@ -16,8 +16,8 @@ public:
     inline void SetRadius(const float radius) { mRadius = radius; }
     inline void SetColor(const sf::Color color) { mColor = color; }
 
-    [[nodiscard]] inline std::string Serialize() const override { return SerializeUtils::Serialize(mRadius); }
-    inline void Deserialize(const std::string& string) override { SerializeUtils::Deserialize(mRadius, string.substr(1)); }
+    [[nodiscard]] inline std::string Serialize() const override { return SerializeUtils::Serialize(mSyncValuesOnUpdate) + SerializeUtils::Serialize(mRadius); }
+    inline void Deserialize(const std::string& string) override { SerializeUtils::Deserialize(mSyncValuesOnUpdate, std::string { string[0] }); SerializeUtils::Deserialize(mRadius, string.substr(1)); }
 
     D2E_COMPONENT("CircleSprite")
 private:

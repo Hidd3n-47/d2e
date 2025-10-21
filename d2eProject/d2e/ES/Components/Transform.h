@@ -16,15 +16,15 @@ public:
     {
         const std::string delimiter = "|";
 
-        return SerializeUtils::Serialize(translation) + delimiter + SerializeUtils::Serialize(scale);
+        return SerializeUtils::Serialize(mSyncValuesOnUpdate) + SerializeUtils::Serialize(translation) + delimiter + SerializeUtils::Serialize(scale);
     }
     inline void Deserialize(const std::string& string) override
     {
-        const std::string delimiter = "|";
+        SerializeUtils::Deserialize(mSyncValuesOnUpdate, std::string{ string[0] });
 
-        const size_t firstPosition  = string.find(delimiter);
+        const size_t firstPosition  = string.find(SerializeUtils::DELIMITER);
 
-        const std::string first  = string.substr(0, firstPosition);
+        const std::string first  = string.substr(1, firstPosition);
         const std::string second = string.substr(firstPosition + 1);
 
         SerializeUtils::Deserialize(translation, first);

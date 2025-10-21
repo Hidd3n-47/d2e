@@ -26,15 +26,16 @@ void PingDisplay::Render(WeakRef<sf::RenderWindow> window)
 std::string PingDisplay::Serialize() const
 {
     const std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds> now = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
-    return SerializeUtils::Serialize(static_cast<uint64_t>(now.time_since_epoch().count()));
+    return SerializeUtils::Serialize(mSyncValuesOnUpdate) + SerializeUtils::Serialize(static_cast<uint64_t>(now.time_since_epoch().count()));
 }
 
 void PingDisplay::Deserialize(const std::string& string)
 {
+    SerializeUtils::Deserialize(mSyncValuesOnUpdate, std::string{ string[0] });
     const std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds> now = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
 
     uint64_t sentTime;
-    SerializeUtils::Deserialize(sentTime, string);
+    SerializeUtils::Deserialize(sentTime, string.substr(1));
 
     const std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds> sentTimePoint{ std::chrono::milliseconds{sentTime} };
 

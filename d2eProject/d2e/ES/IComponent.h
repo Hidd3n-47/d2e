@@ -23,9 +23,13 @@ public:
     [[nodiscard]] virtual std::string Serialize() const { return ""; }
     virtual void Deserialize(const std::string& string) { }
 
+    [[nodiscard]] inline bool SyncValuesOnUpdate() const { return mSyncValuesOnUpdate; }
+    inline void SetSyncValuesOnUpdate(const bool sync) { mSyncValuesOnUpdate = sync; }
+
     virtual std::string GetName() const { return "component"; }
 protected:
     WeakRef<GameObject> mParent;
+    bool mSyncValuesOnUpdate = false;
 };
 
 } // Namespace d2e.

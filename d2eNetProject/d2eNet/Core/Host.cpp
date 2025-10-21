@@ -1,6 +1,5 @@
 #include "Host.h"
 
-#include <iostream>
 #include <format>
 
 namespace d2eNet
@@ -8,10 +7,16 @@ namespace d2eNet
 
 Host::~Host()
 {
+    mRunning = false;
+    if (mHostThread.joinable())
+    {
+        mHostThread.join();
+    }
+
     enet_host_destroy(mHost);
 }
 
-bool Host::Init(const uint8_t ip1, const uint8_t  ip2, const uint8_t ip3, const uint8_t ip4, const uint16_t port)
+bool Host::Init(const uint8_t ip1, const uint8_t  ip2, const uint8_t ip3, const uint8_t ip4, const uint16_t port, const uint32_t timeout)
 {
     const std::string ip = std::format("{}.{}.{}.{}", ip1, ip2, ip3, ip4);
 
@@ -20,74 +25,118 @@ bool Host::Init(const uint8_t ip1, const uint8_t  ip2, const uint8_t ip3, const 
 
     mHost = enet_host_create(&mAddress, NUMBER_OF_ALLOWED_CLIENTS, 2, 0, 0);
 
-    return mHost;
+    mRunning = mHost;
+    mHostThread = std::thread(&Host::Update, this, timeout);
+
+    return mRunning;
 }
 
 void Host::Update(const uint32_t timeout)
 {
-    ENetEvent event;
-
-    while (enet_host_service(mHost, &event, timeout) > 0)
+    while (mRunning)
     {
-        switch (event.type)
+        ENetEvent event;
+
+        while (enet_host_service(mHost, &event, timeout) > 0)
         {
-        case ENET_EVENT_TYPE_CONNECT:
-        {
-            ++mNumJoinedClients;
+            switch (event.type)
+            {
+            case ENET_EVENT_TYPE_CONNECT:
+            {
+                ++mNumJoinedClients;
 
-            const std::string idString = std::to_string(mNumJoinedClients);
-            const char* idStringCStr = idString.c_str();
-            ENetPacket* packet{ enet_packet_create(idStringCStr, strlen(idStringCStr) + 1, ENET_PACKET_FLAG_RELIABLE) };
-            enet_peer_send(event.peer, 0, packet);
-            enet_host_flush(mHost);
-            break;
+                const std::string idString = std::to_string(mNumJoinedClients);
+                const char* idStringCStr = idString.c_str();
+                ENetPacket* packet{ enet_packet_create(idStringCStr, strlen(idStringCStr) + 1, ENET_PACKET_FLAG_RELIABLE) };
+                enet_peer_send(event.peer, 0, packet);
+                enet_host_flush(mHost);
+                break;
+            }
+            case ENET_EVENT_TYPE_DISCONNECT:
+                --mNumJoinedClients;
+                break;
+            case ENET_EVENT_TYPE_RECEIVE:
+            {
+                std::lock_guard lock(mPacketsReceivedMutex);
+                mPacketsReceived.emplace(event.packet->data, event.packet->dataLength);
+                enet_packet_destroy(event.packet);
+                break;
+            }
+            }
+
+            //if (event.type == ENET_EVENT_TYPE_CONNECT)
+            //{
+            //    // todo add.
+            //    ++mNumJoinedClients;
+            //    printf("A new client connected from %x:%u.\n",
+            //        event.peer->address.host,
+            //        event.peer->address.port);
+            //    //return;
+            //}
+
+            //if (event.type == ENET_EVENT_TYPE_DISCONNECT)
+            //{
+            //    // todo add.
+            //    --mNumJoinedClients;
+            //    printf("A new client disconnected from %x:%u.\n",
+            //        event.peer->address.host,
+            //        event.peer->address.port);
+
+            //    //return;
+            //}
+
+            //if (event.type == ENET_EVENT_TYPE_RECEIVE)
+            //{
+            //    // todo add some info here.
+            //    /*printf("A packet of length %u containing %s was received from %s on channel %u.\n",
+            //        event.packet->dataLength,
+            //        reinterpret_cast<const char*>(event.packet->data),
+            //        event.peer->data,
+            //        event.channelID);*/
+
+            //        //mPacketsReceived.emplace(std::string{ reinterpret_cast<const char*>(event.packet->data), event.packet->dataLength });
+            //    mPacketsReceived.emplace(event.packet->data, event.packet->dataLength);
+            //    enet_packet_destroy(event.packet);
+            //    //return;
+            //}
         }
-        case ENET_EVENT_TYPE_DISCONNECT:
-            --mNumJoinedClients;
-            break;
-        case ENET_EVENT_TYPE_RECEIVE:
-            mPacketsReceived.emplace(event.packet->data, event.packet->dataLength);
-            enet_packet_destroy(event.packet);
-            break;
-        }
 
-        //if (event.type == ENET_EVENT_TYPE_CONNECT)
-        //{
-        //    // todo add.
-        //    ++mNumJoinedClients;
-        //    printf("A new client connected from %x:%u.\n",
-        //        event.peer->address.host,
-        //        event.peer->address.port);
-        //    //return;
-        //}
-
-        //if (event.type == ENET_EVENT_TYPE_DISCONNECT)
-        //{
-        //    // todo add.
-        //    --mNumJoinedClients;
-        //    printf("A new client disconnected from %x:%u.\n",
-        //        event.peer->address.host,
-        //        event.peer->address.port);
-
-        //    //return;
-        //}
-
-        //if (event.type == ENET_EVENT_TYPE_RECEIVE)
-        //{
-        //    // todo add some info here.
-        //    /*printf("A packet of length %u containing %s was received from %s on channel %u.\n",
-        //        event.packet->dataLength,
-        //        reinterpret_cast<const char*>(event.packet->data),
-        //        event.peer->data,
-        //        event.channelID);*/
-
-        //        //mPacketsReceived.emplace(std::string{ reinterpret_cast<const char*>(event.packet->data), event.packet->dataLength });
-        //    mPacketsReceived.emplace(event.packet->data, event.packet->dataLength);
-        //    enet_packet_destroy(event.packet);
-        //    //return;
-        //}
+        BroadcastPackets();
     }
 }
+
+std::optional<Packet> Host::GetPacket()
+{
+    std::lock_guard lock(mPacketsReceivedMutex);
+
+    if (mPacketsReceived.empty())
+    {
+        return {};
+    }
+
+    Packet front = mPacketsReceived.front();
+    mPacketsReceived.pop();
+
+    return { front };
+}
+
+void Host::BroadcastPackets()
+{
+    std::queue<Packet> localQueue;
+    {
+        std::lock_guard lock(mPacketsToBroadcastMutex);
+        std::swap(localQueue, mPacketsToBroadcast);
+    }
+
+    while (!localQueue.empty())
+    {
+        BroadcastPacket(localQueue.front());
+        localQueue.pop();
+    }
+
+    enet_host_flush(mHost);
+}
+
 
 void Host::BroadcastPacket(const Packet& packet) const
 {
@@ -95,7 +144,7 @@ void Host::BroadcastPacket(const Packet& packet) const
     ENetPacket* enetPacket{ enet_packet_create(packet.GetData(), packet.GetCount(), packet.IsReliable() ? ENET_PACKET_FLAG_RELIABLE : ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT) };
 
     enet_host_broadcast(mHost, 0, enetPacket);
-    enet_host_flush(mHost);
+    //enet_host_flush(mHost);
 }
 
 } // Namespace d2eNet.

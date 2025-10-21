@@ -64,6 +64,7 @@ void GameScene::InitScene()
         packet.AddLineWithId(id);
 
         d2e::WeakRef<d2e::PingDisplay> pingDisplay = ping->AddComponent<d2e::PingDisplay>();
+        pingDisplay->SetSyncValuesOnUpdate(true);
         packet.AddType<d2e::PingDisplay>(id, pingDisplay->Serialize());
 
         packet.AddSyncObject(id);
@@ -76,6 +77,10 @@ void GameScene::InitScene()
     }
 
     const d2e::WeakRef sceneWeakRef{ d2e::WeakRef{ this }.Cast<d2e::Scene>()};
+
+    // for two players.
+#define TWO_PLAYERS
+#ifdef TWO_PLAYERS
     if (const bool isPlayer1 = client->GetId() == 1; isPlayer1)
     {
         mPlayer.CreatePrefab(sceneWeakRef, isPlayer1);
@@ -90,6 +95,9 @@ void GameScene::InitScene()
 
         mPlayer.CreatePrefab(sceneWeakRef, isPlayer1);
     }
+#else
+    mPlayer.CreatePrefab(sceneWeakRef, true);
+#endif
 
     d2eNet::Packet loadCompleted;
     loadCompleted.AddStringToPacket(d2eNet::PacketLineType::LEVEL_LOAD_COMPLETE, "");
@@ -122,7 +130,7 @@ void GameScene::SceneUpdate() const
     movement->jumped     = jumped;
 
     static int counter;
-    //if (++counter > 5)
+    //if (++counter > 100)
     {
         d2eNet::Packet packet{ false };
         packet.UpdateType<d2e::Movement>(playerGameObject->GetId(), movement->Serialize());

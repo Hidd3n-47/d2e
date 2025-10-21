@@ -24,8 +24,8 @@ public:
     inline void SetRadius(const float radius) { mRadius = radius; }
     inline void SetOnCollisionEnterCallback(const std::function<void(const CollisionInfo&)>& callback) { mOnCollisionEnterCallback = callback; }
 
-    [[nodiscard]] inline std::string Serialize() const override { return SerializeUtils::Serialize(mCollidedLastFrame) + SerializeUtils::Serialize(mRadius); }
-    inline void Deserialize(const std::string& string) override { SerializeUtils::Deserialize(mCollidedLastFrame, std::string{ string[0] }); SerializeUtils::Deserialize(mRadius, string.substr(1)); }
+    [[nodiscard]] inline std::string Serialize() const override { return SerializeUtils::Serialize(mSyncValuesOnUpdate) + SerializeUtils::Serialize(mCollidedLastFrame) + SerializeUtils::Serialize(mRadius); }
+    inline void Deserialize(const std::string& string) override { SerializeUtils::Deserialize(mSyncValuesOnUpdate, std::string{ string[0] });  SerializeUtils::Deserialize(mCollidedLastFrame, std::string{ string[1] }); SerializeUtils::Deserialize(mRadius, string.substr(2)); }
 
     D2E_COMPONENT("CircleCollider")
 

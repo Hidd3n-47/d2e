@@ -16,8 +16,8 @@ public:
 
     inline void SetHalfExtents(const Vec2 halfExtents) { mHalfExtents = halfExtents; }
 
-    [[nodiscard]] inline std::string Serialize() const override { return SerializeUtils::Serialize(mHalfExtents); }
-    inline void Deserialize(const std::string& string) override { SerializeUtils::Deserialize(mHalfExtents, string); }
+    [[nodiscard]] inline std::string Serialize() const override { return SerializeUtils::Serialize(mSyncValuesOnUpdate) + SerializeUtils::Serialize(mHalfExtents); }
+    inline void Deserialize(const std::string& string) override { SerializeUtils::Deserialize(mSyncValuesOnUpdate, std::string{ string[0] }); SerializeUtils::Deserialize(mHalfExtents, string.substr(1)); }
 
     D2E_COMPONENT("StaticBoxCollider")
 

@@ -34,7 +34,8 @@ void Movement::Update(const float dt)
 
 std::string Movement::Serialize() const
 {
-    return SerializeUtils::Serialize(jumped)
+    return SerializeUtils::Serialize(mSyncValuesOnUpdate)
+         + SerializeUtils::Serialize(jumped)
          + SerializeUtils::Serialize(xAxisDelta)   + SerializeUtils::DELIMITER
          + SerializeUtils::Serialize(speed)        + SerializeUtils::DELIMITER
          + SerializeUtils::Serialize(maxJumpCount) + SerializeUtils::DELIMITER
@@ -43,13 +44,14 @@ std::string Movement::Serialize() const
 
 void Movement::Deserialize(const std::string& string)
 {
-    SerializeUtils::Deserialize(jumped, std::string{ string[0] });
+    SerializeUtils::Deserialize(mSyncValuesOnUpdate, std::string{ string[0] });
+    SerializeUtils::Deserialize(jumped, std::string{ string[1] });
 
     const size_t firstDelimiter  = string.find(SerializeUtils::DELIMITER);
     const size_t secondDelimiter = string.find(',', firstDelimiter + 1);
     const size_t thirdDelimiter  = string.find(',', secondDelimiter + 1);
 
-    const std::string first  = string.substr(1, firstDelimiter);
+    const std::string first  = string.substr(2, firstDelimiter);
     const std::string second = string.substr(firstDelimiter + 1, secondDelimiter - firstDelimiter - 1);
     const std::string third  = string.substr(secondDelimiter + 1, thirdDelimiter - secondDelimiter - 1);
     const std::string fourth = string.substr(thirdDelimiter + 1);

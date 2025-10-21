@@ -43,11 +43,12 @@ void Engine::Run()
         {
             SceneUpdate();
         }
-        SendPackets();
+
         if (mActiveScene && mActiveScene->IsSceneLoaded())
         {
             Update();
         }
+
         PostUpdate();
         Render();
         ReceivePackets();
@@ -238,7 +239,7 @@ void Engine::ReceivePackets() const
     std::optional<d2eNet::Packet> packet = mClient->GetPacketReceived();
     while (packet)
     {
-        DEBUG_LOG("Processed Packet: {}", std::string{ packet->BufBegin(), packet->BufEnd() });
+        //DEBUG_LOG("Processed Packet: {}", std::string{ packet->BufBegin(), packet->BufEnd() });
         for (d2eNet::Packet::Iterator it = packet->Begin(); it != packet->End(); ++it)
         {
             const std::string packetString = it.GetPacketLineString();

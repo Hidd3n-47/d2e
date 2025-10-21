@@ -33,6 +33,7 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1)
 
     d2e::WeakRef<d2e::Transform> transform = mGameObject->GetComponent<d2e::Transform>();
     transform->translation = isPlayer1 ? d2e::Vec2{ 900.0f, 100.0f } : d2e::Vec2{ 1100.0f, 100.0f };
+    transform->SetSyncValuesOnUpdate(true);
     packet.AddType<d2e::Transform>(id, transform->Serialize());
 
     d2e::WeakRef<d2e::CircleSprite> visual = mGameObject->AddComponent<d2e::CircleSprite>();
@@ -86,6 +87,7 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1)
     d2e::WeakRef<d2e::RigidBody> rb = mGameObject->AddComponent<d2e::RigidBody>();
     rb->SetGravity(d2e::Vec2{ 0.0f, 15.0f });
     rb->SetRestitution(0.1f);
+    rb->SetSyncValuesOnUpdate(true);
     packet.AddType<d2e::RigidBody>(id, rb->Serialize());
 
     packet.AddSyncObject(id);
