@@ -11,20 +11,21 @@ namespace d2e
 class PingDisplay : public IComponent
 {
 public:
-    //PingDisplay()
-    //    : mPing(sf::Font{ "E:/Programming/d2e/d2eGameProject/d2eGame/Assets/Fonts/Roboto" }, mText, 10)
-    //{}
     void Render(WeakRef<sf::RenderWindow> window) override;
 
     std::string Serialize() const override;
     void Deserialize(const std::string& string) override;
 
     D2E_COMPONENT("PingDisplay")
-private:
-    //sf::Text mPing;
-    uint64_t mPing;
 
-    std::string mText{ "foo" };
+    static constexpr uint32_t PING_CACHE_COUNT = 30;
+private:
+    inline static sf::Font mFont{ "E:/Programming/d2e/d2eGameProject/d2eGame/Assets/Fonts/Roboto/Roboto-Bold.ttf" };
+    uint64_t mPingCache[PING_CACHE_COUNT] { 0 };
+    uint32_t mPingIndex = 0;
+
+    std::string mTextString{ "0" };
+    sf::Text    mText{ mFont, mTextString, 4 };
 };
 
 } // Namespace d2e.

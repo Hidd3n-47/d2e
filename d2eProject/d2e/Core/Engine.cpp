@@ -54,9 +54,9 @@ void Engine::Run()
         ReceivePackets();
         EndFrame();
 
-#ifdef DEV_CONFIGURATION
+//#ifdef DEV_CONFIGURATION
         mWindow->setTitle(std::format("d2e - DEV - {} fps", 1.0f / (std::chrono::duration<float>(std::chrono::high_resolution_clock::now() - mFrameStart).count())));
-#endif // DEV_CONFIGURATION.
+//#endif // DEV_CONFIGURATION.
     }
 }
 

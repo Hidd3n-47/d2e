@@ -73,7 +73,7 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1)
         };
 
         anim->CreateAnimation(animDetails, 0.015f);
-        anim->SetSpriteColor(playerColor);
+        anim->SetSpriteColor(PLAYER_1_COLOR);
         d2e::WeakRef<d2e::Transform> t = object->GetComponent<d2e::Transform>();
         t->translation = info.collisionPosition - d2e::Vec2{ 0.0f, -0.5f };
         t->scale = d2e::Vec2{ 0.13f * r, 0.13f };

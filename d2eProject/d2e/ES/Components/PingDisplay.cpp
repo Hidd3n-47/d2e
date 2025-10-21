@@ -9,18 +9,24 @@ namespace d2e
 
 void PingDisplay::Render(WeakRef<sf::RenderWindow> window)
 {
-    static sf::Font f{ "E:/Programming/d2e/d2eGameProject/d2eGame/Assets/Fonts/Roboto/Roboto-Bold.ttf" };
-    mText = std::to_string(mPing);
+    if (mPingIndex == 0)
+    {
+        uint64_t count = 0;
+        for (const uint64_t ping : mPingCache)
+        {
+            count += ping;
+        }
 
-    sf::Text p(f, mText, 10);
+        mTextString = std::to_string(count / PING_CACHE_COUNT);
+        mText.setString(mTextString);
+    }
 
     const WeakRef<Transform> transform = mParent->GetComponent<Transform>();
 
-    p.setPosition({ transform->translation.x, transform->translation.y});
-    p.setCharacterSize(20);
-    p.setString(mText);
+    mText.setPosition({ transform->translation.x, transform->translation.y});
+    mText.setCharacterSize(20);
 
-    window->draw(p);
+    window->draw(mText);
 }
 
 std::string PingDisplay::Serialize() const
@@ -39,6 +45,7 @@ void PingDisplay::Deserialize(const std::string& string)
 
     const std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds> sentTimePoint{ std::chrono::milliseconds{sentTime} };
 
-    mPing = std::chrono::milliseconds(now - sentTimePoint).count();
+    mPingCache[mPingIndex] = std::chrono::milliseconds(now - sentTimePoint).count();
+    mPingIndex = (mPingIndex + 1) % PING_CACHE_COUNT;
 }
 } // Namespace d2e.

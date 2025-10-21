@@ -78,8 +78,8 @@ void GameScene::InitScene()
 
     const d2e::WeakRef sceneWeakRef{ d2e::WeakRef{ this }.Cast<d2e::Scene>()};
 
-    // for two players.
-#define TWO_PLAYERS
+    // For two players.
+//#define TWO_PLAYERS
 #ifdef TWO_PLAYERS
     if (const bool isPlayer1 = client->GetId() == 1; isPlayer1)
     {
@@ -129,14 +129,9 @@ void GameScene::SceneUpdate() const
     movement->xAxisDelta = xAxisDelta;
     movement->jumped     = jumped;
 
-    static int counter;
-    //if (++counter > 100)
-    {
-        d2eNet::Packet packet{ false };
-        packet.UpdateType<d2e::Movement>(playerGameObject->GetId(), movement->Serialize());
-        d2e::Engine::Instance()->GetClient()->AddPacketToSend(packet);
-        counter = 0;
-    }
+    d2eNet::Packet packet{ false };
+    packet.UpdateType<d2e::Movement>(playerGameObject->GetId(), movement->Serialize());
+    d2e::Engine::Instance()->GetClient()->AddPacketToSend(packet);
 
 }
 
