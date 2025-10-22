@@ -136,11 +136,7 @@ void ServerManager::ProcessIncomingPackets(d2e::WeakRef<d2e::Scene> activeScene)
             }
             case d2eNet::PacketLineType::SYNC_GAME_OBJECT_ACROSS_NETWORK:
             {
-                const size_t delimiter = packetString.find(d2e::SerializeUtils::DELIMITER);
-                const uint32_t clientId = std::stoul(packetString.substr(0, delimiter));
-                const uint64_t ulid = std::stoull(packetString.substr(delimiter + 1));
-
-                mGameObjectsToSyncAcrossNetwork.emplace_back(clientId, ulid);
+                mGameObjectsToSyncAcrossNetwork.emplace_back(d2e::Ulid{ std::stoull(packetString) });
                 mLog.Debug("Registered game object (ID: {}) to be synced across networks.", packetString);
                 break;
             }
@@ -184,7 +180,7 @@ void ServerManager::SendPacketsToClients(d2e::WeakRef<d2e::Scene> activeScene) c
         return;
     }
 
-    for (const auto [clientId, id] : mGameObjectsToSyncAcrossNetwork)
+    for (const d2e::Ulid id : mGameObjectsToSyncAcrossNetwork)
     {
         d2e::WeakRef<d2e::GameObject> gameObject = activeScene->GetGameObject(id);
 
@@ -199,7 +195,7 @@ void ServerManager::SendPacketsToClients(d2e::WeakRef<d2e::Scene> activeScene) c
             }
         }
 
-        mHost->AddPacketToSendToClient(clientId, packet);
+        mHost->AddPacketToBroadcast(packet);
     }
 }
 
