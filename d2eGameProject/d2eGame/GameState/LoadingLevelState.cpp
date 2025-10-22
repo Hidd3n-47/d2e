@@ -24,6 +24,7 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
     const d2e::Vec2 windowSize = d2e::Engine::Instance()->GetWindowSize();
 
     d2e::WeakRef<d2eNet::Client> client = d2e::Engine::Instance()->GetClient();
+    bool uploadLevelData = client->GetId() == 1;
 
     // Testing floor.
     {
@@ -46,7 +47,10 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
         bc->SetHalfExtents(floorSprite->GetHalfExtents());
         packet.AddType<d2e::StaticBoxCollider>(id, bc->Serialize());
 
-        client->AddPacketToSend(packet);
+        if (uploadLevelData)
+        {
+            client->AddPacketToSend(packet);
+        }
     }
 
     // Wall boundaries.
@@ -107,7 +111,10 @@ void LoadingLevelState::CreateWall(d2e::WeakRef<d2eNet::Client> client, const d2
     tag->tag = d2e::ComponentTag::WALL;
     packet.AddType<d2e::Tag>(id, tag->Serialize());
 
-    client->AddPacketToSend(packet);
+    if (client->GetId() == 0)
+    {
+        client->AddPacketToSend(packet);
+    }
 }
 
 } // Namespace d2eGame.

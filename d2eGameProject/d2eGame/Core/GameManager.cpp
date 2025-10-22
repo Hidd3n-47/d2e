@@ -74,13 +74,13 @@ void GameManager::JoinOnlineGame()
 
 void GameManager::PlayerTwoJoined(const uint64_t id)
 {
-    Player p2;
+    /*Player p2;
     p2.CreatePrefab(d2e::WeakRef{ mCurrentScene }.Cast<d2e::Scene>(), id);
 
     if (d2e::Engine::Instance()->GetClient()->GetId() != 1)
     {
         dynamic_cast<GameScene*>(mCurrentScene)->SetPlayer(p2);
-    }
+    }*/
 }
 
 } // Namespace d2eGame.
