@@ -32,7 +32,7 @@ bool Client::Init(const uint8_t ip1, const uint8_t  ip2, const uint8_t ip3, cons
 
     mClient = enet_host_create(nullptr, 1, 2, 0, 0);
 
-    ENetAddress address { .host = ENET_HOST_ANY, .port = 7777 };
+    ENetAddress address { .host = ENET_HOST_ANY, .port = 6666 };
 
     enet_address_set_host(&address, ip.c_str());
     mPeer = enet_host_connect(mClient, &address, 1, 0);
@@ -52,7 +52,7 @@ bool Client::Init(const uint8_t ip1, const uint8_t  ip2, const uint8_t ip3, cons
         case ENET_EVENT_TYPE_RECEIVE:
         {
             const std::string idStr{ reinterpret_cast<char*>(event.packet->data) };
-            mClientId = static_cast<uint16_t>(std::stoi(idStr));
+            mClientId = std::stoul(idStr);
             enet_packet_destroy(event.packet);
 
             setId = true;

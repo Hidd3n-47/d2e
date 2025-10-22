@@ -92,7 +92,8 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const std::optional<ui
     rb->SetSyncValuesOnUpdate(true);
     packet.AddType<d2e::RigidBody>(id, rb->Serialize());
 
-    packet.AddSyncObject(id);
+    d2e::WeakRef<d2eNet::Client> client = d2e::Engine::Instance()->GetClient();
+    packet.AddSyncObject(client->GetId(), id);
 
     d2e::Engine::Instance()->GetClient()->AddPacketToSend(packet);
 }

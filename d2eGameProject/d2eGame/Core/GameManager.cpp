@@ -67,20 +67,20 @@ void GameManager::JoinOnlineGame()
     int ip1, ip2, ip3, ip4;
     std::cin >> ip1 >> ip2 >> ip3 >> ip4;
 
-    d2e::Engine::Instance()->ConnectClientToServer(ip1, ip2, ip3, ip4, 7777);
+    d2e::Engine::Instance()->ConnectClientToServer(ip1, ip2, ip3, ip4, 6666);
 
     ChangeState(ApplicationState::GAME);
 }
 
 void GameManager::PlayerTwoJoined(const uint64_t id)
 {
-    /*Player p2;
+    Player p2;
     p2.CreatePrefab(d2e::WeakRef{ mCurrentScene }.Cast<d2e::Scene>(), id);
 
     if (d2e::Engine::Instance()->GetClient()->GetId() != 1)
     {
         dynamic_cast<GameScene*>(mCurrentScene)->SetPlayer(p2);
-    }*/
+    }
 }
 
 } // Namespace d2eGame.

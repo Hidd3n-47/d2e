@@ -52,6 +52,7 @@ void Host::Update(const uint32_t timeout)
                     mOnClientConnectedCallback(mNumJoinedClients);
                 }
                 mHostAddressToId[event.peer->address.host] = mNumJoinedClients;
+                mClientIdToPeer[mNumJoinedClients] = event.peer;
 
                 const std::string idString = std::to_string(mNumJoinedClients);
                 const char* idStringCStr = idString.c_str();
@@ -114,7 +115,7 @@ void Host::Update(const uint32_t timeout)
             //}
         }
 
-        BroadcastPackets();
+        SendPackets();
     }
 }
 
@@ -133,18 +134,33 @@ std::optional<Packet> Host::GetPacket()
     return { front };
 }
 
-void Host::BroadcastPackets()
+void Host::SendPackets()
 {
-    std::queue<Packet> localQueue;
+    std::queue<Packet> queueToBroadcast;
     {
         std::lock_guard lock(mPacketsToBroadcastMutex);
-        std::swap(localQueue, mPacketsToBroadcast);
+        std::swap(queueToBroadcast, mPacketsToBroadcast);
     }
 
-    while (!localQueue.empty())
+    while (!queueToBroadcast.empty())
     {
-        BroadcastPacket(localQueue.front());
-        localQueue.pop();
+        BroadcastPacket(queueToBroadcast.front());
+        queueToBroadcast.pop();
+    }
+
+    std::unordered_map<uint32_t, std::queue<Packet>> queueToSendToClients;
+    {
+        std::lock_guard lock(mPacketsToSendToClientMutex);
+        queueToSendToClients = std::move(mClientIdToPacketsToSend);
+    }
+
+    for (auto& [clientId, packetQueue] : queueToSendToClients)
+    {
+        while (!packetQueue.empty())
+        {
+            SendPacket(clientId, packetQueue.front());
+            packetQueue.pop();
+        }
     }
 
     enet_host_flush(mHost);
@@ -157,6 +173,13 @@ void Host::BroadcastPacket(const Packet& packet) const
     ENetPacket* enetPacket{ enet_packet_create(packet.GetData(), packet.GetCount(), packet.IsReliable() ? ENET_PACKET_FLAG_RELIABLE : ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT) };
 
     enet_host_broadcast(mHost, 0, enetPacket);
+}
+
+void Host::SendPacket(const uint32_t id, const Packet& packet)
+{
+    ENetPacket* enetPacket{ enet_packet_create(packet.GetData(), packet.GetCount(), packet.IsReliable() ? ENET_PACKET_FLAG_RELIABLE : ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT) };
+
+    enet_peer_send(mClientIdToPeer[id], 0, enetPacket);
 }
 
 } // Namespace d2eNet.

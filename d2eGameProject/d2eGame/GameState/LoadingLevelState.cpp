@@ -71,7 +71,7 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
         pingDisplay->SetSyncValuesOnUpdate(true);
         packet.AddType<d2e::PingDisplay>(id, pingDisplay->Serialize());
 
-        packet.AddSyncObject(id);
+        packet.AddSyncObject(client->GetId(), id);
 
         d2e::WeakRef<d2e::Transform> transform = ping->GetComponent<d2e::Transform>();
         transform->translation = windowSize * d2e::Vec2{ 0.015f, 0.015f };

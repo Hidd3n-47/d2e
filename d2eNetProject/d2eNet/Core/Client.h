@@ -38,12 +38,12 @@ public:
     void SendPackets();
     void SendPacket(const Packet& packet) const;
 
-    [[nodiscard]] inline uint16_t GetId() const { return mClientId; }
+    [[nodiscard]] inline uint32_t GetId() const { return mClientId; }
 private:
     ENetHost* mClient;
     ENetPeer* mPeer;
     std::atomic<bool> mConnected;
-    uint16_t mClientId;
+    uint32_t mClientId;
 
     std::queue<Packet> mPacketsToSend;
     std::queue<Packet> mPacketsReceived;

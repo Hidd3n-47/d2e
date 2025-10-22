@@ -18,7 +18,7 @@ namespace d2eNet
 struct HostInitInfo
 {
     uint8_t ip1, ip2, ip3, ip4;
-    uint16_t port = 7777;
+    uint16_t port = 6666;
     uint32_t timeout = 5;
     std::function<void(uint32_t)> onConnectCallback;
     std::function<void(uint32_t)> onDisconnectCallback;
@@ -36,8 +36,10 @@ public:
 
     std::optional<Packet> GetPacket();
 
+    void AddPacketToSendToClient(const uint32_t id, Packet& packet) { std::lock_guard lock(mPacketsToSendToClientMutex); mClientIdToPacketsToSend[id].emplace(std::move(packet)); }
     void AddPacketToBroadcast(Packet& packet) { std::lock_guard lock(mPacketsToBroadcastMutex); mPacketsToBroadcast.emplace(std::move(packet)); }
-    void BroadcastPackets();
+
+    void SendPackets();
 
     [[nodiscard]] uint32_t GetNumJoinedClients() const { return mNumJoinedClients; }
 
@@ -49,11 +51,14 @@ private:
 
     uint32_t mNumJoinedClients{ 0 };
     std::unordered_map<uint32_t, uint32_t> mHostAddressToId;
+    std::unordered_map<uint32_t, ENetPeer*> mClientIdToPeer;
 
+    std::unordered_map<uint32_t, std::queue<Packet>> mClientIdToPacketsToSend;
     std::queue<Packet> mPacketsReceived;
     std::queue<Packet> mPacketsToBroadcast;
 
     std::thread mHostThread;
+    std::mutex  mPacketsToSendToClientMutex;
     std::mutex  mPacketsReceivedMutex;
     std::mutex  mPacketsToBroadcastMutex;
 
@@ -61,6 +66,7 @@ private:
     std::function<void(uint32_t)> mOnClientDisconnectedCallback;
 
     void BroadcastPacket(const Packet& packet) const;
+    void SendPacket(const uint32_t id, const Packet& packet);
 };
 
 } // Namespace d2eNet.
