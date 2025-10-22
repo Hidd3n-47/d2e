@@ -30,6 +30,7 @@ public:
     void ChangeGameState(const GameState state);
 
     [[nodiscard]] inline Player& GetPlayer() { return mPlayer; }
+    inline void SetPlayer(const Player& player) { mPlayer = player; }
 private:
     Player mPlayer;
 

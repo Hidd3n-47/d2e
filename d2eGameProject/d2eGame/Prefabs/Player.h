@@ -9,7 +9,7 @@ namespace d2eGame
 class Player
 {
 public:
-    void CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1);
+    void CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const std::optional<uint64_t> player2Id = {});
 
     [[nodiscard]] inline d2e::WeakRef<d2e::GameObject> GetGameObject() const { return mGameObject; }
 

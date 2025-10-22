@@ -32,6 +32,9 @@ public:
     void ProcessIncomingPackets(d2e::WeakRef<d2e::Scene> activeScene);
     void SendPacketsToClients(d2e::WeakRef<d2e::Scene> activeScene) const;
 
+    void OnClientConnected(const uint32_t id);
+    void OnClientDisconnected(const uint32_t id);
+
     [[nodiscard]] inline d2e::Log& Log() { return mLog; }
 private:
     static std::unique_ptr<ServerManager> mInstance;
@@ -40,10 +43,9 @@ private:
 
     bool mServerRunning = true;
 
-    std::unique_ptr<d2eNet::Host> mHost;
+    d2e::Scene* mGameScene = nullptr;
 
-    uint32_t mNumClientsConnected{ 0 };
-    void ClientConnected();
+    std::unique_ptr<d2eNet::Host> mHost;
 
     std::vector<d2e::Ulid> mGameObjectsToSyncAcrossNetwork;
 };

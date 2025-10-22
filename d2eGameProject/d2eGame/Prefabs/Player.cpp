@@ -19,12 +19,14 @@
 namespace d2eGame
 {
 
-void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1)
+void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const std::optional<uint64_t> player2Id)
 {
-    const sf::Color playerColor = isPlayer1 ? PLAYER_1_COLOR : PLAYER_2_COLOR;
+    const sf::Color playerColor = !player2Id.has_value() ? PLAYER_1_COLOR : PLAYER_2_COLOR;
 
     d2eNet::Packet packet;
     mGameObject = scene->CreateGameObject();
+    if (player2Id.has_value())
+        mGameObject->SetId(d2e::Ulid{ player2Id.value() });
     const d2e::Ulid id = mGameObject->GetId();
     packet.AddLineWithId(id);
 
@@ -32,7 +34,7 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1)
     constexpr float PLAYER_RADIUS = 20.0f;
 
     d2e::WeakRef<d2e::Transform> transform = mGameObject->GetComponent<d2e::Transform>();
-    transform->translation = isPlayer1 ? d2e::Vec2{ 900.0f, 100.0f } : d2e::Vec2{ 1100.0f, 100.0f };
+    transform->translation = !player2Id.has_value() ? d2e::Vec2{ 900.0f, 100.0f } : d2e::Vec2{ 1100.0f, 100.0f };
     transform->SetSyncValuesOnUpdate(true);
     packet.AddType<d2e::Transform>(id, transform->Serialize());
 

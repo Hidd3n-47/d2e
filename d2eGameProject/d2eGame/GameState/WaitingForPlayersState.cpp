@@ -18,7 +18,7 @@ void WaitingForPlayersState::Init(d2e::WeakRef<d2e::Scene> scene)
     d2e::WeakRef<d2eNet::Client> client = d2e::Engine::Instance()->GetClient();
 
     Player& player = mGameScene->GetPlayer();
-    player.CreatePrefab(scene, client->GetId() == 1);
+    player.CreatePrefab(scene);
         // For two players.
 //#define TWO_PLAYERS
 //#ifdef TWO_PLAYERS

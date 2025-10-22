@@ -2,8 +2,9 @@
 
 #include <iostream>
 
+#include <d2eNet/Core/Client.h>
+
 #include "src/Defines.h"
-#include "Scene/GameScene.h"
 #include "Scene/MainMenuScene.h"
 
 namespace d2eGame
@@ -25,14 +26,14 @@ void GameManager::Init()
 {
     ChangeState(ApplicationState::MAIN_MENU);
 
-    d2e::Engine::Instance()->SetOnLevelLoadCompleteCallback([] { Instance()->ChangeState(ApplicationState::GAME); });
+    d2e::Engine::Instance()->SetOnPlayerTwoJoinedCallback([](const uint64_t id) { Instance()->PlayerTwoJoined(id); });
 
     GAME_LOG("Game initialized.");
 }
 
 void GameManager::ChangeState(const ApplicationState newState)
 {
-    if (mGameState == newState)
+    if (mApplicationState == newState)
     {
         GAME_WARN("Trying to change game state to the same state.");
         return;
@@ -52,11 +53,11 @@ void GameManager::ChangeState(const ApplicationState newState)
         DEBUG_BREAK();
         break;
     default:
-        GAME_ERROR("Trying to change game state to an unhandled state with ID: {}", static_cast<uint32_t>(mGameState));
+        GAME_ERROR("Trying to change game state to an unhandled state with ID: {}", static_cast<uint32_t>(mApplicationState));
         break;
     }
 
-    mGameState = newState;
+    mApplicationState = newState;
 }
 
 void GameManager::JoinOnlineGame()
@@ -69,6 +70,17 @@ void GameManager::JoinOnlineGame()
     d2e::Engine::Instance()->ConnectClientToServer(ip1, ip2, ip3, ip4, 7777);
 
     ChangeState(ApplicationState::GAME);
+}
+
+void GameManager::PlayerTwoJoined(const uint64_t id)
+{
+    Player p2;
+    p2.CreatePrefab(d2e::WeakRef{ mCurrentScene }.Cast<d2e::Scene>(), id);
+
+    if (d2e::Engine::Instance()->GetClient()->GetId() != 1)
+    {
+        dynamic_cast<GameScene*>(mCurrentScene)->SetPlayer(p2);
+    }
 }
 
 } // Namespace d2eGame.

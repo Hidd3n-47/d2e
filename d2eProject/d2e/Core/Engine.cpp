@@ -13,7 +13,6 @@
 #include "ES/Scene.h"
 #include "ES/Components/Transform.h"
 #include "ES/Components/CircleSprite.h"
-#include "ES/Components/Movement.h"
 
 namespace d2e
 {
@@ -268,6 +267,14 @@ void Engine::ProcessNetworkPackets() const
                 {
                     //DEBUG_WARN("Before Update [{}] to game object with ID: {} | <{}>", componentName, id, before);
                     //DEBUG_LOG("Updated Component [{}] to game object with ID: {} | <{}>", componentName, id, componentValue);
+                }
+                break;
+            }
+            case d2eNet::PacketLineType::PLAYER_TWO_JOINED:
+            {
+                if (mOnPlayerTwoJoined)
+                {
+                    mOnPlayerTwoJoined(std::stoull(packetString));
                 }
                 break;
             }

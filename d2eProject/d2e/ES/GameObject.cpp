@@ -26,7 +26,7 @@ GameObject::~GameObject()
 
 void GameObject::Update(const float dt) const
 {
-    for (auto* component : mComponents)
+    for (IComponent* component : mComponents)
     {
         component->Update(dt);
     }
@@ -34,7 +34,7 @@ void GameObject::Update(const float dt) const
 
 void GameObject::Render(const WeakRef<sf::RenderWindow> window) const
 {
-    for (auto* component : mComponents)
+    for (IComponent* component : mComponents)
     {
         component->Render(window);
     }

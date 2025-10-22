@@ -6,12 +6,12 @@
 #include <d2e/Core/Engine.h>
 #include <d2e/Core/WeakRef.h>
 
+#include "Scene/GameScene.h"
 #include "ApplicationState.h"
 
 namespace d2eGame
 {
 
-class GameScene;
 class MainMenuScene;
 
 class GameManager
@@ -34,12 +34,13 @@ public:
     void ChangeState(const ApplicationState newState);
 
     void JoinOnlineGame();
+    void PlayerTwoJoined(const uint64_t id);
 private:
     static std::unique_ptr<GameManager> mInstance;
 
     DEBUG(std::unique_ptr<d2e::Log> mLog);
 
-    ApplicationState   mGameState      = ApplicationState::NONE;
+    ApplicationState mApplicationState = ApplicationState::NONE;
     d2e::Scene* mCurrentScene   = nullptr;
 
     template <typename Scene>
@@ -50,6 +51,7 @@ template <typename Scene>
 void GameManager::SetScene()
 {
     static_assert(std::is_base_of_v<d2e::Scene, Scene>);
+
     d2e::Scene* scene = new Scene();
 
     d2e::Engine::Instance()->ChangeActiveScene(scene);

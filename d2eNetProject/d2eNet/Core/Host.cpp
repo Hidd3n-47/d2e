@@ -16,17 +16,20 @@ Host::~Host()
     enet_host_destroy(mHost);
 }
 
-bool Host::Init(const uint8_t ip1, const uint8_t  ip2, const uint8_t ip3, const uint8_t ip4, const uint16_t port, const uint32_t timeout)
+bool Host::Init(const HostInitInfo& info)
 {
-    const std::string ip = std::format("{}.{}.{}.{}", ip1, ip2, ip3, ip4);
+    const std::string ip = std::format("{}.{}.{}.{}", info.ip1, info.ip2, info.ip3, info.ip4);
 
     enet_address_set_host(&mAddress, ip.c_str());
-    mAddress.port = port;
+    mAddress.port = info.port;
 
     mHost = enet_host_create(&mAddress, NUMBER_OF_ALLOWED_CLIENTS, 2, 0, 0);
 
-    mRunning = mHost;
-    mHostThread = std::thread(&Host::Update, this, timeout);
+    mRunning    = mHost;
+    mHostThread = std::thread(&Host::Update, this, info.timeout);
+
+    mOnClientConnectedCallback    = info.onConnectCallback;
+    mOnClientDisconnectedCallback = info.onDisconnectCallback;
 
     return mRunning;
 }
@@ -44,6 +47,11 @@ void Host::Update(const uint32_t timeout)
             case ENET_EVENT_TYPE_CONNECT:
             {
                 ++mNumJoinedClients;
+                if (mOnClientConnectedCallback)
+                {
+                    mOnClientConnectedCallback(mNumJoinedClients);
+                }
+                mHostAddressToId[event.peer->address.host] = mNumJoinedClients;
 
                 const std::string idString = std::to_string(mNumJoinedClients);
                 const char* idStringCStr = idString.c_str();
@@ -54,6 +62,11 @@ void Host::Update(const uint32_t timeout)
             }
             case ENET_EVENT_TYPE_DISCONNECT:
                 --mNumJoinedClients;
+                if (mOnClientDisconnectedCallback)
+                {
+                    mOnClientDisconnectedCallback(mHostAddressToId[event.peer->address.host]);
+                }
+                mHostAddressToId.erase(event.peer->address.host);
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
             {

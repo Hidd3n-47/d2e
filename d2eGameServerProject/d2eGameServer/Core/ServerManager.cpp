@@ -28,13 +28,22 @@ bool ServerManager::Init()
     std::cin >> ip1 >> ip2 >> ip3 >> ip4;
 
     mHost = std::make_unique<d2eNet::Host>();
-    constexpr uint16_t port = 7777;
-    if (!mHost->Init(static_cast<uint8_t>(ip1), static_cast<uint8_t>(ip2), static_cast<uint8_t>(ip3), static_cast<uint8_t>(ip4), port))
+
+    const d2eNet::HostInitInfo hostInfo
     {
-        mLog.Error("Failed to start up host at the given IP: {}.{}.{}.{}:{}", ip1, ip2, ip3, ip4, port);
+        .ip1 = static_cast<uint8_t>(ip1),
+        .ip2 = static_cast<uint8_t>(ip2),
+        .ip3 = static_cast<uint8_t>(ip3),
+        .ip4 = static_cast<uint8_t>(ip4),
+        .onConnectCallback = [&](const uint32_t id) { OnClientConnected(id); },
+        .onDisconnectCallback = [&](const uint32_t id) { OnClientDisconnected(id); }
+    };
+    if (!mHost->Init(hostInfo))
+    {
+        mLog.Error("Failed to start up host at the given IP: {}.{}.{}.{}:{}", ip1, ip2, ip3, ip4, hostInfo.port);
         return false;
     }
-    mLog.Debug("Host running at given IP: {}.{}.{}.{}:{}", ip1, ip2, ip3, ip4, port);
+    mLog.Debug("Host running at given IP: {}.{}.{}.{}:{}", ip1, ip2, ip3, ip4,hostInfo.port);
 
     mLog.Debug("Server initialized.");
     return true;
@@ -57,11 +66,6 @@ void ServerManager::Run()
             {
                 mServerRunning = false;
             }
-        }
-
-        if (mHost->GetNumJoinedClients() > mNumClientsConnected)
-        {
-            ClientConnected();
         }
 
         d2e::WeakRef<d2e::Scene> activeScene = d2e::Engine::Instance()->GetActiveScene();
@@ -195,20 +199,37 @@ void ServerManager::SendPacketsToClients(d2e::WeakRef<d2e::Scene> activeScene) c
     }
 }
 
-void ServerManager::ClientConnected()
+void ServerManager::OnClientConnected(const uint32_t id)
 {
-    ++mNumClientsConnected;
+    mLog.Debug("Client with ID '{}' connected.", id);
 
-    if (mNumClientsConnected != 1)
+    // This is the first player to join the server.
+    if (mGameScene == nullptr)
     {
+        mLog.Debug("Created game scene.");
+        mGameScene = new d2e::Scene();
+        d2e::Engine::Instance()->ChangeActiveScene(mGameScene);
         return;
     }
 
-    d2e::WeakRef<d2e::Scene> scene = d2e::Engine::Instance()->GetActiveScene();
-    d2e::Engine::Instance()->RemoveScene(scene);
+    // The second player has joined the server.
+    d2eNet::Packet p;
+    p.AddLineWithId(d2e::Ulid{}, d2eNet::PacketLineType::PLAYER_TWO_JOINED);
+    mHost->AddPacketToBroadcast(p);
+}
 
-    scene = d2e::Engine::Instance()->CreateScene();
-    d2e::Engine::Instance()->ChangeActiveScene(scene.GetRawPtr());
+void ServerManager::OnClientDisconnected(const uint32_t id)
+{
+    mLog.Debug("Client with ID '{}' disconnected.", id);
+
+    if (mHost->GetNumJoinedClients() == 0)
+    {
+        mLog.Debug("Destroyed game scene as no more players remain.");
+        delete mGameScene;
+        mGameScene = nullptr;
+        d2e::Engine::Instance()->ChangeActiveScene(mGameScene);
+        mGameObjectsToSyncAcrossNetwork.clear();
+    }
 }
 
 } // Namespace d2eServer.
