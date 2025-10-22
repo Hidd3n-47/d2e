@@ -90,9 +90,9 @@ public:
         AddStringToPacket(packetType, line);
     }
 
-    inline void AddSyncObject(const uint32_t clientId, const uint64_t id)
+    inline void AddSyncObject(const uint64_t id)
     {
-        const std::string line = std::to_string(clientId) + '|' + std::to_string(id);
+        const std::string line = std::to_string(id);
 
         AddStringToPacket(PacketLineType::SYNC_GAME_OBJECT_ACROSS_NETWORK, line);
     }

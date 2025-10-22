@@ -47,7 +47,7 @@ private:
 
     std::unique_ptr<d2eNet::Host> mHost;
 
-    std::vector<std::pair<uint32_t, d2e::Ulid>> mGameObjectsToSyncAcrossNetwork;
+    std::vector<d2e::Ulid> mGameObjectsToSyncAcrossNetwork;
 };
 
 } // Namespace d2eServer.
