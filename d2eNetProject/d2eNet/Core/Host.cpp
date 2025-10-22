@@ -144,7 +144,6 @@ void Host::BroadcastPacket(const Packet& packet) const
     ENetPacket* enetPacket{ enet_packet_create(packet.GetData(), packet.GetCount(), packet.IsReliable() ? ENET_PACKET_FLAG_RELIABLE : ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT) };
 
     enet_host_broadcast(mHost, 0, enetPacket);
-    //enet_host_flush(mHost);
 }
 
 } // Namespace d2eNet.

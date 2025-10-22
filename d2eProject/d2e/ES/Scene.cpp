@@ -35,19 +35,34 @@ void Scene::Render(const  WeakRef<sf::RenderWindow> window) const
 
 WeakRef<GameObject> Scene::CreateGameObject()
 {
-    mGameObjects.emplace_back(new GameObject{ ++mGameObjectId, WeakRef{ this } });
-    mGameObjectIdToIndex[mGameObjectId] = mGameObjects.size() - 1;
+    const Ulid id;
+    mGameObjects.emplace_back(new GameObject{ id, WeakRef{ this } });
+    mGameObjectIdToIndex[id] = mGameObjects.size() - 1;
     return WeakRef{ mGameObjects.back() };
 }
 
-WeakRef<GameObject> Scene::GetGameObject(const uint32_t id)
+WeakRef<GameObject> Scene::GetGameObject(const Ulid id)
 {
     if (!mGameObjectIdToIndex.contains(id))
     {
-        DEBUG_WARN("Failed to obtain game object with ID: {}", id);
+        DEBUG_WARN("Failed to obtain game object with ID: {}", (uint64_t)id);
         return {};
     }
 
     return WeakRef{ mGameObjects[mGameObjectIdToIndex[id]] };
 }
+
+void Scene::UpdateGameObjectId(const Ulid oldId, const Ulid newId)
+{
+    const auto it = mGameObjectIdToIndex.find(oldId);
+    if (it == mGameObjectIdToIndex.end())
+    {
+        DEBUG_WARN("Failed to obtain game object with ID: {}", (uint64_t)oldId);
+        return;
+    }
+
+    mGameObjectIdToIndex[newId] = it->second;
+    mGameObjectIdToIndex.erase(oldId);
+}
+
 } // Namespace d2e.

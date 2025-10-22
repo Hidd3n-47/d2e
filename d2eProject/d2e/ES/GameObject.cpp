@@ -1,13 +1,15 @@
 #include "d2ePch.h"
 #include "GameObject.h"
 
-#include <d2e/Core/Rtti.h>
+#include "ES/Scene.h"
+#include "Core/Rtti.h"
 
 #include "Components/Transform.h"
 
 namespace d2e
 {
-GameObject::GameObject(const uint32_t id, const WeakRef<Scene> parent)
+
+GameObject::GameObject(const Ulid id, const WeakRef<Scene> parent)
     : mId(id)
     , mParent(parent)
 {
@@ -55,6 +57,12 @@ WeakRef<IComponent> GameObject::AddComponent(const std::string& component)
 WeakRef<IComponent> GameObject::GetComponent(const std::string& component)
 {
     return WeakRef{ mNameToComponentMap[component] };
+}
+
+void GameObject::SetId(const Ulid id)
+{
+    mParent->UpdateGameObjectId(mId, id);
+    mId = id;
 }
 
 } // Namespace d2e.

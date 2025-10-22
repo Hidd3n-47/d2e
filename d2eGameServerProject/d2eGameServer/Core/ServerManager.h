@@ -8,6 +8,7 @@
 
 namespace d2e
 {
+class Ulid;
 class Scene;
 }
 
@@ -44,7 +45,7 @@ private:
     uint32_t mNumClientsConnected{ 0 };
     void ClientConnected();
 
-    std::vector<uint32_t> mGameObjectsToSyncAcrossNetwork;
+    std::vector<d2e::Ulid> mGameObjectsToSyncAcrossNetwork;
 };
 
 } // Namespace d2eServer.

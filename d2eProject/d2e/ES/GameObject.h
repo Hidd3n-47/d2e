@@ -1,6 +1,7 @@
 #pragma once
 
 #include "d2e/src/d2ePch.h"
+#include "d2e/Core/Ulid.h"
 #include "d2e/Es/IComponent.h"
 
 namespace d2e
@@ -12,7 +13,7 @@ class Transform;
 class GameObject
 {
 public:
-    GameObject(const uint32_t id, const WeakRef<Scene> parent);
+    GameObject(const Ulid id, const WeakRef<Scene> parent);
     ~GameObject();
 
     void Update(const float dt) const;
@@ -38,13 +39,12 @@ public:
 
     [[nodiscard]] inline const std::vector<IComponent*>& GetComponents() const { return mComponents; }
 
-    [[nodiscard]] inline uint32_t GetId() const { return mId; }
-    inline void SetId(const uint32_t id) { mId = id; }
+    [[nodiscard]] inline Ulid GetId() const { return mId; }
+    void SetId(const Ulid id);
 private:
-    uint32_t mId;
+    Ulid   mId;
     WeakRef<Scene> mParent;
 
-    //std::unique_ptr<Transform>  mTransform;
     std::vector<IComponent*> mComponents;
     std::unordered_map<std::string, IComponent*> mNameToComponentMap;
 };

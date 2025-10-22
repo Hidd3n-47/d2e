@@ -29,8 +29,6 @@ void MainMenuScene::InitScene()
     d2e::WeakRef<d2e::GameObject>   exitButtonObject = CreateGameObject();
     d2e::WeakRef<d2e::UiButton>     exitButton = exitButtonObject->AddComponent<d2e::UiButton>(exitSpriteId, []() { d2e::Engine::Instance()->CloseGame(); });
     exitButtonObject->GetComponent<d2e::Transform>()->translation = windowSize * d2e::Vec2{ 0.5f, 0.6f };
-
-    mSceneLoaded = true;
 }
 
 

@@ -11,7 +11,7 @@ enum class PacketLineType : uint8_t
     ADD_COMPONENT,
     UPDATE_COMPONENT,
     SYNC_GAME_OBJECT_ACROSS_NETWORK,
-    LEVEL_LOAD_COMPLETE
+    SERVER_HANDLED_PACKET_CONFIRM
 };
 
 class Packet
@@ -82,21 +82,21 @@ public:
     [[nodiscard]] inline uint32_t GetCount() const { return static_cast<uint32_t>(mBuffer.size()); }
     [[nodiscard]] inline bool IsReliable() const { return mReliable; }
 
-    inline void AddLineWithId(const uint32_t id)
+    inline void AddLineWithId(const uint64_t id)
     {
         const std::string line = std::to_string(id);
 
         AddStringToPacket(PacketLineType::ADD_GAME_OBJECT, line);
     }
 
-    inline void AddSyncObject(const uint32_t id)
+    inline void AddSyncObject(const uint64_t id)
     {
         const std::string line = std::to_string(id);
 
         AddStringToPacket(PacketLineType::SYNC_GAME_OBJECT_ACROSS_NETWORK, line);
     }
 
-    inline void UpdateType(const uint32_t id, const std::string& component, const std::string& value)
+    inline void UpdateType(const uint64_t id, const std::string& component, const std::string& value)
     {
         // ID | Component | ComponentValues.
         const std::string line = std::to_string(id) + '|' + component + '|' + value;
@@ -105,12 +105,12 @@ public:
     }
 
     template<typename T>
-    inline void UpdateType(const uint32_t id, const std::string& value)
+    inline void UpdateType(const uint64_t id, const std::string& value)
     {
         UpdateType(id, T::GetNameStatic(), value);
     }
 
-    inline void AddType(const uint32_t id, const std::string& component, const std::string& value)
+    inline void AddType(const uint64_t id, const std::string& component, const std::string& value)
     {
         // ID | Component | ComponentValues.
         const std::string line = std::to_string(id) + '|' + component + '|' + value;
@@ -119,7 +119,7 @@ public:
     }
 
     template<typename T>
-    inline void AddType(const uint32_t id, const std::string& value)
+    inline void AddType(const uint64_t id, const std::string& value)
     {
         AddType(id, T::GetNameStatic(), value);
     }

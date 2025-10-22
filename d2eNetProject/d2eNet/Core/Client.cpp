@@ -171,6 +171,24 @@ std::optional<Packet> Client::GetPacketReceived()
     return { front };
 }
 
+void Client::ServerProcessedPacketsConfirmation(const std::function<void()>& onServerPacketHandled)
+{
+    Packet handledPacket;
+    handledPacket.AddStringToPacket(PacketLineType::SERVER_HANDLED_PACKET_CONFIRM, std::to_string(mServerConfirmationId));
+    AddPacketToSend(handledPacket);
+
+    mPacketIdToHandledCallback[mServerConfirmationId++] = onServerPacketHandled;
+}
+
+void Client::ServerHandledPacketQuery(const uint32_t handledPacketId)
+{
+    if (const auto it = mPacketIdToHandledCallback.find(handledPacketId); it != mPacketIdToHandledCallback.end())
+    {
+        mPacketIdToHandledCallback[handledPacketId]();
+        mPacketIdToHandledCallback.erase(it);
+    }
+}
+
 void Client::SendPackets()
 {
     if (!mConnected)

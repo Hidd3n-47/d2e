@@ -10,8 +10,11 @@ class Client;
 namespace d2eGame
 {
 
+class IGameState;
+
 enum class GameState
 {
+    NONE,
     LOADING_LEVEL,
     WAITING_FOR_PLAYERS,
     LOADING_PLAYERS,
@@ -25,12 +28,13 @@ public:
     void SceneUpdate() const override;
 
     void ChangeGameState(const GameState state);
+
+    [[nodiscard]] inline Player& GetPlayer() { return mPlayer; }
 private:
     Player mPlayer;
 
-    GameState mGameState = GameState::LOADING_LEVEL;
-
-    void CreateWall(d2e::WeakRef<d2eNet::Client> client, const d2e::Vec2 translation, const d2e::Vec2 halfExtents);
+    GameState   mState     = GameState::NONE;
+    IGameState* mGameState = nullptr;
 };
 
 } // Namespace d2e.

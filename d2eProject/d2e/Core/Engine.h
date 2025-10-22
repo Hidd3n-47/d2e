@@ -50,7 +50,7 @@ public:
     void Update() const;
     void PostUpdate();
     void Render() const;
-    void ReceivePackets() const;
+    void ProcessNetworkPackets() const;
 
     inline void SetOnLevelLoadCompleteCallback(const std::function<void()>& callback) { mOnLevelLoadCompleteCallback = callback; }
 

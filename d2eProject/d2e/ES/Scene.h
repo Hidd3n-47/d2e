@@ -13,7 +13,7 @@ public:
     Scene() = default;
     virtual ~Scene();
 
-    inline virtual void InitScene() { mSceneLoaded = true; }
+    inline virtual void InitScene() { mScenePaused = true; }
     inline virtual void SceneUpdate() const { }
 
     void Update(const float dt) const;
@@ -21,20 +21,21 @@ public:
 
     [[nodiscard]] WeakRef<GameObject> CreateGameObject();
 
-    [[nodiscard]] WeakRef<GameObject> GetGameObject(const uint32_t id);
+    [[nodiscard]] WeakRef<GameObject> GetGameObject(const Ulid id);
+
+    void UpdateGameObjectId(const Ulid oldId, const Ulid newId);
 
     [[nodiscard]] inline WeakRef<PhysicsManager>    GetPhysicsManager()     { return WeakRef{ &mPhysicsManager }; }
     [[nodiscard]] inline WeakRef<CollisionHandler>  GetCollisionHandler()   { return WeakRef{ &mCollisionHandler }; }
 
-    [[nodiscard]] inline bool IsSceneLoaded() const { return mSceneLoaded; }
-    void SetSceneLoaded(const bool loaded) { mSceneLoaded = loaded; }
+    [[nodiscard]] inline bool IsScenePaused() const { return mScenePaused; }
+    inline void PauseScene(bool paused = true)      { mScenePaused = paused; }
 protected:
-    bool mSceneLoaded = false;
+    bool mScenePaused = false;
 private:
     std::vector<GameObject*> mGameObjects;
-    uint32_t mGameObjectId{0};
 
-    std::unordered_map<uint32_t, size_t> mGameObjectIdToIndex;
+    std::unordered_map<Ulid, size_t> mGameObjectIdToIndex;
 
     PhysicsManager   mPhysicsManager;
     CollisionHandler mCollisionHandler;

@@ -25,7 +25,7 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1)
 
     d2eNet::Packet packet;
     mGameObject = scene->CreateGameObject();
-    const uint32_t id = mGameObject->GetId();
+    const d2e::Ulid id = mGameObject->GetId();
     packet.AddLineWithId(id);
 
     //todo this should be changed into a percentage and not a pixel based.

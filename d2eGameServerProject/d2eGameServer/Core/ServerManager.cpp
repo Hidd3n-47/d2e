@@ -110,11 +110,11 @@ void ServerManager::ProcessIncomingPackets(d2e::WeakRef<d2e::Scene> activeScene)
                 const size_t firstDelimiter  = packetString.find(d2e::SerializeUtils::DELIMITER);
                 const size_t secondDelimiter = packetString.find(d2e::SerializeUtils::DELIMITER, firstDelimiter + 1);
 
-                const uint32_t id = std::stoul(packetString.substr(0, firstDelimiter));
+                const uint64_t id = std::stoull(packetString.substr(0, firstDelimiter));
                 const std::string componentName  = packetString.substr(firstDelimiter + 1, secondDelimiter - firstDelimiter - 1);
                 const std::string componentValue = packetString.substr(secondDelimiter + 1);
 
-                d2e::WeakRef<d2e::GameObject> gameObject = d2e::Engine::Instance()->GetActiveScene()->GetGameObject(id);
+                d2e::WeakRef<d2e::GameObject> gameObject = d2e::Engine::Instance()->GetActiveScene()->GetGameObject(d2e::Ulid{ id });
                 gameObject->AddComponent(componentName)->Deserialize(componentValue);
 
                 mLog.Debug("Added Component [{}] to game object with ID: {} | <{}>", componentName, id, componentValue);
@@ -122,17 +122,17 @@ void ServerManager::ProcessIncomingPackets(d2e::WeakRef<d2e::Scene> activeScene)
             }
             case d2eNet::PacketLineType::ADD_GAME_OBJECT:
             {
-                uint32_t id;
+                uint64_t id;
                 d2e::SerializeUtils::Deserialize(id, packetString);
 
-                activeScene->CreateGameObject()->SetId(id);
+                activeScene->CreateGameObject()->SetId(d2e::Ulid{ id });
 
                 mLog.Debug("Created game object (ID: {})", packetString, id);
                 break;
             }
             case d2eNet::PacketLineType::SYNC_GAME_OBJECT_ACROSS_NETWORK:
             {
-                mGameObjectsToSyncAcrossNetwork.emplace_back(std::stoul(packetString));
+                mGameObjectsToSyncAcrossNetwork.emplace_back(d2e::Ulid{ std::stoull(packetString) });
                 mLog.Debug("Registered game object (ID: {}) to be synced across networks.", packetString);
                 break;
             }
@@ -141,20 +141,20 @@ void ServerManager::ProcessIncomingPackets(d2e::WeakRef<d2e::Scene> activeScene)
                 const size_t firstDelimiter  = packetString.find(d2e::SerializeUtils::DELIMITER);
                 const size_t secondDelimiter = packetString.find(d2e::SerializeUtils::DELIMITER, firstDelimiter + 1);
 
-                const uint32_t id = std::stoul(packetString.substr(0, firstDelimiter));
+                const uint64_t id = std::stoull(packetString.substr(0, firstDelimiter));
                 const std::string componentName  = packetString.substr(firstDelimiter + 1, secondDelimiter - firstDelimiter - 1);
                 const std::string componentValue = packetString.substr(secondDelimiter + 1);
 
-                activeScene->GetGameObject(id)->GetComponent(componentName)->Deserialize(componentValue);
+                activeScene->GetGameObject(d2e::Ulid{ id })->GetComponent(componentName)->Deserialize(componentValue);
 
                 if (componentName == d2e::RigidBody::GetNameStatic())
                     mLog.Warn("Updated Component [{}] to game object with ID: {} | <{}>", componentName, id, componentValue);
                 break;
             }
-            case d2eNet::PacketLineType::LEVEL_LOAD_COMPLETE:
+            case d2eNet::PacketLineType::SERVER_HANDLED_PACKET_CONFIRM:
             {
                 d2eNet::Packet p;
-                p.AddStringToPacket(d2eNet::PacketLineType::LEVEL_LOAD_COMPLETE, "");
+                p.AddStringToPacket(d2eNet::PacketLineType::SERVER_HANDLED_PACKET_CONFIRM, packetString);
                 mHost->AddPacketToBroadcast(p);
                 break;
             }
@@ -176,7 +176,7 @@ void ServerManager::SendPacketsToClients(d2e::WeakRef<d2e::Scene> activeScene) c
         return;
     }
 
-    for (const uint32_t id : mGameObjectsToSyncAcrossNetwork)
+    for (const d2e::Ulid id : mGameObjectsToSyncAcrossNetwork)
     {
         d2e::WeakRef<d2e::GameObject> gameObject = activeScene->GetGameObject(id);
 

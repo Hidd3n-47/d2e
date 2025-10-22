@@ -39,19 +39,19 @@ void Engine::Run()
         StartFrame();
         Input();
 
-        if (mActiveScene && mActiveScene->IsSceneLoaded())
+        if (mActiveScene && !mActiveScene->IsScenePaused())
         {
             SceneUpdate();
         }
 
-        if (mActiveScene && mActiveScene->IsSceneLoaded())
+        if (mActiveScene && !mActiveScene->IsScenePaused())
         {
             Update();
         }
 
         PostUpdate();
         Render();
-        ReceivePackets();
+        ProcessNetworkPackets();
         EndFrame();
 
 //#ifdef DEV_CONFIGURATION
@@ -229,7 +229,7 @@ void Engine::Render() const
     mWindow->display();
 }
 
-void Engine::ReceivePackets() const
+void Engine::ProcessNetworkPackets() const
 {
     if (!mClient)
     {
@@ -251,7 +251,7 @@ void Engine::ReceivePackets() const
                 const size_t firstDelimiter  = packetString.find(SerializeUtils::DELIMITER);
                 const size_t secondDelimiter = packetString.find(SerializeUtils::DELIMITER, firstDelimiter + 1);
 
-                const uint32_t id = std::stoul(packetString.substr(0, firstDelimiter));
+                const uint64_t id = std::stoull(packetString.substr(0, firstDelimiter));
                 const std::string componentName  = packetString.substr(firstDelimiter + 1, secondDelimiter - firstDelimiter - 1);
                 const std::string componentValue = packetString.substr(secondDelimiter + 1);
 
@@ -261,8 +261,8 @@ void Engine::ReceivePackets() const
                     continue;
                 }
 
-                const std::string before = mActiveScene->GetGameObject(id)->GetComponent(componentName)->Serialize();
-                mActiveScene->GetGameObject(id)->GetComponent(componentName)->Deserialize(componentValue);
+                //const std::string before = mActiveScene->GetGameObject(id)->GetComponent(componentName)->Serialize();
+                mActiveScene->GetGameObject(Ulid{ id })->GetComponent(componentName)->Deserialize(componentValue);
 
                 //if (componentName == Movement::GetNameStatic())
                 {
@@ -271,12 +271,9 @@ void Engine::ReceivePackets() const
                 }
                 break;
             }
-            case d2eNet::PacketLineType::LEVEL_LOAD_COMPLETE:
+            case d2eNet::PacketLineType::SERVER_HANDLED_PACKET_CONFIRM:
             {
-                if (mOnLevelLoadCompleteCallback)
-                {
-                    mOnLevelLoadCompleteCallback();
-                }
+                mClient->ServerHandledPacketQuery(std::stoul(packetString));
                 break;
             }
             case d2eNet::PacketLineType::ADD_COMPONENT:

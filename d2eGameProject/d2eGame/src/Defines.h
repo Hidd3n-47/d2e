@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core/GameManager.h"
+
 #ifdef DEV_CONFIGURATION
 #define DEBUG_BREAK() __debugbreak()
 #define DEBUG(...) __VA_ARGS__

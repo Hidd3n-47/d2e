@@ -3,6 +3,7 @@
 #include <queue>
 #include <cstdint>
 #include <optional>
+#include <functional>
 
 #include <mutex>
 #include <thread>
@@ -31,6 +32,9 @@ public:
 
     std::optional<Packet> GetPacketReceived();
 
+    void ServerProcessedPacketsConfirmation(const std::function<void()>& onServerPacketHandled);
+    void ServerHandledPacketQuery(const uint32_t handledPacketId);
+
     void SendPackets();
     void SendPacket(const Packet& packet) const;
 
@@ -47,6 +51,9 @@ private:
     std::thread mClientThread;
     std::mutex mPacketsToSendMutex;
     std::mutex mPacketsReceivedMutex;
+
+    uint32_t mServerConfirmationId{ 0 };
+    std::unordered_map<uint32_t, std::function<void()>> mPacketIdToHandledCallback;
 };
 
 } // Namespace d2eNet.
