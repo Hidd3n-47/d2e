@@ -2,6 +2,8 @@
 
 #include <d2e/Core/Engine.h>
 
+#include <d2eNet/Core/Client.h>
+
 #include "src/Defines.h"
 #include "Scene/GameScene.h"
 
@@ -15,7 +17,7 @@ void BattleCountdownState::Init(d2e::WeakRef<d2e::Scene> scene)
     if (!mGameScene->ArePlayersSyncedAcrossNetwork())
     {
         mGameScene->GetPlayer().SyncPlayer();
-        mGameScene->GetOtherPlayer().SyncPlayer();
+        mGameScene->SetPlayersSyncedAcrossNetwork();
     }
 
     mTimer = TIME_TO_COUNTDOWN_SECONDS;

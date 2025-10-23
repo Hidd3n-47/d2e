@@ -13,6 +13,7 @@
 #include <d2eNet/Core/Client.h>
 
 #include "Scene/GameScene.h"
+#include "src/Defines.h"
 
 namespace d2eGame
 {
@@ -61,24 +62,26 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
 
     // Ping display.
     {
-        d2eNet::Packet packet;
 
         d2e::WeakRef<d2e::GameObject> ping = scene->CreateGameObject();
         constexpr d2e::Ulid id = d2e::Engine::PING_DISPLAY_ULID;
         ping->SetId(id);
-        packet.AddLineWithId(id);
 
         d2e::WeakRef<d2e::PingDisplay> pingDisplay = ping->AddComponent<d2e::PingDisplay>();
         pingDisplay->SetSyncValuesOnUpdate(true);
-        packet.AddType<d2e::PingDisplay>(id, pingDisplay->Serialize());
-
-        packet.AddSyncObject(id);
 
         d2e::WeakRef<d2e::Transform> transform = ping->GetComponent<d2e::Transform>();
         transform->translation = windowSize * d2e::Vec2{ 0.015f, 0.015f };
-        packet.AddType<d2e::Transform>(id, transform->Serialize());
 
-        client->AddPacketToSend(packet);
+        if (client->GetId() == 1)
+        {
+            d2eNet::Packet packet;
+            packet.AddLineWithId(id);
+            packet.AddType<d2e::PingDisplay>(id, pingDisplay->Serialize());
+            packet.AddType<d2e::Transform>(id, transform->Serialize());
+            packet.AddSyncObject(id);
+            client->AddPacketToSend(packet);
+        }
     }
 
     if (d2e::Engine::Instance()->GetClient()->GetId() != 1)
@@ -86,6 +89,7 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
         d2e::WeakRef<GameScene> gameScene = scene.Cast<GameScene>();
         gameScene->GetPlayer().CreatePrefab(scene, false);
         gameScene->GetOtherPlayer().CreatePrefab(scene, true);
+        GAME_LOG("Locally created the players");
     }
 
     client->ServerProcessedPacketsConfirmation([&] { LoadingCompleted(); });
@@ -95,6 +99,7 @@ void LoadingLevelState::Update()
 {
     if (mLoadingCompleted)
     {
+        GAME_LOG("Loading Completed");
         if (d2e::Engine::Instance()->GetClient()->GetId() == 1)
         {
             mParent.Cast<GameScene>()->ChangeGameState(GameState::WAITING_FOR_PLAYERS);
