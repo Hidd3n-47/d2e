@@ -9,10 +9,17 @@ namespace d2e
 
 void BattleTimer::Update(const float dt)
 {
+    if (!mTimerRunning)
+    {
+        return;
+    }
+
     mTimer -= dt;
 
     if (mTimer < 0.0f)
     {
+        mTimerRunning = false;
+
         if (OnTimerCompletedCallback)
         {
             OnTimerCompletedCallback();
@@ -22,7 +29,7 @@ void BattleTimer::Update(const float dt)
 
 void BattleTimer::Render(WeakRef<sf::RenderWindow> window)
 {
-    if (mTimer <= 0.0f)
+    if (!mTimerRunning)
     {
         return;
     }

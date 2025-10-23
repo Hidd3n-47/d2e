@@ -9,7 +9,7 @@ namespace d2e
 class BattleTimer : public IComponent
 {
 public:
-
+    inline void StartTimer() { mTimer = TIME_TO_COUNTDOWN_SECONDS; mTimerRunning = true; }
     void Update(const float dt) override;
     void Render(WeakRef<sf::RenderWindow> window) override;
 
@@ -19,6 +19,8 @@ public:
     D2E_COMPONENT("BattleTimer")
 private:
     float mTimer = TIME_TO_COUNTDOWN_SECONDS;
+    bool  mTimerRunning = false;
+
     std::string mTextString;
     sf::Text mText{ Engine::GAME_FONT };
 };
