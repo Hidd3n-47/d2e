@@ -5,6 +5,7 @@
 
 #include <d2e/ES/Components/Tag.h>
 #include <d2e/ES/Components/Transform.h>
+#include <d2e/ES/Components/BattleTimer.h>
 #include <d2e/ES/Components/PingDisplay.h>
 #include <d2e/ES/Components/RectangleSprite.h>
 #include <d2e/ES/Components/StaticBoxCollider.h>
@@ -62,7 +63,6 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
 
     // Ping display.
     {
-
         d2e::WeakRef<d2e::GameObject> ping = scene->CreateGameObject();
         constexpr d2e::Ulid id = d2e::Engine::PING_DISPLAY_ULID;
         ping->SetId(id);
@@ -78,6 +78,29 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
             d2eNet::Packet packet;
             packet.AddLineWithId(id);
             packet.AddType<d2e::PingDisplay>(id, pingDisplay->Serialize());
+            packet.AddType<d2e::Transform>(id, transform->Serialize());
+            packet.AddSyncObject(id);
+            client->AddPacketToSend(packet);
+        }
+    }
+
+    // Battle timer.
+    {
+        d2e::WeakRef<d2e::GameObject> ping = scene->CreateGameObject();
+        constexpr d2e::Ulid id = d2e::Engine::BATTLE_TIMER_ULID;
+        ping->SetId(id);
+
+        d2e::WeakRef<d2e::BattleTimer> timer = ping->AddComponent<d2e::BattleTimer>();
+        timer->SetSyncValuesOnUpdate(true);
+
+        d2e::WeakRef<d2e::Transform> transform = ping->GetComponent<d2e::Transform>();
+        transform->translation = windowSize * d2e::Vec2{ 0.5f };
+
+        if (client->GetId() == 1)
+        {
+            d2eNet::Packet packet;
+            packet.AddLineWithId(id);
+            packet.AddType<d2e::BattleTimer>(id, timer->Serialize());
             packet.AddType<d2e::Transform>(id, transform->Serialize());
             packet.AddSyncObject(id);
             client->AddPacketToSend(packet);

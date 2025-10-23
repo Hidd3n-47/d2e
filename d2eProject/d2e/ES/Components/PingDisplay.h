@@ -20,12 +20,11 @@ public:
 
     static constexpr uint32_t PING_CACHE_COUNT = 30;
 private:
-    inline static sf::Font mFont{ "E:/Programming/d2e/d2eGameProject/d2eGame/Assets/Fonts/Roboto/Roboto-Bold.ttf" };
     uint64_t mPingCache[PING_CACHE_COUNT] { 0 };
     uint32_t mPingIndex = 0;
 
     std::string mTextString{ "0" };
-    sf::Text    mText{ mFont, mTextString, 4 };
+    sf::Text    mText{ Engine::GAME_FONT, mTextString, 4 };
 };
 
 } // Namespace d2e.

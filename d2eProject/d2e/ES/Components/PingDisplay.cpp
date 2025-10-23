@@ -24,7 +24,7 @@ void PingDisplay::Render(WeakRef<sf::RenderWindow> window)
     const WeakRef<Transform> transform = mParent->GetComponent<Transform>();
 
     mText.setPosition({ transform->translation.x, transform->translation.y});
-    mText.setCharacterSize(20);
+    mText.setCharacterSize(30);
 
     window->draw(mText);
 }

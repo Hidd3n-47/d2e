@@ -73,6 +73,9 @@ public:
     static constexpr Ulid PLAYER_ONE_ULID{ 1 };
     static constexpr Ulid PLAYER_TWO_ULID{ 2 };
     static constexpr Ulid PING_DISPLAY_ULID{ 3 };
+    static constexpr Ulid BATTLE_TIMER_ULID{ 4 };
+
+    inline static sf::Font GAME_FONT{ "E:/Programming/d2e/d2eGameProject/d2eGame/Assets/Fonts/Liquidism/Liquidism.ttf" };
 private:
     static std::unique_ptr<Engine>      mInstance;
 
