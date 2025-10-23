@@ -16,7 +16,7 @@ void BattleTimer::Update(const float dt)
 
     mTimer -= dt;
 
-    if (mTimer < 0.0f)
+    if (mTimer <= 0.0f)
     {
         mTimerRunning = false;
 

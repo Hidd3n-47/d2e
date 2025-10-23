@@ -12,11 +12,10 @@ public:
     void Init(d2e::WeakRef<d2e::Scene> scene) override;
     void Update() override;
 
-    static constexpr float TIME_TO_COUNTDOWN_SECONDS = 3.0f;
+    inline void BattleStarted() { mBattleStarted = true; }
 private:
     d2e::WeakRef<GameScene> mGameScene;
-
-    float mTimer = 0;
+    bool mBattleStarted = false;
 };
 
 } // Namespace d2eGame.

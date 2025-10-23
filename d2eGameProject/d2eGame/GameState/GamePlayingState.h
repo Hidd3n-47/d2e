@@ -11,8 +11,11 @@ class GamePlayingState : public IGameState
 public:
     void Init(d2e::WeakRef<d2e::Scene> scene) override;
     void Update() override;
+
 private:
     d2e::WeakRef<GameScene> mGameScene;
+
+    bool mBattleStarted = false;
 };
 
 } // Namespace d2eGame.
