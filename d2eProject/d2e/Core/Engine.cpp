@@ -270,14 +270,6 @@ void Engine::ProcessNetworkPackets() const
                 }
                 break;
             }
-            case d2eNet::PacketLineType::PLAYER_TWO_READY:
-            {
-                if (mOnPlayerTwoJoined)
-                {
-                    mOnPlayerTwoJoined();
-                }
-                break;
-            }
             case d2eNet::PacketLineType::PLAYER_TWO_JOINED:
             {
                 if (mOnPlayerTwoJoined)

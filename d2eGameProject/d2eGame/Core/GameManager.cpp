@@ -26,8 +26,7 @@ void GameManager::Init()
 {
     ChangeState(ApplicationState::MAIN_MENU);
 
-    d2e::Engine::Instance()->SetOnPlayerTwoJoinedCallback([] { Instance()->OnPlayerTwoJoined(); });
-    d2e::Engine::Instance()->SetOnPlayerTwoReadyCallback([] { Instance()->OnPlayerTwoReady(); });
+    d2e::Engine::Instance()->SetOnPlayerTwoJoinedCallback([] { Instance()->PlayerTwoJoined(); });
 
     GAME_LOG("Game initialized.");
 }
@@ -73,31 +72,12 @@ void GameManager::JoinOnlineGame()
     ChangeState(ApplicationState::GAME);
 }
 
-void GameManager::OnPlayerTwoReady() const
+void GameManager::PlayerTwoJoined() const
 {
     GameScene* gameScene = dynamic_cast<GameScene*>(mCurrentScene);
+    gameScene->GetOtherPlayer().CreatePrefab(d2e::WeakRef{ mCurrentScene }.Cast<d2e::Scene>(), false);
+
     gameScene->ChangeGameState(GameState::BATTLE_COUNTDOWN);
-}
-
-void GameManager::OnPlayerTwoJoined() const
-{
-    GameScene* gameScene = dynamic_cast<GameScene*>(mCurrentScene);
-
-    if (d2e::Engine::Instance()->GetClient()->GetId() == 1)
-    {
-        gameScene->GetOtherPlayer().CreatePrefab(d2e::WeakRef{ mCurrentScene }.Cast<d2e::Scene>(), false);
-    }
-    else
-    {
-        gameScene->GetPlayer().CreatePrefab(d2e::WeakRef{ mCurrentScene }.Cast<d2e::Scene>(), false);
-        gameScene->GetOtherPlayer().CreatePrefab(d2e::WeakRef{ mCurrentScene }.Cast<d2e::Scene>(), true);
-
-        {
-            d2eNet::Packet p;
-            p.AddStringToPacket(d2eNet::PacketLineType::PLAYER_TWO_READY);
-            d2e::Engine::Instance()->GetClient()->AddPacketToSend(p);
-        }
-    }
 }
 
 } // Namespace d2eGame.
