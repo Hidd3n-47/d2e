@@ -81,6 +81,13 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
         client->AddPacketToSend(packet);
     }
 
+    if (d2e::Engine::Instance()->GetClient()->GetId() != 1)
+    {
+        d2e::WeakRef<GameScene> gameScene = scene.Cast<GameScene>();
+        gameScene->GetPlayer().CreatePrefab(scene, false);
+        gameScene->GetOtherPlayer().CreatePrefab(scene, true);
+    }
+
     client->ServerProcessedPacketsConfirmation([&] { LoadingCompleted(); });
 }
 
@@ -88,7 +95,14 @@ void LoadingLevelState::Update()
 {
     if (mLoadingCompleted)
     {
-        mParent.Cast<GameScene>()->ChangeGameState(GameState::WAITING_FOR_PLAYERS);
+        if (d2e::Engine::Instance()->GetClient()->GetId() == 1)
+        {
+            mParent.Cast<GameScene>()->ChangeGameState(GameState::WAITING_FOR_PLAYERS);
+        }
+        else
+        {
+            mParent.Cast<GameScene>()->ChangeGameState(GameState::BATTLE_COUNTDOWN);
+        }
     }
 }
 
@@ -112,7 +126,7 @@ void LoadingLevelState::CreateWall(d2e::WeakRef<d2eNet::Client> client, const d2
     tag->tag = d2e::ComponentTag::WALL;
     packet.AddType<d2e::Tag>(id, tag->Serialize());
 
-    if (client->GetId() == 0)
+    if (client->GetId() == 1)
     {
         client->AddPacketToSend(packet);
     }

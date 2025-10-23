@@ -75,9 +75,19 @@ void GameManager::JoinOnlineGame()
 void GameManager::PlayerTwoJoined() const
 {
     GameScene* gameScene = dynamic_cast<GameScene*>(mCurrentScene);
-    gameScene->GetOtherPlayer().CreatePrefab(d2e::WeakRef{ mCurrentScene }.Cast<d2e::Scene>(), false);
+    //gameScene->GetOtherPlayer().CreatePrefab(d2e::WeakRef{ mCurrentScene }.Cast<d2e::Scene>(), false);
 
-    gameScene->ChangeGameState(GameState::BATTLE_COUNTDOWN);
+    if (d2e::Engine::Instance()->GetClient()->GetId() == 1)
+    {
+        gameScene->GetOtherPlayer().CreatePrefab(d2e::WeakRef{ mCurrentScene }.Cast<d2e::Scene>(), false);
+        gameScene->ChangeGameState(GameState::BATTLE_COUNTDOWN);
+    }
+    else
+    {
+        /*gameScene->GetPlayer().CreatePrefab(d2e::WeakRef{ mCurrentScene }.Cast<d2e::Scene>(), false);
+        gameScene->GetOtherPlayer().CreatePrefab(d2e::WeakRef{ mCurrentScene }.Cast<d2e::Scene>(), true);*/
+    }
+
 }
 
 } // Namespace d2eGame.
