@@ -12,6 +12,7 @@ enum class PacketLineType : uint8_t
     UPDATE_COMPONENT,
     SYNC_GAME_OBJECT_ACROSS_NETWORK,
     PLAYER_TWO_JOINED,
+    PLAYER_TWO_READY,
     SERVER_HANDLED_PACKET_CONFIRM
 };
 
@@ -83,11 +84,11 @@ public:
     [[nodiscard]] inline uint32_t GetCount() const { return static_cast<uint32_t>(mBuffer.size()); }
     [[nodiscard]] inline bool IsReliable() const { return mReliable; }
 
-    inline void AddLineWithId(const uint64_t id, const PacketLineType packetType = PacketLineType::ADD_GAME_OBJECT)
+    inline void AddLineWithId(const uint64_t id)
     {
         const std::string line = std::to_string(id);
 
-        AddStringToPacket(packetType, line);
+        AddStringToPacket(PacketLineType::ADD_GAME_OBJECT, line);
     }
 
     inline void AddSyncObject(const uint64_t id)
@@ -125,7 +126,7 @@ public:
         AddType(id, T::GetNameStatic(), value);
     }
 
-    inline void AddStringToPacket(const PacketLineType lineType, const std::string& string)
+    inline void AddStringToPacket(const PacketLineType lineType, const std::string& string = "")
     {
         mBuffer.emplace_back(static_cast<uint8_t>(lineType));
         mBuffer.emplace_back(static_cast<uint8_t>(string.length()));

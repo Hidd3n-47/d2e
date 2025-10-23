@@ -55,6 +55,7 @@ public:
     void ProcessNetworkPackets() const;
 
     inline void SetOnPlayerTwoJoinedCallback(const std::function<void()>& callback) { mOnPlayerTwoJoined = callback; }
+    inline void SetOnPlayerTwoReadyCallback(const std::function<void()>& callback)  { mOnPlayerTwoReady  = callback; }
 
     [[nodiscard]] inline Vec2                       GetWindowSize()     const { return mWindowSize; }
     [[nodiscard]] inline WeakRef<Scene>             GetActiveScene()    const { return WeakRef{ mActiveScene }; }
@@ -93,6 +94,7 @@ private:
     Vec2 mWindowSize{ 1920.0f, 1080.0f };
 
     std::function<void()> mOnPlayerTwoJoined;
+    std::function<void()> mOnPlayerTwoReady;
 };
 
 } // Namespace d2e.
