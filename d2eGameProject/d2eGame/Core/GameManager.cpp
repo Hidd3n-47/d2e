@@ -45,7 +45,7 @@ void GameManager::ChangeState(const ApplicationState newState)
         SetScene<MainMenuScene>();
         break;
     case ApplicationState::GAME:
-        GAME_LOG("Loading game.");
+        GAME_LOG("Game State.");
         SetScene<GameScene>();
         break;
     case ApplicationState::NONE:

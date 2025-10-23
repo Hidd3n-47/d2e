@@ -27,15 +27,19 @@ void GameScene::ChangeGameState(const GameState state)
     switch (state)
     {
     case GameState::LOADING_LEVEL:
+        GAME_LOG("Changing game state: Loading game.");
         mGameState = new LoadingLevelState();
         break;
     case GameState::WAITING_FOR_PLAYERS:
+        GAME_LOG("Changing game state: Waiting for players.");
         mGameState = new WaitingForPlayersState();
         break;
     case GameState::BATTLE_COUNTDOWN:
+        GAME_LOG("Changing game state: Battle countdown.");
         mGameState = new BattleCountdownState();
         break;
     case GameState::PLAYING:
+        GAME_LOG("Changing game state: Playing.");
         mGameState = new GamePlayingState();
         break;
     case GameState::NONE:
