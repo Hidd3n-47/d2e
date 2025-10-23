@@ -2,6 +2,8 @@
 
 #include <d2e/src/d2ePch.h>
 
+#include "d2e/Core/Ulid.h"
+
 namespace d2eNet
 {
 class Client;
@@ -52,7 +54,7 @@ public:
     void Render() const;
     void ProcessNetworkPackets() const;
 
-    inline void SetOnPlayerTwoJoinedCallback(const std::function<void(uint64_t)>& callback) { mOnPlayerTwoJoined = callback; }
+    inline void SetOnPlayerTwoJoinedCallback(const std::function<void()>& callback) { mOnPlayerTwoJoined = callback; }
 
     [[nodiscard]] inline Vec2                       GetWindowSize()     const { return mWindowSize; }
     [[nodiscard]] inline WeakRef<Scene>             GetActiveScene()    const { return WeakRef{ mActiveScene }; }
@@ -61,10 +63,16 @@ public:
     [[nodiscard]] inline WeakRef<d2eNet::Client>    GetClient()         const { return WeakRef{ mClient.get() }; }
     DEBUG([[nodiscard]] inline WeakRef<Log>         GetLog()            const { return WeakRef{ mLog.get() }; })
 
+    [[nodiscard]] inline float GetDeltaTime() const { return mDeltaTime; }
+
     inline void CloseGame() { mRunning = false; }
 
     static constexpr uint32_t TARGET_FRAMES = 120;
     static constexpr std::chrono::duration<float> TARGET_FRAME_TIME{ 1.0f / TARGET_FRAMES };
+
+    static constexpr Ulid PLAYER_ONE_ULID{ 1 };
+    static constexpr Ulid PLAYER_TWO_ULID{ 2 };
+    static constexpr Ulid PING_DISPLAY_ULID{ 3 };
 private:
     static std::unique_ptr<Engine>      mInstance;
 
@@ -84,7 +92,7 @@ private:
 
     Vec2 mWindowSize{ 1920.0f, 1080.0f };
 
-    std::function<void(uint64_t)> mOnPlayerTwoJoined;
+    std::function<void()> mOnPlayerTwoJoined;
 };
 
 } // Namespace d2e.

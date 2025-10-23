@@ -19,29 +19,23 @@
 namespace d2eGame
 {
 
-void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const std::optional<uint64_t> player2Id)
+void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1)
 {
-    const sf::Color playerColor = !player2Id.has_value() ? PLAYER_1_COLOR : PLAYER_2_COLOR;
+    const sf::Color playerColor = isPlayer1 ? PLAYER_1_COLOR : PLAYER_2_COLOR;
 
-    d2eNet::Packet packet;
     mGameObject = scene->CreateGameObject();
-    if (player2Id.has_value())
-        mGameObject->SetId(d2e::Ulid{ player2Id.value() });
-    const d2e::Ulid id = mGameObject->GetId();
-    packet.AddLineWithId(id);
+    mGameObject->SetId(isPlayer1 ? d2e::Engine::PLAYER_ONE_ULID : d2e::Engine::PLAYER_TWO_ULID);
 
     //todo this should be changed into a percentage and not a pixel based.
     constexpr float PLAYER_RADIUS = 20.0f;
 
     d2e::WeakRef<d2e::Transform> transform = mGameObject->GetComponent<d2e::Transform>();
-    transform->translation = !player2Id.has_value() ? d2e::Vec2{ 900.0f, 100.0f } : d2e::Vec2{ 1100.0f, 100.0f };
+    transform->translation = isPlayer1 ? d2e::Vec2{ 900.0f, 100.0f } : d2e::Vec2{ 1100.0f, 100.0f };
     transform->SetSyncValuesOnUpdate(true);
-    packet.AddType<d2e::Transform>(id, transform->Serialize());
 
     d2e::WeakRef<d2e::CircleSprite> visual = mGameObject->AddComponent<d2e::CircleSprite>();
     visual->SetColor(playerColor);
     visual->SetRadius(PLAYER_RADIUS);
-    packet.AddType<d2e::CircleSprite>(id, visual->Serialize());
 
     static d2e::spriteId spriteId = d2e::SpriteManager::Instance()->LoadTexture("E:/Programming/d2e/d2eGameProject/d2eGame/Assets/SplatAnim/SplatSpritesheet.png");
 
@@ -80,21 +74,30 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const std::optional<ui
         t->translation = info.collisionPosition - d2e::Vec2{ 0.0f, -0.5f };
         t->scale = d2e::Vec2{ 0.13f * r, 0.13f };
     });
-    packet.AddType<d2e::CircleCollider>(id, collider->Serialize());
 
     d2e::WeakRef<d2e::Movement> movement = mGameObject->AddComponent<d2e::Movement>();
     movement->speed = 800.0f;
-    packet.AddType<d2e::Movement>(id, movement->Serialize());
 
     d2e::WeakRef<d2e::RigidBody> rb = mGameObject->AddComponent<d2e::RigidBody>();
     rb->SetGravity(d2e::Vec2{ 0.0f, 15.0f });
     rb->SetRestitution(0.1f);
     rb->SetSyncValuesOnUpdate(true);
-    packet.AddType<d2e::RigidBody>(id, rb->Serialize());
+}
+
+void Player::SyncPlayer()
+{
+    d2eNet::Packet packet;
+    const uint64_t id = mGameObject->GetId();
+
+    packet.AddLineWithId(id);
+    packet.AddType<d2e::Transform>(id, mGameObject->GetComponent<d2e::Transform>()->Serialize());
+    packet.AddType<d2e::CircleSprite>(id, mGameObject->GetComponent<d2e::CircleSprite>()->Serialize());
+    packet.AddType<d2e::CircleCollider>(id, mGameObject->GetComponent<d2e::CircleCollider>()->Serialize());
+    packet.AddType<d2e::Movement>(id, mGameObject->GetComponent<d2e::Movement>()->Serialize());
+    packet.AddType<d2e::RigidBody>(id, mGameObject->GetComponent<d2e::RigidBody>()->Serialize());
 
     packet.AddSyncObject(id);
 
     d2e::Engine::Instance()->GetClient()->AddPacketToSend(packet);
 }
-
 } // Namespace d2eGame.

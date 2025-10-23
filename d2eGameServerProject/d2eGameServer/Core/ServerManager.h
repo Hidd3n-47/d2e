@@ -27,7 +27,7 @@ public:
 
     bool Init();
     void Run();
-    void Destroy();
+    void Destroy() const;
 
     void ProcessIncomingPackets(d2e::WeakRef<d2e::Scene> activeScene);
     void SendPacketsToClients(d2e::WeakRef<d2e::Scene> activeScene) const;

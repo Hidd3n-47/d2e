@@ -274,7 +274,7 @@ void Engine::ProcessNetworkPackets() const
             {
                 if (mOnPlayerTwoJoined)
                 {
-                    mOnPlayerTwoJoined(std::stoull(packetString));
+                    mOnPlayerTwoJoined();
                 }
                 break;
             }

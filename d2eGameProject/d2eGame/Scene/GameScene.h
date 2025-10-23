@@ -17,7 +17,7 @@ enum class GameState
     NONE,
     LOADING_LEVEL,
     WAITING_FOR_PLAYERS,
-    LOADING_PLAYERS,
+    BATTLE_COUNTDOWN,
     PLAYING
 };
 
@@ -29,10 +29,16 @@ public:
 
     void ChangeGameState(const GameState state);
 
-    [[nodiscard]] inline Player& GetPlayer() { return mPlayer; }
-    inline void SetPlayer(const Player& player) { mPlayer = player; }
+    [[nodiscard]] inline Player& GetPlayer()      { return mPlayer; }
+    [[nodiscard]] inline Player& GetOtherPlayer() { return mOtherPlayer; }
+
+    [[nodiscard]] inline bool ArePlayersSyncedAcrossNetwork() const { return mPlayersSyncedAcrossNetwork; }
+    inline void SetPlayersSyncedAcrossNetwork(const bool synced = true) { mPlayersSyncedAcrossNetwork = true; }
 private:
     Player mPlayer;
+    Player mOtherPlayer;
+
+    bool mPlayersSyncedAcrossNetwork = false;
 
     GameState   mState     = GameState::NONE;
     IGameState* mGameState = nullptr;

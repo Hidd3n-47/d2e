@@ -34,7 +34,7 @@ public:
     void ChangeState(const ApplicationState newState);
 
     void JoinOnlineGame();
-    void PlayerTwoJoined(const uint64_t id);
+    void PlayerTwoJoined() const;
 private:
     static std::unique_ptr<GameManager> mInstance;
 

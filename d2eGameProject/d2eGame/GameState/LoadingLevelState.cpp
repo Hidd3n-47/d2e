@@ -64,7 +64,8 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
         d2eNet::Packet packet;
 
         d2e::WeakRef<d2e::GameObject> ping = scene->CreateGameObject();
-        const d2e::Ulid id = ping->GetId();
+        constexpr d2e::Ulid id = d2e::Engine::PING_DISPLAY_ULID;
+        ping->SetId(id);
         packet.AddLineWithId(id);
 
         d2e::WeakRef<d2e::PingDisplay> pingDisplay = ping->AddComponent<d2e::PingDisplay>();

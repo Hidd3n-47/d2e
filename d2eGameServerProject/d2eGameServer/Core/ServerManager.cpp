@@ -72,10 +72,7 @@ void ServerManager::Run()
 
         ProcessIncomingPackets(activeScene);
 
-        if (mHost->GetNumJoinedClients() != 0)
-        {
-            d2e::Engine::Instance()->Update();
-        }
+        d2e::Engine::Instance()->Update();
         d2e::Engine::Instance()->PostUpdate();
 
         SendPacketsToClients(activeScene);
@@ -84,7 +81,7 @@ void ServerManager::Run()
     }
 }
 
-void ServerManager::Destroy()
+void ServerManager::Destroy() const
 {
     d2eNet::d2eNet::Destroy();
 
@@ -162,6 +159,7 @@ void ServerManager::ProcessIncomingPackets(d2e::WeakRef<d2e::Scene> activeScene)
                 mHost->AddPacketToBroadcast(p);
                 break;
             }
+            case d2eNet::PacketLineType::PLAYER_TWO_JOINED:
             default:
                 mLog.Warn("Received packet that is not processed: <{}>", packetString);
                 break;
@@ -214,7 +212,7 @@ void ServerManager::OnClientConnected(const uint32_t id)
 
     // The second player has joined the server.
     d2eNet::Packet p;
-    p.AddLineWithId(d2e::Ulid{}, d2eNet::PacketLineType::PLAYER_TWO_JOINED);
+    p.AddLineWithId(0, d2eNet::PacketLineType::PLAYER_TWO_JOINED);
     mHost->AddPacketToBroadcast(p);
 }
 

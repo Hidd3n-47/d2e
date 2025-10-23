@@ -2,7 +2,9 @@
 
 #include "src/Defines.h"
 
+#include "GameState/GamePlayingState.h"
 #include "GameState/LoadingLevelState.h"
+#include "GameState/BattleCountdownState.h"
 #include "GameState/WaitingForPlayersState.h"
 
 namespace d2eGame
@@ -30,9 +32,11 @@ void GameScene::ChangeGameState(const GameState state)
     case GameState::WAITING_FOR_PLAYERS:
         mGameState = new WaitingForPlayersState();
         break;
-    case GameState::LOADING_PLAYERS:
+    case GameState::BATTLE_COUNTDOWN:
+        mGameState = new BattleCountdownState();
         break;
     case GameState::PLAYING:
+        mGameState = new GamePlayingState();
         break;
     case GameState::NONE:
     default:
