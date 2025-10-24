@@ -76,42 +76,6 @@ void Host::Update(const uint32_t timeout)
                 break;
             }
             }
-
-            //if (event.type == ENET_EVENT_TYPE_CONNECT)
-            //{
-            //    // todo add.
-            //    ++mNumJoinedClients;
-            //    printf("A new client connected from %x:%u.\n",
-            //        event.peer->address.host,
-            //        event.peer->address.port);
-            //    //return;
-            //}
-
-            //if (event.type == ENET_EVENT_TYPE_DISCONNECT)
-            //{
-            //    // todo add.
-            //    --mNumJoinedClients;
-            //    printf("A new client disconnected from %x:%u.\n",
-            //        event.peer->address.host,
-            //        event.peer->address.port);
-
-            //    //return;
-            //}
-
-            //if (event.type == ENET_EVENT_TYPE_RECEIVE)
-            //{
-            //    // todo add some info here.
-            //    /*printf("A packet of length %u containing %s was received from %s on channel %u.\n",
-            //        event.packet->dataLength,
-            //        reinterpret_cast<const char*>(event.packet->data),
-            //        event.peer->data,
-            //        event.channelID);*/
-
-            //        //mPacketsReceived.emplace(std::string{ reinterpret_cast<const char*>(event.packet->data), event.packet->dataLength });
-            //    mPacketsReceived.emplace(event.packet->data, event.packet->dataLength);
-            //    enet_packet_destroy(event.packet);
-            //    //return;
-            //}
         }
 
         BroadcastPackets();
@@ -153,7 +117,6 @@ void Host::BroadcastPackets()
 
 void Host::BroadcastPacket(const Packet& packet) const
 {
-    //std::cout << "Trying to send packet of: <" + std::string{ packet.BufBegin(), packet.BufEnd() } + ">\n";
     ENetPacket* enetPacket{ enet_packet_create(packet.GetData(), packet.GetCount(), packet.IsReliable() ? ENET_PACKET_FLAG_RELIABLE : ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT) };
 
     enet_host_broadcast(mHost, 0, enetPacket);

@@ -16,8 +16,7 @@ Particle::Particle(const Vec2 position, const Vec2 velocity, const float resista
 
 bool Particle::Update(const float dt)
 {
-    //todo does this need dt?
-    mPosition += mVelocity;
+    mPosition += mVelocity * dt;
 
     mVelocity.y -= mResistance;
     if (abs(mVelocity.y) < 0.02)
