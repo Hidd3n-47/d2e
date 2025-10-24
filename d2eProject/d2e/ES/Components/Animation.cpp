@@ -13,6 +13,12 @@ void Animation::CreateAnimation(const AnimationDetails& details, const float tim
     mTimeBetweenFrames = timeBetweenFrames;
 }
 
+void Animation::RestartAnimation()
+{
+    mCurrentFrame = 0;
+    mTimer = 0.0f;
+}
+
 void Animation::Update(const float dt)
 {
     mTimer += dt;

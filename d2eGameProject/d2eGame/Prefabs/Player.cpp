@@ -6,7 +6,6 @@
 
 #include <d2e/ES/Components/Tag.h>
 #include <d2e/Es/Components/Movement.h>
-#include <d2e/Es/Components/Animation.h>
 #include <d2e/ES/Components/RigidBody.h>
 #include <d2e/ES/Components/Transform.h>
 #include <d2e/ES/Components/CircleSprite.h>
@@ -14,6 +13,8 @@
 
 #include <d2eNet/Core/Client.h>
 #include <d2eNet/Core/Packet.h>
+
+#include "Systems/SplatAnimationManager.h"
 
 
 namespace d2eGame
@@ -36,8 +37,6 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1)
     visual->SetColor(playerColor);
     visual->SetRadius(PLAYER_RADIUS);
 
-    static d2e::spriteId spriteId = d2e::SpriteManager::Instance()->LoadTexture("E:/Programming/d2e/d2eGameProject/d2eGame/Assets/SplatAnim/SplatSpritesheet.png");
-
     d2e::WeakRef<d2e::CircleCollider> collider = mGameObject->AddComponent<d2e::CircleCollider>();
     collider->SetRadius(PLAYER_RADIUS);
     collider->SetOnCollisionEnterCallback([&](const d2e::CollisionInfo& info)
@@ -54,25 +53,7 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1)
             return;
         }
 
-        //todo need to pool this as we cannot have infinite splats.
-        const float r = d2e::Random::GetRandomBetween<int>(0, 2) == 1 ? 1.0f : -1.0f;
-
-        d2e::WeakRef<d2e::GameObject> object = info.instance->GetScene()->CreateGameObject();
-        d2e::WeakRef<d2e::Animation>  anim   = object->AddComponent<d2e::Animation>();
-        const d2e::AnimationDetails animDetails
-        {
-            .spriteSheetId      = spriteId,
-            .framesHorizontal   = 4,
-            .frameCount         = 7,
-            .repeatAnimation    = false
-        };
-
-        anim->CreateAnimation(animDetails, 0.015f);
-        anim->SetSpriteColor(PLAYER_1_COLOR);
-        d2e::WeakRef<d2e::Transform> t = object->GetComponent<d2e::Transform>();
-        DEBUG_LOG("Collision Position: {}:{}", info.collisionPosition.x, info.collisionPosition.y);
-        t->translation = info.collisionPosition + d2e::Vec2{ 0.0f, -0.02f };
-        t->scale = d2e::Vec2{ 0.13f * r, 0.13f };
+        SplatAnimationManager::Instance()->AddSplatAnimation(info.collisionPosition, info.instance->GetId() == d2e::Engine::PLAYER_ONE_ULID);
     });
 
     mGameObject->AddComponent<d2e::Movement>();

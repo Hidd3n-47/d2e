@@ -21,6 +21,8 @@ class Animation : public IComponent
 public:
     void CreateAnimation(const AnimationDetails& details, const float timeBetweenFrames);
 
+    void RestartAnimation();
+
     void Update(const float dt) override;
     void Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera) override;
 

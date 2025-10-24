@@ -15,6 +15,7 @@
 
 #include "Scene/GameScene.h"
 #include "src/Defines.h"
+#include "Systems/SplatAnimationManager.h"
 
 namespace d2eGame
 {
@@ -110,6 +111,8 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
     }
 
     client->ServerProcessedPacketsConfirmation([&] { LoadingCompleted(); });
+
+    SplatAnimationManager::Instance()->InitPool(scene);
 }
 
 void LoadingLevelState::Update()
