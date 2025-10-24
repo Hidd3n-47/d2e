@@ -23,10 +23,9 @@ void GamePlayingState::Update()
     d2e::WeakRef<d2e::GameObject> playerGameObject = mGameScene->GetPlayer().GetGameObject();
     d2e::WeakRef<d2e::Movement>   movement = playerGameObject->GetComponent<d2e::Movement>();
 
-    float xAxisDelta = 0.0f;
-    bool jumped = false;
-
     const d2e::WeakRef<d2e::InputManager> inputManager = d2e::Engine::Instance()->GetInputManager();
+
+    float xAxisDelta = 0.0f;
     if (inputManager->IsKeyDown(sf::Keyboard::Key::A))
     {
         xAxisDelta -= 1.0f;
@@ -35,13 +34,12 @@ void GamePlayingState::Update()
     {
         xAxisDelta += 1.0f;
     }
-    if (inputManager->IsKeyPressed(sf::Keyboard::Key::Space) )
-    {
-        jumped = true;
-    }
-
     movement->xAxisDelta = xAxisDelta;
-    movement->jumped     = jumped;
+
+    if (inputManager->IsKeyPressed(sf::Keyboard::Key::Space))
+    {
+        ++movement->currentFrameJumpCount;
+    }
 
     d2eNet::Packet packet{ false };
     packet.UpdateType<d2e::Movement>(playerGameObject->GetId(), movement->Serialize());

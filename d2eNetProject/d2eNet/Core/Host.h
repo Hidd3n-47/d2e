@@ -43,8 +43,8 @@ public:
 
     static constexpr uint32_t NUMBER_OF_ALLOWED_CLIENTS = 2;
 private:
-    ENetHost*   mHost;
-    ENetAddress mAddress;
+    ENetHost*   mHost = nullptr;
+    ENetAddress mAddress{};
     std::atomic<bool> mRunning;
 
     uint32_t mNumJoinedClients{ 0 };

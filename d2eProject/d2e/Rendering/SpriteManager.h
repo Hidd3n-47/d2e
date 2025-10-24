@@ -20,8 +20,8 @@ public:
     [[nodiscard]] spriteId LoadTexture(const std::filesystem::path& path);
 
     //todo make it return invalid texture if it doesn't exist.
-    [[nodiscard]] inline WeakRef<Sprite> GetSprite(const spriteId id) const
-        { DEBUG(if (!mIdToSpriteIndexMap.contains(id)) DEBUG_WARN("Failed to obtain sprite with ID {}", id);) return WeakRef{ mLoadedSprites[mIdToSpriteIndexMap.at(id)] }; }
+    [[nodiscard]] WeakRef<Sprite> GetSprite(const spriteId id) const;
+
 private:
     static std::unique_ptr<SpriteManager> mInstance;
 

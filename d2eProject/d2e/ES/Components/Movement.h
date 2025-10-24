@@ -12,12 +12,12 @@ class Movement : public IComponent
 public:
     void Update(const float dt) override;
 
-    bool  jumped;
     float xAxisDelta = 0.0f;
 
     float    speed        = 20.0f;
-    uint16_t maxJumpCount = 2;
-    uint16_t jumpCount    = 0;
+    uint16_t maxJumpCount = 0;
+    uint16_t currentFrameJumpCount  = 0;
+    uint16_t previousFrameJumpCount = 0;
 
     [[nodiscard]] std::string Serialize() const override;
     void Deserialize(const std::string& string) override;

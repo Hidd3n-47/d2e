@@ -28,4 +28,10 @@ spriteId SpriteManager::LoadTexture(const std::filesystem::path& path)
     return mTextureId++;
 }
 
+WeakRef<Sprite> SpriteManager::GetSprite(const spriteId id) const
+{
+    DEBUG(if (!mIdToSpriteIndexMap.contains(id)) DEBUG_WARN("Failed to obtain sprite with ID {}", id);)
+
+    return WeakRef{ mLoadedSprites[mIdToSpriteIndexMap.at(id)] };
+}
 } // Namespace d2e.

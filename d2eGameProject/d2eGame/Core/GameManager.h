@@ -9,6 +9,8 @@
 #include "Scene/GameScene.h"
 #include "ApplicationState.h"
 
+#include "src/Defines.h"
+
 namespace d2eGame
 {
 

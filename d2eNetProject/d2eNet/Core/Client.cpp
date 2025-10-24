@@ -49,7 +49,7 @@ bool Client::Init(const uint8_t ip1, const uint8_t  ip2, const uint8_t ip3, cons
         case ENET_EVENT_TYPE_RECEIVE:
         {
             const std::string idStr{ reinterpret_cast<char*>(event.packet->data) };
-            mClientId = static_cast<uint16_t>(std::stoi(idStr));
+            mClientId = static_cast<uint32_t>(std::stoi(idStr));
             enet_packet_destroy(event.packet);
 
             setId = true;

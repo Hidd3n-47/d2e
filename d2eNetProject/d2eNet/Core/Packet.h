@@ -24,9 +24,9 @@ friend class Iterator;
     public:
         Iterator(const Packet* ptr, const uint32_t index) : mPtr(ptr), mIndex(index) { /* Empty. */ }
 
-        [[nodiscard]] inline PacketLineType GetPacketLineType() const { return static_cast<PacketLineType>(mPtr->mBuffer[mIndex]); }
-        [[nodiscard]] inline uint8_t GetPacketLineLength() const { return mPtr->mBuffer[mIndex + 1]; }
-        [[nodiscard]] inline std::string GetPacketLineString() const
+        [[nodiscard]] inline PacketLineType GetPacketLineType()   const { return static_cast<PacketLineType>(mPtr->mBuffer[mIndex]); }
+        [[nodiscard]] inline uint8_t        GetPacketLineLength() const { return mPtr->mBuffer[mIndex + 1]; }
+        [[nodiscard]] inline std::string    GetPacketLineString() const
         {
             if (mPtr->mBuffer[mIndex + 1] == 0)
             {
@@ -76,12 +76,12 @@ public:
     Packet() = default;
     Packet(const bool reliable) : mReliable(reliable) { }
     inline Packet(const uint8_t* data, const uint16_t size) {
-        mBuffer.insert(mBuffer.begin(), data, data + size * sizeof(uint8_t)); }
+        mBuffer.insert(mBuffer.begin(), data, data + static_cast<size_t>(size) * sizeof(uint8_t)); }
 
     [[nodiscard]] inline PacketLineType GetPacketLineType() const { return static_cast<PacketLineType>(mBuffer[0]); }
-    [[nodiscard]] inline void* GetData() const { return (void*)mBuffer.data(); }
-    [[nodiscard]] inline uint32_t GetCount() const { return static_cast<uint32_t>(mBuffer.size()); }
-    [[nodiscard]] inline bool IsReliable() const { return mReliable; }
+    [[nodiscard]] inline void*    GetData()    const { return (void*)mBuffer.data(); }
+    [[nodiscard]] inline uint32_t GetCount()   const { return static_cast<uint32_t>(mBuffer.size()); }
+    [[nodiscard]] inline bool     IsReliable() const { return mReliable; }
 
     inline void AddLineWithId(const uint64_t id, const PacketLineType packetType = PacketLineType::ADD_GAME_OBJECT)
     {
