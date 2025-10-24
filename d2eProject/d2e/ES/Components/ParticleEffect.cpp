@@ -55,7 +55,7 @@ void ParticleEffect::Update(const float dt)
     }
 }
 
-void ParticleEffect::Render(const WeakRef<sf::RenderWindow> window)
+void ParticleEffect::Render(const WeakRef<sf::RenderWindow> window, const OrthoCamera& camera)
 {
     for (uint32_t i{ 0 }; i < mNumAliveParticles; ++i)
     {

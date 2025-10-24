@@ -24,7 +24,7 @@ void Animation::Update(const float dt)
     }
 }
 
-void Animation::Render(WeakRef<sf::RenderWindow> window)
+void Animation::Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera)
 {
     const WeakRef<Transform> transform = mParent->GetComponent<Transform>();
 

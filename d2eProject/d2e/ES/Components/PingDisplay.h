@@ -11,7 +11,7 @@ namespace d2e
 class PingDisplay : public IComponent
 {
 public:
-    void Render(WeakRef<sf::RenderWindow> window) override;
+    void Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera) override;
 
     std::string Serialize() const override;
     void Deserialize(const std::string& string) override;

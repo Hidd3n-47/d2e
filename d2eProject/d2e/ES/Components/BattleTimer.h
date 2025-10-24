@@ -13,7 +13,7 @@ class BattleTimer : public IComponent
 public:
     inline void StartTimer() { mTimer = TIME_TO_COUNTDOWN_SECONDS; mTimerRunning = true; }
     void Update(const float dt) override;
-    void Render(WeakRef<sf::RenderWindow> window) override;
+    void Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera) override;
 
     static constexpr float TIME_TO_COUNTDOWN_SECONDS = 3.0f;
 

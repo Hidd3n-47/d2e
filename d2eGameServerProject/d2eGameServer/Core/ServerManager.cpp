@@ -133,7 +133,7 @@ void ServerManager::ProcessIncomingPackets(d2e::WeakRef<d2e::Scene> activeScene)
             }
             case d2eNet::PacketLineType::SYNC_GAME_OBJECT_ACROSS_NETWORK:
             {
-                mGameObjectsToSyncAcrossNetwork.emplace_back(d2e::Ulid{ std::stoull(packetString) });
+                mGameObjectsToSyncAcrossNetwork.emplace_back(std::stoull(packetString));
                 mLog.Debug("Registered game object (ID: {}) to be synced across networks.", packetString);
                 break;
             }

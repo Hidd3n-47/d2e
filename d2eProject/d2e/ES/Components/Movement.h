@@ -23,10 +23,6 @@ public:
     void Deserialize(const std::string& string) override;
 
     D2E_COMPONENT("Movement")
-//private:
-//    float    mSpeed        = 1.0f;
-//    uint16_t mMaxJumpCount = 2;
-//    uint16_t mJumpCount    = 0;
 };
 
 } // Namespace d2e.

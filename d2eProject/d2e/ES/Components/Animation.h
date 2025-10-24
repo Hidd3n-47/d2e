@@ -22,7 +22,7 @@ public:
     void CreateAnimation(const AnimationDetails& details, const float timeBetweenFrames);
 
     void Update(const float dt) override;
-    void Render(WeakRef<sf::RenderWindow> window) override;
+    void Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera) override;
 
     inline void SetSpriteColor(const sf::Color color) { mSpriteColor = color; }
 

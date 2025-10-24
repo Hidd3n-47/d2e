@@ -23,13 +23,13 @@ public:
 
 #ifdef DEV_CONFIGURATION
 public:
-    void Render(WeakRef<sf::RenderWindow> window) override;
+    void Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera) override;
 private:
     sf::RectangleShape mDebugRender;
 public:
 #endif // DEV_CONFIGURATION.
 private:
-    Vec2 mHalfExtents{ 10.f, 10.0f };
+    Vec2 mHalfExtents{ 0.5f, 0.5f };
 };
 
 } // Namespace d2e.

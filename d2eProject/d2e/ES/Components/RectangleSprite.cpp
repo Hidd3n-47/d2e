@@ -7,12 +7,15 @@
 namespace d2e
 {
 
-void RectangleSprite::Render(WeakRef<sf::RenderWindow> window)
+void RectangleSprite::Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera)
 {
-    const auto transform = mParent->GetComponent<Transform>();
+    const WeakRef<Transform> transform = mParent->GetComponent<Transform>();
 
-    mRectangle.setPosition({ transform->translation.x - mHalfExtents.x, transform->translation.y - mHalfExtents.y });
-    mRectangle.setSize({ mHalfExtents.x * 2.0f, mHalfExtents.y * 2.0f });
+    const Vec2 position{ camera.PositionToScreenSpace(transform->translation + Vec2{ -mHalfExtents.x, mHalfExtents.y }) };
+    const Vec2 size{ camera.SizeInScreenSpace(mHalfExtents * 2.0f) };
+
+    mRectangle.setPosition({ position.x, position.y });
+    mRectangle.setSize({ size.x, size.y });
     window->draw(mRectangle);
 }
 

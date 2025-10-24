@@ -1,8 +1,9 @@
 #pragma once
 
-#include <d2e/src/d2ePch.h>
+#include "d2e/src/d2ePch.h"
 
 #include "d2e/Core/Ulid.h"
+#include "d2e/Core/OrthoCamera.h"
 
 namespace d2eNet
 {
@@ -35,7 +36,7 @@ public:
 
     void Init();
     void Run();
-    void Destroy();
+    void Destroy() const;
 
     [[nodiscard]] WeakRef<Scene> CreateScene();
     void RemoveScene(WeakRef<Scene>& scene);
@@ -56,7 +57,7 @@ public:
 
     inline void SetOnPlayerTwoJoinedCallback(const std::function<void()>& callback) { mOnPlayerTwoJoined = callback; }
 
-    [[nodiscard]] inline Vec2                       GetWindowSize()     const { return mWindowSize; }
+    [[nodiscard]] inline const OrthoCamera&         GetCamera()         const { return mOrthoCamera; }
     [[nodiscard]] inline WeakRef<Scene>             GetActiveScene()    const { return WeakRef{ mActiveScene }; }
     [[nodiscard]] inline WeakRef<InputManager>      GetInputManager()   const { return WeakRef{ mInputManager.get() }; }
     [[nodiscard]] inline WeakRef<sf::RenderWindow>  GetWindow()         const { return WeakRef{ mWindow.get() }; }
@@ -75,6 +76,7 @@ public:
     static constexpr Ulid PING_DISPLAY_ULID{ 3 };
     static constexpr Ulid BATTLE_TIMER_ULID{ 4 };
 
+    const Vec2 DEFAULT_SCREEN_SIZE{ 1920.0f, 1080.0f };
     inline static sf::Font GAME_FONT{ "E:/Programming/d2e/d2eGameProject/d2eGame/Assets/Fonts/Liquidism/Liquidism.ttf" };
 private:
     static std::unique_ptr<Engine>      mInstance;
@@ -85,15 +87,13 @@ private:
     std::unique_ptr<d2eNet::Client>     mClient;
     DEBUG(std::unique_ptr<Log> mLog);
 
-    // todo look at changing from raw pointer for scenes.
-    std::vector<Scene*> mScenes;
-    Scene*              mActiveScene;
+    OrthoCamera mOrthoCamera;
+
+    Scene* mActiveScene     = nullptr;
     Scene* mSceneToChangeTo = nullptr;
 
     float mDeltaTime = TARGET_FRAME_TIME.count();
     std::chrono::time_point<std::chrono::steady_clock> mFrameStart;
-
-    Vec2 mWindowSize{ 1920.0f, 1080.0f };
 
     std::function<void()> mOnPlayerTwoJoined;
 };

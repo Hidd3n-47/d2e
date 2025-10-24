@@ -29,7 +29,7 @@ public:
     void EmitParticles(const uint32_t numParticles, const Vec2 startingPosition, const ParticleEffectDetails& details = {});
 
     void Update(const float dt) override;
-    void Render(const WeakRef<sf::RenderWindow> window) override;
+    void Render(const WeakRef<sf::RenderWindow> window, const OrthoCamera& camera) override;
 
     D2E_COMPONENT("ParticleEffect")
 private:

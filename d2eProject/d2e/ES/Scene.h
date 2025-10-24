@@ -1,6 +1,7 @@
 #pragma once
 
 #include "d2e/Es/GameObject.h"
+#include "d2e/Core/OrthoCamera.h"
 #include "d2e/Physics/PhysicsManager.h"
 #include "d2e/Physics/CollisionHandler.h"
 
@@ -17,7 +18,7 @@ public:
     inline virtual void SceneUpdate() const { }
 
     void Update(const float dt) const;
-    void Render(const WeakRef<sf::RenderWindow> window) const;
+    void Render(const WeakRef<sf::RenderWindow> window, const OrthoCamera& camera) const;
 
     [[nodiscard]] WeakRef<GameObject> CreateGameObject();
 

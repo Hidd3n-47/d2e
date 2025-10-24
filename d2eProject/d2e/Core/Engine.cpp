@@ -21,10 +21,21 @@ std::unique_ptr<Engine> Engine::mInstance = std::make_unique<Engine>();
 
 void Engine::Init()
 {
-    mWindow = std::make_unique<sf::RenderWindow>(sf::VideoMode({ static_cast<uint32_t>(mWindowSize.x), static_cast<uint32_t>(mWindowSize.y) }), "d2e");
+    mWindow = std::make_unique<sf::RenderWindow>(sf::VideoMode({ static_cast<uint32_t>(DEFAULT_SCREEN_SIZE.x), static_cast<uint32_t>(DEFAULT_SCREEN_SIZE.y) }), "d2e");
 
     mInputManager = std::make_unique<InputManager>();
     DEBUG(mLog = std::make_unique<Log>("d2e Engine"));
+
+    OrthoCameraValues cameraValues
+    {
+        .left   = -8.0f,
+        .right  =  8.0f,
+        .top    =  4.5f,
+        .bottom = -4.5f,
+        .screenWidth  = DEFAULT_SCREEN_SIZE.x,
+        .screenHeight = DEFAULT_SCREEN_SIZE.y
+    };
+    mOrthoCamera = OrthoCamera{ cameraValues };
 
     d2eNet::d2eNet::Init();
 
@@ -59,42 +70,11 @@ void Engine::Run()
     }
 }
 
-void Engine::Destroy()
+void Engine::Destroy() const
 {
     d2eNet::d2eNet::Destroy();
 
     DEBUG_LOG("d2e engine destroyed.");
-}
-
-WeakRef<Scene> Engine::CreateScene()
-{
-    mScenes.emplace_back(new Scene());
-    return WeakRef{ mScenes.back() };
-}
-
-void Engine::RemoveScene(WeakRef<Scene>& scene)
-{
-    if (!scene.IsRefValid())
-    {
-        return;
-    }
-
-    const Scene* sceneToFind = scene.GetRawPtr();
-    for (size_t i{ 0 }; i < mScenes.size(); ++i)
-    {
-        if (mScenes[i] != sceneToFind)
-        {
-            continue;
-        }
-
-        delete mScenes[i];
-        mScenes[i] = mScenes.back();
-        mScenes.pop_back();
-
-        scene.Invalidate();
-
-        return;
-    }
 }
 
 void Engine::ConnectClientToServer(const int ip1, const int ip2, const int ip3, const int ip4, const uint16_t port)
@@ -138,7 +118,6 @@ void Engine::Input()
         if (const sf::Event::Resized* resized = event->getIf<sf::Event::Resized>())
         {
             mWindow->setSize(resized->size);
-            mWindowSize = Vec2{ static_cast<float>(resized->size.x), static_cast<float>(resized->size.y) };
         }
 
         if (const sf::Event::KeyPressed* key = event->getIf<sf::Event::KeyPressed>())
@@ -217,7 +196,7 @@ void Engine::Render() const
 
     if (mActiveScene)
     {
-        mActiveScene->Render(WeakRef{ mWindow.get() });
+        mActiveScene->Render(WeakRef{ mWindow.get() }, mOrthoCamera);
     }
     else
     {

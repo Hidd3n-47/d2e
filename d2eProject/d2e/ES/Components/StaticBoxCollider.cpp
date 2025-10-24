@@ -21,12 +21,15 @@ void StaticBoxCollider::OnComponentRemoved()
 }
 
 #ifdef DEV_CONFIGURATION
-void StaticBoxCollider::Render(WeakRef<sf::RenderWindow> window)
+void StaticBoxCollider::Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera)
 {
-    const auto transform = mParent->GetComponent<Transform>();
+    const WeakRef<Transform> transform = mParent->GetComponent<Transform>();
 
-    mDebugRender.setPosition({ transform->translation.x - mHalfExtents.x, transform->translation.y - mHalfExtents.y });
-    mDebugRender.setSize({ mHalfExtents.x * 2.0f, mHalfExtents.y * 2.0f });
+    const Vec2 position{ camera.PositionToScreenSpace(transform->translation + Vec2{  -mHalfExtents.x, +mHalfExtents.y }) };
+    const Vec2 size{ camera.SizeInScreenSpace(Vec2{ mHalfExtents.x * 2.0f, mHalfExtents.y * 2.0f }) };
+
+    mDebugRender.setPosition({ position.x, position.y });
+    mDebugRender.setSize({ size.x, size.y });
     mDebugRender.setFillColor(sf::Color::Transparent);
     mDebugRender.setOutlineColor(sf::Color::White);
     mDebugRender.setOutlineThickness(2.0f);

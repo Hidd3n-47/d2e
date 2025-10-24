@@ -25,11 +25,11 @@ void Scene::Update(const float dt) const
     mPhysicsManager.Update(dt);
 }
 
-void Scene::Render(const  WeakRef<sf::RenderWindow> window) const
+void Scene::Render(const  WeakRef<sf::RenderWindow> window, const OrthoCamera& camera) const
 {
     for (const GameObject* gameObject : mGameObjects)
     {
-        gameObject->Render(window);
+        gameObject->Render(window, camera);
     }
 }
 

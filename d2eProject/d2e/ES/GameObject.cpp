@@ -32,11 +32,11 @@ void GameObject::Update(const float dt) const
     }
 }
 
-void GameObject::Render(const WeakRef<sf::RenderWindow> window) const
+void GameObject::Render(const WeakRef<sf::RenderWindow> window, const OrthoCamera& camera) const
 {
     for (IComponent* component : mComponents)
     {
-        component->Render(window);
+        component->Render(window, camera);
     }
 }
 

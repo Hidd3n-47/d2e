@@ -7,12 +7,15 @@
 namespace d2e
 {
 
-void CircleSprite::Render(WeakRef<sf::RenderWindow> window)
+void CircleSprite::Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera)
 {
-    const auto transform = mParent->GetComponent<Transform>();
+    const WeakRef<Transform> transform = mParent->GetComponent<Transform>();
 
-    mCircle.setPosition({ transform->translation.x - mRadius, transform->translation.y -mRadius });
-    mCircle.setRadius(mRadius);
+    const Vec2 position{ camera.PositionToScreenSpace(Vec2{ transform->translation.x - mRadius, transform->translation.y + mRadius }) };
+    const Vec2 size{ camera.SizeInScreenSpace(Vec2{ mRadius * 2.0f, 0.0f }) };
+
+    mCircle.setPosition({ position.x, position.y });
+    mCircle.setRadius(size.x);
     mCircle.setFillColor(mColor);
     window->draw(mCircle);
 }

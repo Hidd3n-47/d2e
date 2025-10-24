@@ -27,7 +27,7 @@ void BattleTimer::Update(const float dt)
     }
 }
 
-void BattleTimer::Render(WeakRef<sf::RenderWindow> window)
+void BattleTimer::Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera)
 {
     if (!mTimerRunning)
     {

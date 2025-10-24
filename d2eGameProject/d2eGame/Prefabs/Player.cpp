@@ -26,11 +26,10 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1)
     mGameObject = scene->CreateGameObject();
     mGameObject->SetId(isPlayer1 ? d2e::Engine::PLAYER_ONE_ULID : d2e::Engine::PLAYER_TWO_ULID);
 
-    //todo this should be changed into a percentage and not a pixel based.
-    constexpr float PLAYER_RADIUS = 20.0f;
+    constexpr float PLAYER_RADIUS = 0.1f;
 
     d2e::WeakRef<d2e::Transform> transform = mGameObject->GetComponent<d2e::Transform>();
-    transform->translation = isPlayer1 ? d2e::Vec2{ 900.0f, 100.0f } : d2e::Vec2{ 1100.0f, 100.0f };
+    transform->translation = isPlayer1 ? d2e::Vec2{ -6.0f, 3.0f } : d2e::Vec2{ 6.0f, 3.0f };
     transform->SetSyncValuesOnUpdate(true);
 
     d2e::WeakRef<d2e::CircleSprite> visual = mGameObject->AddComponent<d2e::CircleSprite>();
@@ -79,7 +78,7 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1)
     movement->speed = 800.0f;
 
     d2e::WeakRef<d2e::RigidBody> rb = mGameObject->AddComponent<d2e::RigidBody>();
-    rb->SetGravity(d2e::Vec2{ 0.0f, 15.0f });
+    rb->SetGravity(d2e::Vec2{ 0.0f, 0.0f });
     rb->SetRestitution(0.1f);
     rb->SetSyncValuesOnUpdate(true);
 }

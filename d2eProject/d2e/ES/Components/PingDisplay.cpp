@@ -7,7 +7,7 @@
 namespace d2e
 {
 
-void PingDisplay::Render(WeakRef<sf::RenderWindow> window)
+void PingDisplay::Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera)
 {
     if (mPingIndex == 0)
     {
@@ -22,8 +22,9 @@ void PingDisplay::Render(WeakRef<sf::RenderWindow> window)
     }
 
     const WeakRef<Transform> transform = mParent->GetComponent<Transform>();
+    const Vec2 position = camera.PositionToScreenSpace(Vec2{ transform->translation.x, transform->translation.y });
 
-    mText.setPosition({ transform->translation.x, transform->translation.y});
+    mText.setPosition({ position.x, position.y });
     mText.setCharacterSize(30);
 
     window->draw(mText);

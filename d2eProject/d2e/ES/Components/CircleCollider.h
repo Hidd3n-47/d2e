@@ -31,7 +31,7 @@ public:
 
 #ifdef DEV_CONFIGURATION
 public:
-    void Render(WeakRef<sf::RenderWindow> window) override;
+    void Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera) override;
 private:
     sf::CircleShape mDebugRender;
 public:

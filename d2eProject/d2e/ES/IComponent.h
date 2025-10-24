@@ -1,5 +1,7 @@
 #pragma once
 
+#include "d2e/Core/OrthoCamera.h"
+
 namespace d2e
 {
 
@@ -18,7 +20,7 @@ public:
     virtual void OnComponentRemoved() { }
 
     virtual void Update(const float dt) { }
-    virtual void Render(WeakRef<sf::RenderWindow> window) { }
+    virtual void Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera) { }
 
     [[nodiscard]] virtual std::string Serialize() const { return ""; }
     virtual void Deserialize(const std::string& string) { }

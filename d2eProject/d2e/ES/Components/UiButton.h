@@ -15,7 +15,7 @@ public:
     UiButton(const spriteId spriteId, const std::function<void()>& callback);
 
     void Update(const float dt) override;
-    void Render(WeakRef<sf::RenderWindow> window) override;
+    void Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera) override;
 
     inline void SetOnButtonPressedCallback(const std::function<void()>& callback) { mOnButtonPressed = callback; }
 

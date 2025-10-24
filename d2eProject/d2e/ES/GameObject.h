@@ -1,8 +1,10 @@
 #pragma once
 
 #include "d2e/src/d2ePch.h"
+
 #include "d2e/Core/Ulid.h"
 #include "d2e/Es/IComponent.h"
+#include "d2e/Core/OrthoCamera.h"
 
 namespace d2e
 {
@@ -17,7 +19,7 @@ public:
     ~GameObject();
 
     void Update(const float dt) const;
-    void Render(const WeakRef<sf::RenderWindow> window) const;
+    void Render(const WeakRef<sf::RenderWindow> window, const OrthoCamera& camera) const;
 
     [[nodiscard]] inline WeakRef<Scene> GetScene() const { return mParent; }
 

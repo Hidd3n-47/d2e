@@ -10,7 +10,7 @@ class GameObject;
 class RectangleSprite : public IComponent
 {
 public:
-    void Render(WeakRef<sf::RenderWindow> window) override;
+    void Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera) override;
 
     [[nodiscard]] inline Vec2 GetHalfExtents() const { return mHalfExtents; }
 
@@ -21,7 +21,7 @@ public:
 private:
     sf::RectangleShape mRectangle { { 10.0f, 10.0f } };
 
-    Vec2 mHalfExtents{ 10.0f, 10.0f };
+    Vec2 mHalfExtents{ 0.5f, 0.5f };
 };
 
 } // Namespace d2e.

@@ -49,12 +49,15 @@ void CircleCollider::UpdateObjectsCollidedWith(const std::vector<CollisionInfo>&
 }
 
 #ifdef DEV_CONFIGURATION
-void CircleCollider::Render(WeakRef<sf::RenderWindow> window)
+void CircleCollider::Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera)
 {
-    const auto transform = mParent->GetComponent<Transform>();
+    const WeakRef<Transform> transform = mParent->GetComponent<Transform>();
 
-    mDebugRender.setPosition({ transform->translation.x - mRadius, transform->translation.y - mRadius });
-    mDebugRender.setRadius(mRadius);
+    const Vec2 position{ camera.PositionToScreenSpace(transform->translation + Vec2{ -mRadius, mRadius }) };
+    const Vec2 size{ camera.SizeInScreenSpace(Vec2{ mRadius * 2.0f, 0.0f }) };
+
+    mDebugRender.setPosition({ position.x, position.y });
+    mDebugRender.setRadius(size.x);
     mDebugRender.setFillColor(sf::Color::Transparent);
     mDebugRender.setOutlineColor(sf::Color::White);
     mDebugRender.setOutlineThickness(2.0f);

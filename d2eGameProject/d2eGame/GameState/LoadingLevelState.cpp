@@ -23,8 +23,6 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
 {
     mParent = scene;
 
-    const d2e::Vec2 windowSize = d2e::Engine::Instance()->GetWindowSize();
-
     d2e::WeakRef<d2eNet::Client> client = d2e::Engine::Instance()->GetClient();
     bool uploadLevelData = client->GetId() == 1;
 
@@ -37,12 +35,12 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
         packet.AddLineWithId(id);
 
         d2e::WeakRef<d2e::RectangleSprite> floorSprite = floorObject->AddComponent<d2e::RectangleSprite>();
-        floorSprite->SetHalfExtents(windowSize * d2e::Vec2{ 0.2f, 0.05f });
+        floorSprite->SetHalfExtents(d2e::Vec2{ 2.0f, 0.5f });
         floorSprite->SetColor(sf::Color::Blue);
         packet.AddType<d2e::RectangleSprite>(id, floorSprite->Serialize());
 
         d2e::WeakRef<d2e::Transform> transform = floorObject->GetComponent<d2e::Transform>();
-        transform->translation = windowSize * d2e::Vec2{ 0.5f, 0.5f };
+        transform->translation = d2e::Vec2{ -5.5f, 0.0f };
         packet.AddType<d2e::Transform>(id, transform->Serialize());
 
         d2e::WeakRef<d2e::StaticBoxCollider> bc = floorObject->AddComponent<d2e::StaticBoxCollider>();
@@ -56,10 +54,10 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
     }
 
     // Wall boundaries.
-    CreateWall(client, windowSize * d2e::Vec2{ 0.0f, 0.5f }, d2e::Vec2{ 5.0f, windowSize.y });
-    CreateWall(client, windowSize * d2e::Vec2{ 1.0f, 0.5f }, d2e::Vec2{ 5.0f, windowSize.y });
-    CreateWall(client, windowSize * d2e::Vec2{ 0.5f, 0.0f }, d2e::Vec2{ windowSize.x, 5.0f });
-    CreateWall(client, windowSize * d2e::Vec2{ 0.5f, 1.0f }, d2e::Vec2{ windowSize.x, 5.0f });
+    CreateWall(client, d2e::Vec2{  0.0f,  4.5f }, d2e::Vec2{ 16.0f, 0.1f });
+    CreateWall(client, d2e::Vec2{  0.0f, -4.5f }, d2e::Vec2{ 16.0f, 0.1f });
+    CreateWall(client, d2e::Vec2{  8.0f,  0.0f }, d2e::Vec2{  0.1f, 9.0f });
+    CreateWall(client, d2e::Vec2{ -8.0f,  0.0f }, d2e::Vec2{  0.1f, 9.0f });
 
     // Ping display.
     {
@@ -71,7 +69,7 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
         pingDisplay->SetSyncValuesOnUpdate(true);
 
         d2e::WeakRef<d2e::Transform> transform = ping->GetComponent<d2e::Transform>();
-        transform->translation = windowSize * d2e::Vec2{ 0.015f, 0.015f };
+        transform->translation = d2e::Vec2{ -7.8f, 4.38f };
 
         if (client->GetId() == 1)
         {
@@ -93,15 +91,11 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
         d2e::WeakRef<d2e::BattleTimer> timer = ping->AddComponent<d2e::BattleTimer>();
         timer->SetSyncValuesOnUpdate(true);
 
-        d2e::WeakRef<d2e::Transform> transform = ping->GetComponent<d2e::Transform>();
-        transform->translation = windowSize * d2e::Vec2{ 0.5f };
-
         if (client->GetId() == 1)
         {
             d2eNet::Packet packet;
             packet.AddLineWithId(id);
             packet.AddType<d2e::BattleTimer>(id, timer->Serialize());
-            packet.AddType<d2e::Transform>(id, transform->Serialize());
             packet.AddSyncObject(id);
             client->AddPacketToSend(packet);
         }

@@ -11,7 +11,7 @@ class GameObject;
 class CircleSprite : public IComponent
 {
 public:
-    void Render(WeakRef<sf::RenderWindow> window) override;
+    void Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera) override;
 
     inline void SetRadius(const float radius) { mRadius = radius; }
     inline void SetColor(const sf::Color color) { mColor = color; }
