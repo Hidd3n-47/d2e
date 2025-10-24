@@ -7,6 +7,7 @@
 #include "ES/Components/StaticBoxCollider.h"
 #include "ES/Components/CircleCollider.h"
 #include "ES/Components/RigidBody.h"
+#include "Math/Math.h"
 
 namespace d2e
 {
@@ -93,15 +94,55 @@ void CollisionHandler::ResolveCollisionBetweenCircles(WeakRef<GameObject> circle
         return;
     }
 
+    if (Math::IsEqualTo(length, 0.0f))
     // Normalize delta so we only take into account the direction between the centres.
     // Note we divide by length here as its more efficient than calling Normalize since we already computed the sqrt length.
-    // Additionally, we don't have to worry about when length == 0.0f, as minDistance == 0.0f, meaning we would return from above prior to reaching this.
     delta /= length;
 
-    const float halfOverlap = (minDistance - length) * 0.5f;
+    const float overlap = minDistance - length;
+    //const float halfOverlap = (minDistance - length) * 0.5f;
 
-    circle1->GetComponent<Transform>()->translation +=  delta * halfOverlap * -1.0f;
-    circle2->GetComponent<Transform>()->translation +=  delta * halfOverlap;
+    //circle1->GetComponent<Transform>()->translation +=  delta * halfOverlap * -1.0f;
+    //circle2->GetComponent<Transform>()->translation +=  delta * halfOverlap;
+
+    WeakRef<RigidBody> circleOneRigidBody = circle1->GetComponent<RigidBody>();
+    WeakRef<RigidBody> circleTwoRigidBody = circle2->GetComponent<RigidBody>();
+
+    // Correct the position slightly to prevent jittering.
+    constexpr float PERCENT = 0.8f;
+    constexpr float SLOP = 0.01f;
+    {
+        circle1->GetComponent<Transform>()->translation += delta * (overlap - SLOP) * PERCENT;
+
+        const float velAlongNormal = Vec2::Dot(circleOneRigidBody->mVelocity, delta);
+
+        float j1 = -(1.0f + circleOneRigidBody->mRestitution) * velAlongNormal;
+        j1 /= 1.0f / circleOneRigidBody->mMass;
+
+        const Vec2 impulse = delta * j1;
+        circleOneRigidBody->AddVelocity(impulse * (1.0f / circleOneRigidBody->GetMass()));
+        if (abs(circleOneRigidBody->mVelocity.x) <= 0.02f)
+        {
+            circleOneRigidBody->SetVelocity(Vec2{ 0.0f, 0.0f });
+            return;
+        }
+    }
+    // todo check that the direction is correct, and it's not pushing both circles in the same direction.
+    {
+        circle2->GetComponent<Transform>()->translation += delta * (overlap - SLOP) * PERCENT;
+
+        const float velAlongNormal = Vec2::Dot(circleTwoRigidBody->mVelocity, delta);
+
+        float j2 = -(1.0f + circleTwoRigidBody->mRestitution) * velAlongNormal;
+        j2 /= 1.0f / circleTwoRigidBody->mMass;
+
+        const Vec2 impulse = delta * j2;
+        circleTwoRigidBody->AddVelocity(impulse * (1.0f / circleTwoRigidBody->GetMass()));
+        if (abs(circleTwoRigidBody->mVelocity.x) <= 0.02f)
+        {
+            circleTwoRigidBody->SetVelocity(Vec2{ 0.0f, 0.0f });
+        }
+    }
 }
 
 void CollisionHandler::ResolveCollisionBetweenBoxAndCircle(std::vector<CollisionInfo>& collisionInfos, WeakRef<GameObject> box,
@@ -165,10 +206,6 @@ void CollisionHandler::ResolveCollisionBetweenBoxAndCircle(std::vector<Collision
     const Vec2 impulse = delta * j;
     rigidBody->AddVelocity(impulse * (1.0f / rigidBody->GetMass()));
 
-    //constexpr float dragCoefficient = 0.01f;
-    //const Vec2 drag = Vec2{ rigidBody->GetVelocity().x, 0.0f } * -dragCoefficient;
-    //rigidBody->AddForce(drag);
-
     collisionInfos.emplace_back(circle, box, closestPointOnBox);
 
     if (abs(rigidBody->mVelocity.x) <= 0.02f)
@@ -183,11 +220,6 @@ void CollisionHandler::ResolveCollisionBetweenBoxAndCircle(std::vector<Collision
     Vec2 movementDirection = rigidBody->mVelocity.x >= 0.0f ? Vec2{ 1.0f, 0.0f } : Vec2{ -1.0f, 0.0f };
     const Vec2 b = movementDirection * mu * forceNormalMag * -1.0f;
     rigidBody->AddForce(b);
-    return;
-
-    //float frictionCoeff = 0.2f; // tune this
-    //Vec2 friction = Vec2(rigidBody->GetVelocity().x, 0) * -frictionCoeff;
-    //rigidBody->AddVelocity(friction);
 }
 
 } // Namespace d2e.

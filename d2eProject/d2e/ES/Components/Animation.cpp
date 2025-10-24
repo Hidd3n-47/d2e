@@ -30,8 +30,10 @@ void Animation::Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& came
 
     sf::Sprite visual = SpriteManager::Instance()->GetSprite(mAnimationDetails.spriteSheetId)->sprite;
 
+    const Vec2 position = camera.PositionToScreenSpace(transform->translation);
+
     visual.setScale({ transform->scale.x, transform->scale.y });
-    visual.setPosition({ transform->translation.x - 0.5f * mAnimationDetails.textureSize.x * transform->scale.x, transform->translation.y - 0.5f * mAnimationDetails.textureSize.y * transform->scale.y });
+    visual.setPosition({ position.x - 0.5f * mAnimationDetails.textureSize.x * transform->scale.x, position.y - 0.5f * mAnimationDetails.textureSize.y * transform->scale.y });
     visual.setColor(mSpriteColor);
 
     const sf::Vector2i size = { static_cast<int>(mAnimationDetails.textureSize.x), static_cast<int>(mAnimationDetails.textureSize.y) };

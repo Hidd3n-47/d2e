@@ -15,7 +15,7 @@ public:
     bool  jumped;
     float xAxisDelta = 0.0f;
 
-    float    speed        = 1.0f;
+    float    speed        = 20.0f;
     uint16_t maxJumpCount = 2;
     uint16_t jumpCount    = 0;
 

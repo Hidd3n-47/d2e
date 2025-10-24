@@ -23,11 +23,10 @@ void Movement::Update(const float dt)
     if (jumped && jumpCount < 2)
     {
         ++jumpCount;
-        rigidBody->AddVelocity(Vec2{ 0.0f, -7.5f });
+        rigidBody->AddVelocity(Vec2{ 0.0f, 8.0f });
     }
 
-    //todo fix why we multiplying by that value.
-    const float desiredSpeed = xAxisDelta * (speed * 0.02f);
+    const float desiredSpeed = xAxisDelta * speed;
 
     rigidBody->AddForce(Vec2{ desiredSpeed, 0.0f });
 }

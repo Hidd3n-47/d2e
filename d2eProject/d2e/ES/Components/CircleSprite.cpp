@@ -11,8 +11,8 @@ void CircleSprite::Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& c
 {
     const WeakRef<Transform> transform = mParent->GetComponent<Transform>();
 
-    const Vec2 position{ camera.PositionToScreenSpace(Vec2{ transform->translation.x - mRadius, transform->translation.y + mRadius }) };
-    const Vec2 size{ camera.SizeInScreenSpace(Vec2{ mRadius * 2.0f, 0.0f }) };
+    const Vec2 position{ camera.PositionToScreenSpace(transform->translation + Vec2{ -mRadius, mRadius }) };
+    const Vec2 size{ camera.SizeInScreenSpace(Vec2{ mRadius, 0.0f }) };
 
     mCircle.setPosition({ position.x, position.y });
     mCircle.setRadius(size.x);

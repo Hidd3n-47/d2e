@@ -36,7 +36,7 @@ public:
 private:
     float mMass        = 1.0f;
     float mRestitution = 0.1f;
-    float mMaxSpeed    = 500.0f;
+    float mMaxSpeed    = 50.0f;
 
     Vec2 mVelocity;
     Vec2 mAcceleration;

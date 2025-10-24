@@ -36,10 +36,8 @@ public:
 
     void Init();
     void Run();
-    void Destroy() const;
+    static void Destroy();
 
-    [[nodiscard]] WeakRef<Scene> CreateScene();
-    void RemoveScene(WeakRef<Scene>& scene);
     inline void ChangeActiveScene(Scene* scene) { mSceneToChangeTo = scene; };
 
     void ConnectClientToServer(const int ip1, const int ip2, const int ip3, const int ip4, const uint16_t port);
@@ -47,9 +45,8 @@ public:
     void StartFrame();
     void EndFrame() const;
 
-    void Input();
+    void Input() const;
     void SceneUpdate() const;
-    void SendPackets() const;
     void Update() const;
     void PostUpdate();
     void Render() const;

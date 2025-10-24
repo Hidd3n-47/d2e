@@ -1,8 +1,6 @@
 #include "d2ePch.h"
 #include "Engine.h"
 
-#include <thread>
-
 #include <d2eNet/Core/d2eNet.h>
 #include <d2eNet/Core/Client.h>
 
@@ -12,7 +10,6 @@
 
 #include "ES/Scene.h"
 #include "ES/Components/Transform.h"
-#include "ES/Components/CircleSprite.h"
 
 namespace d2e
 {
@@ -70,7 +67,7 @@ void Engine::Run()
     }
 }
 
-void Engine::Destroy() const
+void Engine::Destroy()
 {
     d2eNet::d2eNet::Destroy();
 
@@ -104,7 +101,7 @@ void Engine::EndFrame() const
     }
 }
 
-void Engine::Input()
+void Engine::Input() const
 {
     mInputManager->StartFrame();
 
@@ -153,19 +150,6 @@ void Engine::SceneUpdate() const
     {
         mActiveScene->SceneUpdate();
     }
-}
-
-void Engine::SendPackets() const
-{
-    if (!mClient)
-    {
-        return;
-    }
-
-    mClient->Update(3);
-
-    DEBUG_LOG("Sending Packets.");
-    mClient->SendPackets();
 }
 
 void Engine::Update() const
@@ -217,7 +201,6 @@ void Engine::ProcessNetworkPackets() const
     std::optional<d2eNet::Packet> packet = mClient->GetPacketReceived();
     while (packet)
     {
-        //DEBUG_LOG("Processed Packet: {}", std::string{ packet->BufBegin(), packet->BufEnd() });
         for (d2eNet::Packet::Iterator it = packet->Begin(); it != packet->End(); ++it)
         {
             const std::string packetString = it.GetPacketLineString();
@@ -233,20 +216,8 @@ void Engine::ProcessNetworkPackets() const
                 const std::string componentName  = packetString.substr(firstDelimiter + 1, secondDelimiter - firstDelimiter - 1);
                 const std::string componentValue = packetString.substr(secondDelimiter + 1);
 
-                //todo, find out why this doesn't work.
-                if (componentName == CircleSprite::GetNameStatic())
-                {
-                    continue;
-                }
-
-                //const std::string before = mActiveScene->GetGameObject(id)->GetComponent(componentName)->Serialize();
                 mActiveScene->GetGameObject(Ulid{ id })->GetComponent(componentName)->Deserialize(componentValue);
 
-                //if (componentName == Movement::GetNameStatic())
-                {
-                    //DEBUG_WARN("Before Update [{}] to game object with ID: {} | <{}>", componentName, id, before);
-                    //DEBUG_LOG("Updated Component [{}] to game object with ID: {} | <{}>", componentName, id, componentValue);
-                }
                 break;
             }
             case d2eNet::PacketLineType::PLAYER_TWO_JOINED:

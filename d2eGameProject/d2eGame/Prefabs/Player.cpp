@@ -26,7 +26,7 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1)
     mGameObject = scene->CreateGameObject();
     mGameObject->SetId(isPlayer1 ? d2e::Engine::PLAYER_ONE_ULID : d2e::Engine::PLAYER_TWO_ULID);
 
-    constexpr float PLAYER_RADIUS = 0.1f;
+    constexpr float PLAYER_RADIUS = 0.2f;
 
     d2e::WeakRef<d2e::Transform> transform = mGameObject->GetComponent<d2e::Transform>();
     transform->translation = isPlayer1 ? d2e::Vec2{ -6.0f, 3.0f } : d2e::Vec2{ 6.0f, 3.0f };
@@ -49,7 +49,7 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1)
         }
 
         // If the player collides with anything other than the top of the floor, don't add the splat.
-        if (info.collisionPosition.y <= info.instance->GetComponent<d2e::Transform>()->translation.y)
+        if (info.collisionPosition.y >= info.instance->GetComponent<d2e::Transform>()->translation.y)
         {
             return;
         }
@@ -70,15 +70,15 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1)
         anim->CreateAnimation(animDetails, 0.015f);
         anim->SetSpriteColor(PLAYER_1_COLOR);
         d2e::WeakRef<d2e::Transform> t = object->GetComponent<d2e::Transform>();
-        t->translation = info.collisionPosition - d2e::Vec2{ 0.0f, -0.5f };
+        DEBUG_LOG("Collision Position: {}:{}", info.collisionPosition.x, info.collisionPosition.y);
+        t->translation = info.collisionPosition + d2e::Vec2{ 0.0f, -0.02f };
         t->scale = d2e::Vec2{ 0.13f * r, 0.13f };
     });
 
-    d2e::WeakRef<d2e::Movement> movement = mGameObject->AddComponent<d2e::Movement>();
-    movement->speed = 800.0f;
+    mGameObject->AddComponent<d2e::Movement>();
 
     d2e::WeakRef<d2e::RigidBody> rb = mGameObject->AddComponent<d2e::RigidBody>();
-    rb->SetGravity(d2e::Vec2{ 0.0f, 0.0f });
+    rb->SetGravity(d2e::Vec2{ 0.0f, -15.0f });
     rb->SetRestitution(0.1f);
     rb->SetSyncValuesOnUpdate(true);
 }

@@ -54,7 +54,7 @@ void CircleCollider::Render(WeakRef<sf::RenderWindow> window, const OrthoCamera&
     const WeakRef<Transform> transform = mParent->GetComponent<Transform>();
 
     const Vec2 position{ camera.PositionToScreenSpace(transform->translation + Vec2{ -mRadius, mRadius }) };
-    const Vec2 size{ camera.SizeInScreenSpace(Vec2{ mRadius * 2.0f, 0.0f }) };
+    const Vec2 size{ camera.SizeInScreenSpace(Vec2{ mRadius, 0.0f }) };
 
     mDebugRender.setPosition({ position.x, position.y });
     mDebugRender.setRadius(size.x);
