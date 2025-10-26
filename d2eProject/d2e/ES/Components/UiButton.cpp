@@ -45,7 +45,7 @@ void UiButton::Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camer
 {
     const WeakRef<Transform> transform = mParent->GetComponent<Transform>();
 
-    WeakRef<Sprite> sprite = SpriteManager::Instance()->GetSprite(mSpriteId);
+    WeakRef<SpriteInfo> sprite = SpriteManager::Instance()->GetSprite(mSpriteId);
 
     const sf::Vector2u textureSize = sprite->texture.getSize();
 

@@ -20,12 +20,12 @@ public:
     [[nodiscard]] spriteId LoadTexture(const std::filesystem::path& path);
 
     //todo make it return invalid texture if it doesn't exist.
-    [[nodiscard]] WeakRef<Sprite> GetSprite(const spriteId id) const;
+    [[nodiscard]] WeakRef<SpriteInfo> GetSprite(const spriteId id) const;
 
 private:
     static std::unique_ptr<SpriteManager> mInstance;
 
-    std::vector<Sprite*> mLoadedSprites;
+    std::vector<SpriteInfo*> mLoadedSprites;
     std::unordered_map<spriteId, uint32_t> mIdToSpriteIndexMap;
     std::unordered_map<std::filesystem::path, spriteId> mLoadedTextures;
 

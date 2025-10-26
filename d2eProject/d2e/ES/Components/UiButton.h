@@ -22,7 +22,6 @@ public:
     D2E_COMPONENT("UiButton")
 private:
     spriteId mSpriteId{ 0 };
-    Vec2 mSize{ 10.0f, 10.0f };
 
     std::function<void()> mOnButtonPressed;
 };

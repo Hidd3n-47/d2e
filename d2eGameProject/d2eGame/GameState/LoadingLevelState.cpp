@@ -13,6 +13,7 @@
 #include <d2eNet/Core/Packet.h>
 #include <d2eNet/Core/Client.h>
 
+#include "d2e/ES/Components/Sprite.h"
 #include "Scene/GameScene.h"
 #include "src/Defines.h"
 #include "Systems/SplatAnimationManager.h"

@@ -3,9 +3,9 @@
 namespace d2e
 {
 
-struct Sprite
+struct SpriteInfo
 {
-    inline explicit Sprite(sf::Texture&& texture)
+    inline explicit SpriteInfo(sf::Texture&& texture)
         : texture(std::move(texture))
         , sprite(sf::Sprite{ this->texture })
     { /* Empty. */ }

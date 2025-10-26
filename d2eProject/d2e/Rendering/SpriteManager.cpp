@@ -8,7 +8,7 @@ std::unique_ptr<SpriteManager> SpriteManager::mInstance = std::make_unique<Sprit
 
 SpriteManager::~SpriteManager()
 {
-    for (const Sprite* sprite : mLoadedSprites)
+    for (const SpriteInfo* sprite : mLoadedSprites)
     {
         delete sprite;
     }
@@ -22,13 +22,13 @@ spriteId SpriteManager::LoadTexture(const std::filesystem::path& path)
         return mLoadedTextures[path];
     }
 
-    mLoadedSprites.emplace_back(new Sprite{ sf::Texture{ path.c_str() } });
+    mLoadedSprites.emplace_back(new SpriteInfo{ sf::Texture{ path.c_str() } });
     mIdToSpriteIndexMap[mTextureId] = static_cast<uint32_t>(mLoadedSprites.size() - 1);
 
     return mTextureId++;
 }
 
-WeakRef<Sprite> SpriteManager::GetSprite(const spriteId id) const
+WeakRef<SpriteInfo> SpriteManager::GetSprite(const spriteId id) const
 {
     DEBUG(if (!mIdToSpriteIndexMap.contains(id)) DEBUG_WARN("Failed to obtain sprite with ID {}", id);)
 
