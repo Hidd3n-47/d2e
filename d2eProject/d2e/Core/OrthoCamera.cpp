@@ -16,6 +16,16 @@ OrthoCamera::OrthoCamera(const OrthoCameraValues& values)
     // Empty.
 }
 
+Vec2 OrthoCamera::ScreenToWorld(const Vec2 screenSpace) const
+{
+    Vec2 worldSpace = screenSpace / Vec2{ mScreenWidth, mScreenHeight };
+    worldSpace *= 2.0f;
+    worldSpace -= Vec2{ 1.0f };
+    worldSpace *= Vec2{ (mRight - mLeft) * 0.5f, (mBottom - mTop) * 0.5f };
+
+    return worldSpace;
+}
+
 Vec2 OrthoCamera::ScreenSizeToWorldSize(const Vec2 screenSpace) const
 {
     Vec2 worldSpace = screenSpace / Vec2{ mScreenWidth, mScreenHeight };

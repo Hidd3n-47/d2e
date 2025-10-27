@@ -13,7 +13,8 @@ class CircleSprite : public IComponent
 public:
     void Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera) override;
 
-    inline void SetRadius(const float radius) { mRadius = radius; }
+    inline void SetEnabled(const bool enabled)  { mEnabled = enabled; }
+    inline void SetRadius(const float radius)   { mRadius = radius; }
     inline void SetColor(const sf::Color color) { mColor = color; }
 
     [[nodiscard]] inline std::string Serialize() const override { return SerializeUtils::Serialize(mSyncValuesOnUpdate) + SerializeUtils::Serialize(mRadius); }
@@ -21,8 +22,10 @@ public:
 
     D2E_COMPONENT("CircleSprite")
 private:
+    bool mEnabled = true;
+
     sf::CircleShape mCircle{ 10.0f };
-    sf::Color mColor;
+    sf::Color mColor{ 107, 111, 117 };
 
     float mRadius = 10.0f;
 };

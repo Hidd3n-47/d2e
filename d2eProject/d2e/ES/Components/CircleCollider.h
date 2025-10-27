@@ -18,14 +18,16 @@ public:
 
     void UpdateObjectsCollidedWith(const std::vector<CollisionInfo>& collisionInfos);
 
+    [[nodiscard]] inline bool IsEnabled() const { return mEnabled; }
     [[nodiscard]] inline bool  GetCollidedLastFrame() const { return mCollidedLastFrame; }
     [[nodiscard]] inline float GetRadius() const { return mRadius; }
 
-    inline void SetRadius(const float radius) { mRadius = radius; }
+    inline void SetEnabled(const bool enabled) { mEnabled = enabled; }
+    inline void SetRadius(const float radius)  { mRadius = radius; }
     inline void SetOnCollisionEnterCallback(const std::function<void(const CollisionInfo&)>& callback) { mOnCollisionEnterCallback = callback; }
 
-    [[nodiscard]] inline std::string Serialize() const override { return SerializeUtils::Serialize(mSyncValuesOnUpdate) + SerializeUtils::Serialize(mCollidedLastFrame) + SerializeUtils::Serialize(mRadius); }
-    inline void Deserialize(const std::string& string) override { SerializeUtils::Deserialize(mSyncValuesOnUpdate, std::string{ string[0] });  SerializeUtils::Deserialize(mCollidedLastFrame, std::string{ string[1] }); SerializeUtils::Deserialize(mRadius, string.substr(2)); }
+    [[nodiscard]] std::string Serialize() const override;
+    void Deserialize(const std::string& string) override;
 
     D2E_COMPONENT("CircleCollider")
 
@@ -37,6 +39,7 @@ private:
 public:
 #endif // DEV_CONFIGURATION.
 private:
+    bool  mEnabled           = true;
     float mRadius            = 10.0f;
     bool  mCollidedLastFrame = false;
 

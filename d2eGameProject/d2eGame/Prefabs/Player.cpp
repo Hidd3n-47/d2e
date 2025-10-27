@@ -62,6 +62,8 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1)
     rb->SetGravity(d2e::Vec2{ 0.0f, -15.0f });
     rb->SetRestitution(0.1f);
     rb->SetSyncValuesOnUpdate(true);
+
+    mBulletManager.Init(scene, mGameObject);
 }
 
 void Player::SyncPlayer()

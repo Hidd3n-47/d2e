@@ -29,6 +29,7 @@ public:
     [[nodiscard]] inline bool IsKeyPressed(const sf::Keyboard::Key key)      const { return mKeyMapForSingleFrame.contains(key); }
     [[nodiscard]] inline bool IsMousePressed(const sf::Mouse::Button button) const { return mMouseButtonMapForSingleFrame.contains(button); }
     [[nodiscard]] inline Vec2 GetMousePosition() const { return mMousePosition; }
+    [[nodiscard]] Vec2 GetMousePositionWorldSpace() const;
 
     inline void SetMousePosition(const Vec2 mousePosition) { mMousePosition = mousePosition; }
 private:

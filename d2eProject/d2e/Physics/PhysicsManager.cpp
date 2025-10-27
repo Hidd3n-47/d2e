@@ -12,8 +12,13 @@ void PhysicsManager::Update(const float dt) const
 {
     for (const WeakRef<GameObject> body : mBodies)
     {
-        WeakRef<Transform> transform = body->GetComponent<Transform>();
         WeakRef<RigidBody> rigidBody = body->GetComponent<RigidBody>();
+        if (!rigidBody->IsEnabled())
+        {
+            continue;
+        }
+
+        WeakRef<Transform> transform = body->GetComponent<Transform>();
 
         const Vec2 acceleration = (rigidBody->mForce + rigidBody->mGravity) / rigidBody->mMass;
 

@@ -21,7 +21,9 @@ void RigidBody::OnComponentRemoved()
 
 std::string RigidBody::Serialize() const
 {
-    return SerializeUtils::Serialize(mSyncValuesOnUpdate) + SerializeUtils::Serialize(mMass) +
+    return SerializeUtils::Serialize(mEnabled) +
+           SerializeUtils::Serialize(mSyncValuesOnUpdate) +
+           SerializeUtils::Serialize(mMass) +
            SerializeUtils::DELIMITER + SerializeUtils::Serialize(mRestitution) +
            SerializeUtils::DELIMITER + SerializeUtils::Serialize(mMaxSpeed) +
            SerializeUtils::DELIMITER + SerializeUtils::Serialize(mVelocity) +
@@ -33,7 +35,8 @@ std::string RigidBody::Serialize() const
 
 void RigidBody::Deserialize(const std::string& string)
 {
-    SerializeUtils::Deserialize(mSyncValuesOnUpdate, std::string{ string[0] });
+    SerializeUtils::Deserialize(mEnabled, std::string{ string[0] });
+    SerializeUtils::Deserialize(mSyncValuesOnUpdate, std::string{ string[1] });
 
     const size_t firstDelimiter  = string.find(SerializeUtils::DELIMITER);
     const size_t secondDelimiter = string.find(SerializeUtils::DELIMITER, firstDelimiter  + 1);
@@ -42,7 +45,7 @@ void RigidBody::Deserialize(const std::string& string)
     const size_t fifthDelimiter  = string.find(SerializeUtils::DELIMITER, fourthDelimiter + 1);
     const size_t sixthDelimiter  = string.find(SerializeUtils::DELIMITER, fifthDelimiter  + 1);
 
-    const std::string first   = string.substr(1, firstDelimiter);
+    const std::string first   = string.substr(2, firstDelimiter);
     const std::string second  = string.substr(firstDelimiter  + 1, secondDelimiter - firstDelimiter - 1);
     const std::string third   = string.substr(secondDelimiter + 1, thirdDelimiter - secondDelimiter - 1);
     const std::string fourth  = string.substr(thirdDelimiter  + 1, fourthDelimiter - thirdDelimiter - 1);

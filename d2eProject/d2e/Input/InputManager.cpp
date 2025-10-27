@@ -1,6 +1,7 @@
 #include "d2ePch.h"
 #include "InputManager.h"
 
+#include "Core/Engine.h"
 
 namespace d2e
 {
@@ -27,6 +28,13 @@ void InputManager::MouseDown(const sf::Mouse::Button button)
 void InputManager::MouseUp(const sf::Mouse::Button button)
 {
     mMouseButtonMap[button] = false;
+}
+
+Vec2 InputManager::GetMousePositionWorldSpace() const
+{
+    const OrthoCamera& camera = Engine::Instance()->GetCamera();
+
+    return camera.ScreenToWorld(mMousePosition);
 }
 
 } // Namespace d2e.

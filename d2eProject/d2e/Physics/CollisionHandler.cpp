@@ -76,11 +76,17 @@ void CollisionHandler::RemoveCircle(const WeakRef<GameObject> circle)
 
 void CollisionHandler::ResolveCollisionBetweenCircles(WeakRef<GameObject> circle1, WeakRef<GameObject> circle2)
 {
-    WeakRef<CircleCollider> circleCollider = circle1->GetComponent<CircleCollider>();
+    WeakRef<CircleCollider> circleCollider  = circle1->GetComponent<CircleCollider>();
+    WeakRef<CircleCollider> circle2Collider = circle2->GetComponent<CircleCollider>();
+
+    if (!circleCollider->IsEnabled() || !circle2Collider->IsEnabled())
+    {
+        return;
+    }
+
     const float circle1Radius   = circleCollider->GetRadius();
     const Vec2  circle1Centre   = circle1->GetComponent<Transform>()->translation;
 
-    WeakRef<CircleCollider> circle2Collider = circle2->GetComponent<CircleCollider>();
     const float circle2Radius   = circle2Collider->GetRadius();
     const Vec2  circle2Centre   = circle2->GetComponent<Transform>()->translation;
 

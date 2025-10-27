@@ -48,9 +48,28 @@ void CircleCollider::UpdateObjectsCollidedWith(const std::vector<CollisionInfo>&
     mCollidedLastFrame    = !mObjectsCollidingWith.empty();
 }
 
+std::string CircleCollider::Serialize() const
+{
+    return SerializeUtils::Serialize(mSyncValuesOnUpdate) +
+           SerializeUtils::Serialize(mCollidedLastFrame) +
+           SerializeUtils::Serialize(mRadius);
+}
+
+void CircleCollider::Deserialize(const std::string& string)
+{
+    SerializeUtils::Deserialize(mSyncValuesOnUpdate, std::string{ string[0] });
+    SerializeUtils::Deserialize(mCollidedLastFrame, std::string{ string[1] });
+    SerializeUtils::Deserialize(mRadius, string.substr(2));
+}
+
 #ifdef DEV_CONFIGURATION
 void CircleCollider::Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera)
 {
+    if (!mEnabled)
+    {
+        return;
+    }
+
     const WeakRef<Transform> transform = mParent->GetComponent<Transform>();
 
     const Vec2 position{ camera.PositionToScreenSpace(transform->translation + Vec2{ -mRadius, mRadius }) };

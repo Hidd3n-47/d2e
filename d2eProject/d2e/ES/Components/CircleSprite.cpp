@@ -9,6 +9,11 @@ namespace d2e
 
 void CircleSprite::Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera)
 {
+    if (!mEnabled)
+    {
+        return;
+    }
+
     const WeakRef<Transform> transform = mParent->GetComponent<Transform>();
 
     const Vec2 position{ camera.PositionToScreenSpace(transform->translation + Vec2{ -mRadius, mRadius }) };

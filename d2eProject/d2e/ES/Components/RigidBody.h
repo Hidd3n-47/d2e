@@ -16,6 +16,7 @@ public:
     inline void AddForce(const Vec2 force)       { mForce += force; }
     inline void AddVelocity(const Vec2 velocity) { mVelocity += velocity; EnsureVelocityIsUnderMaxSpeed(); }
 
+    [[nodiscard]] inline bool  IsEnabled()      const { return mEnabled; }
     [[nodiscard]] inline float GetMass()        const { return mMass; }
     [[nodiscard]] inline float GetRestitution() const { return mRestitution; }
     [[nodiscard]] inline float GetMaxSpeed()    const { return mMaxSpeed; }
@@ -23,6 +24,7 @@ public:
     [[nodiscard]] inline Vec2  GetGravity()     const { return mGravity; }
     [[nodiscard]] inline Vec2  GetFnet()        const { return mForce + mGravity; }
 
+    inline void SetEnabled(const bool enabled)          { mEnabled = enabled; }
     inline void SetMass(const float mass)               { mMass = mass; }
     inline void SetMaxSpeed(const float maxSpeed)       { mMaxSpeed = maxSpeed; }
     inline void SetRestitution(const float restitution) { mRestitution = restitution; }
@@ -34,6 +36,8 @@ public:
 
     D2E_COMPONENT("RigidBody")
 private:
+    bool mEnabled = true;
+
     float mMass        = 1.0f;
     float mRestitution = 0.1f;
     float mMaxSpeed    = 50.0f;
