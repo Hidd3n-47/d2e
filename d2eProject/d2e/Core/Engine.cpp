@@ -164,7 +164,7 @@ void Engine::PostUpdate()
 {
     if (mSceneToChangeTo)
     {
-        delete mActiveScene;
+        //delete mActiveScene;
 
         mActiveScene = mSceneToChangeTo;
         mActiveScene->InitScene();

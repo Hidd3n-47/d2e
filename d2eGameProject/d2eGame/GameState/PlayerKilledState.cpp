@@ -1,6 +1,7 @@
 #include "PlayerKilledState.h"
 
 #include <d2e/Core/Engine.h>
+#include <d2e/ES/Components/Text.h>
 
 #include "Scene/GameScene.h"
 
@@ -20,6 +21,8 @@ void PlayerKilledState::Update()
 
     if (mTimer <= 0.0f)
     {
+        mGameScene->GetScoreObject()->GetComponent<d2e::Text>()->ShouldRender(false);
+
         mGameScene->ChangeGameState(GameState::BATTLE_COUNTDOWN);
     }
 }

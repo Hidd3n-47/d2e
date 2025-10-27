@@ -9,6 +9,11 @@ namespace d2e
 
 void Text::Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera)
 {
+    if (!mRender)
+    {
+        return;
+    }
+
     const WeakRef<Transform> transform = mParent->GetComponent<Transform>();
 
     const Vec2 position = camera.PositionToScreenSpace(transform->translation);

@@ -37,9 +37,14 @@ public:
     inline void SetPlayersSyncedAcrossNetwork(const bool synced = true) { mPlayersSyncedAcrossNetwork = true; }
 
     [[nodiscard]] inline d2e::WeakRef<d2e::GameObject> GetScoreObject() const { return mScoreObject; }
+
+    void IncreaseScore(const d2e::Ulid playerWhoDiedUlid);
 private:
     Player mPlayer;
     Player mOtherPlayer;
+
+    uint32_t mPlayer1Score;
+    uint32_t mPlayer2Score;
 
     bool mPlayersSyncedAcrossNetwork = false;
 

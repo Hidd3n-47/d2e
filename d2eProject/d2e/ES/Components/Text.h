@@ -14,14 +14,17 @@ public:
 
     void SetText(const std::string& text);
 
+    inline void ShouldRender(const bool render) { mRender = render; }
     inline void SetTextSize(const uint32_t size) { mTextSize = size; }
 
     D2E_COMPONENT("Text")
 private:
+    bool mRender = true;
+
     std::string mTextString{ "0" };
     sf::Text    mText{ Engine::GAME_FONT, mTextString, 7 };
 
-    uint32_t    mTextSize = 30.0f;
+    uint32_t    mTextSize = 30;
 };
 
 } // Namespace d2e.

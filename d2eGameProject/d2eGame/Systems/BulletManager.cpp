@@ -59,7 +59,9 @@ void BulletManager::Init(d2e::WeakRef<d2e::Scene> scene, const d2e::WeakRef<d2e:
             // Player shot the other player.
             GAME_LOG("Player shot the other player");
 
-            GameManager::Instance()->GetScene().Cast<GameScene>()->IncreaseScore(info.other->GetId());
+            d2e::WeakRef<GameScene> gameScene = GameManager::Instance()->GetScene().Cast<GameScene>();
+            gameScene->IncreaseScore(info.other->GetId());
+            gameScene->ChangeGameState(GameState::PLAYER_KILLED);
         });
 
         d2e::WeakRef<d2eNet::Client> client = d2e::Engine::Instance()->GetClient();

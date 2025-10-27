@@ -15,10 +15,12 @@ namespace d2eGame
 
 void GameScene::InitScene()
 {
-    mScoreObject = CreateGameObject();
-    mScoreObject->AddComponent<d2e::Text>()->SetTextSize(500);
-
     ChangeGameState(GameState::LOADING_LEVEL);
+
+    mScoreObject = CreateGameObject();
+    d2e::WeakRef<d2e::Text> text = mScoreObject->AddComponent<d2e::Text>();
+    text->SetTextSize(500);
+    text->ShouldRender(false);
 }
 
 void GameScene::SceneUpdate() const
@@ -75,7 +77,9 @@ void GameScene::IncreaseScore(const d2e::Ulid playerWhoDiedUlid)
 
     std::string scoreString = std::format("{} - {}", mPlayer1Score, mPlayer2Score);
 
-    mScoreObject->GetComponent<d2e::Text>()->SetText(scoreString);
+    d2e::WeakRef<d2e::Text> text = mScoreObject->GetComponent<d2e::Text>();
+    text->SetText(scoreString);
+    text->ShouldRender(true);
 }
 
 } // Namespace d2eGame.
