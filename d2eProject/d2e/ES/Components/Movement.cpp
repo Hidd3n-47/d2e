@@ -49,7 +49,7 @@ void Movement::Deserialize(const std::string& string)
     const size_t thirdDelimiter   = string.find(SerializeUtils::DELIMITER, secondDelimiter + 1);
     const size_t fourthDelimiter  = string.find(SerializeUtils::DELIMITER, thirdDelimiter  + 1);
 
-    const std::string first  = string.substr(2, firstDelimiter);
+    const std::string first  = string.substr(1, firstDelimiter);
     const std::string second = string.substr(firstDelimiter  + 1, secondDelimiter - firstDelimiter  - 1);
     const std::string third  = string.substr(secondDelimiter + 1, thirdDelimiter  - secondDelimiter - 1);
     const std::string fourth = string.substr(thirdDelimiter  + 1, fourthDelimiter - thirdDelimiter  - 1);

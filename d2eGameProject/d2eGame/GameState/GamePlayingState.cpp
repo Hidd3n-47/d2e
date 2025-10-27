@@ -4,6 +4,7 @@
 #include <d2e/Input/InputManager.h>
 
 #include <d2e/ES/Components/Movement.h>
+#include <d2e/ES/Components/Transform.h>
 
 #include <d2eNet/Core/Packet.h>
 #include <d2eNet/Core/Client.h>
@@ -45,6 +46,18 @@ void GamePlayingState::Update()
     d2eNet::Packet packet{ };
     packet.UpdateType<d2e::Movement>(playerGameObject->GetId(), movement->Serialize());
     d2e::Engine::Instance()->GetClient()->AddPacketToSend(packet);
+
+    if (inputManager->IsMousePressed(sf::Mouse::Button::Left))
+    {
+        Player& player = mGameScene->GetPlayer();
+
+        const d2e::Vec2 mousePos = inputManager->GetMousePositionWorldSpace();
+        const d2e::Vec2 playerPos = player.GetGameObject()->GetComponent<d2e::Transform>()->translation;
+
+        d2e::Vec2 direction = mousePos - playerPos;
+        direction.Normalize();
+        player.GetBulletManager().ShootBullet(direction);
+    }
 }
 
 

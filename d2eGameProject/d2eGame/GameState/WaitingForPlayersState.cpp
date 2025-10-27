@@ -25,20 +25,4 @@ void WaitingForPlayersState::Init(d2e::WeakRef<d2e::Scene> scene)
     }
 }
 
-void WaitingForPlayersState::Update()
-{
-    d2e::WeakRef<d2e::InputManager> inputManager = d2e::Engine::Instance()->GetInputManager();
-    if (inputManager->IsMousePressed(sf::Mouse::Button::Left))
-    {
-        Player& player = mGameScene->GetPlayer();
-
-        const d2e::Vec2 mousePos = inputManager->GetMousePositionWorldSpace();
-        const d2e::Vec2 playerPos = player.GetGameObject()->GetComponent<d2e::Transform>()->translation;
-
-        d2e::Vec2 direction = mousePos - playerPos;
-        direction.Normalize();
-        player.GetBulletManager().ShootBullet(direction);
-    }
-}
-
 } // Namespace d2eGame.
