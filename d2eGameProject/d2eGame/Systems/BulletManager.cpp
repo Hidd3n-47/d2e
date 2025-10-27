@@ -11,6 +11,10 @@
 #include <d2eNet/Core/Client.h>
 #include <d2eNet/Core/Packet.h>
 
+#include "d2e/ES/Components/Tag.h"
+#include "d2e/Physics/CollisionInfo.h"
+#include "src/Defines.h"
+
 namespace d2eGame
 {
 
@@ -39,6 +43,24 @@ void BulletManager::Init(d2e::WeakRef<d2e::Scene> scene, const d2e::WeakRef<d2e:
         rigidBody->SetGravity(d2e::Vec2{ 0.0f, -8.0f });
         rigidBody->SetEnabled(false);
         sprite->SetSyncValuesOnUpdate(true);
+
+        collider->SetOnCollisionEnterCallback([](const d2e::CollisionInfo& info)
+        {
+            if (auto tag = info.other->GetComponent<d2e::Tag>(); !tag.IsRefValid() || tag->tag != d2e::ComponentTag::PLAYER)
+            {
+                GAME_LOG("Bullet collided, disabling");
+
+                info.instance->GetComponent<d2e::RigidBody>()->SetEnabled(false);
+                info.instance->GetComponent<d2e::CircleSprite>()->SetEnabled(false);
+                info.instance->GetComponent<d2e::CircleCollider>()->SetEnabled(false);
+                return;
+            }
+
+            // Player shot the other player.
+            GAME_LOG("Player shot the other player");
+
+            GameManager::Instance()->GetScene().Cast<GameScene>()->IncreaseScore(info.other->GetId());
+        });
 
         d2e::WeakRef<d2eNet::Client> client = d2e::Engine::Instance()->GetClient();
         if (client->GetId() == 1)

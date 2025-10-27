@@ -9,7 +9,8 @@ namespace d2e
 enum class ComponentTag : uint8_t
 {
     NONE,
-    WALL
+    WALL,
+    PLAYER
 };
 
 struct Tag : public IComponent

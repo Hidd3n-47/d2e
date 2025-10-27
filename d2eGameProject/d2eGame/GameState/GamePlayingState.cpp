@@ -41,7 +41,8 @@ void GamePlayingState::Update()
         ++movement->currentFrameJumpCount;
     }
 
-    d2eNet::Packet packet{ false };
+    // todo testing with reliable packet, remove is bad performance.
+    d2eNet::Packet packet{ };
     packet.UpdateType<d2e::Movement>(playerGameObject->GetId(), movement->Serialize());
     d2e::Engine::Instance()->GetClient()->AddPacketToSend(packet);
 }

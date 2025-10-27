@@ -29,6 +29,8 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1)
 
     constexpr float PLAYER_RADIUS = 0.2f;
 
+    mGameObject->AddComponent<d2e::Tag>()->tag = d2e::ComponentTag::PLAYER;
+
     d2e::WeakRef<d2e::Transform> transform = mGameObject->GetComponent<d2e::Transform>();
     transform->translation = isPlayer1 ? d2e::Vec2{ -4.5f, -1.5f } : d2e::Vec2{ 4.5f, 3.5f };
     transform->SetSyncValuesOnUpdate(true);
@@ -39,7 +41,7 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1)
 
     d2e::WeakRef<d2e::CircleCollider> collider = mGameObject->AddComponent<d2e::CircleCollider>();
     collider->SetRadius(PLAYER_RADIUS);
-    collider->SetOnCollisionEnterCallback([&](const d2e::CollisionInfo& info)
+    collider->SetOnCollisionEnterCallback([](const d2e::CollisionInfo& info)
     {
         // If the player collides with the wall, we don't need to add the splat.
         if (auto tag = info.other->GetComponent<d2e::Tag>(); tag.IsRefValid() && tag->tag == d2e::ComponentTag::WALL)
@@ -72,6 +74,7 @@ void Player::SyncPlayer()
     const uint64_t id = mGameObject->GetId();
 
     packet.AddLineWithId(id);
+    packet.AddType<d2e::Tag>(id, mGameObject->GetComponent<d2e::Tag>()->Serialize());
     packet.AddType<d2e::Transform>(id, mGameObject->GetComponent<d2e::Transform>()->Serialize());
     packet.AddType<d2e::CircleSprite>(id, mGameObject->GetComponent<d2e::CircleSprite>()->Serialize());
     packet.AddType<d2e::CircleCollider>(id, mGameObject->GetComponent<d2e::CircleCollider>()->Serialize());

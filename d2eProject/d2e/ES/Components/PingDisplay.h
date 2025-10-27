@@ -7,7 +7,6 @@
 namespace d2e
 {
 
-
 class PingDisplay : public IComponent
 {
 public:

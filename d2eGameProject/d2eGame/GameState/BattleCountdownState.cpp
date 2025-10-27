@@ -20,6 +20,8 @@ void BattleCountdownState::Init(d2e::WeakRef<d2e::Scene> scene)
         mGameScene->SetPlayersSyncedAcrossNetwork();
     }
 
+    mBattleStarted = false;
+
     d2e::WeakRef<d2e::BattleTimer> timer = mGameScene->GetGameObject(d2e::Engine::BATTLE_TIMER_ULID)->GetComponent<d2e::BattleTimer>();
     timer->OnTimerCompletedCallback = [&] { BattleStarted(); };
     timer->StartTimer();

@@ -37,6 +37,8 @@ public:
 
     void JoinOnlineGame();
     void PlayerTwoJoined() const;
+
+    [[nodiscard]] inline d2e::WeakRef<d2e::Scene> GetScene() const { return d2e::WeakRef{ mCurrentScene } };
 private:
     static std::unique_ptr<GameManager> mInstance;
 
