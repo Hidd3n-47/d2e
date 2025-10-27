@@ -25,6 +25,7 @@ private:
     bool mLoadingCompleted = false;
 
     void CreateWall(d2e::WeakRef<d2eNet::Client> client, const d2e::Vec2 translation, const d2e::Vec2 halfExtents);
+    void CreateFloor(d2e::WeakRef<d2eNet::Client> client, const d2e::Vec2 translation, const d2e::Vec2 scale);
 };
 
 } // Namespace d2eGame.

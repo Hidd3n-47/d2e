@@ -10,6 +10,7 @@
 #include "d2e/ES/Components/PingDisplay.h"
 #include "d2e/ES/Components/RectangleSprite.h"
 #include "d2e/ES/Components/RigidBody.h"
+#include "d2e/ES/Components/Sprite.h"
 #include "d2e/ES/Components/StaticBoxCollider.h"
 #include "d2e/ES/Components/Tag.h"
 #include "d2e/ES/Components/Transform.h"
@@ -31,6 +32,7 @@ inline static auto& GetComponentMap()
         m["PingDisplay"]       = [](auto go) { return WeakRef{ go->AddComponent<PingDisplay>()       }.Cast<IComponent>(); };
         m["RectangleSprite"]   = [](auto go) { return WeakRef{ go->AddComponent<RectangleSprite>()   }.Cast<IComponent>(); };
         m["RigidBody"]         = [](auto go) { return WeakRef{ go->AddComponent<RigidBody>()         }.Cast<IComponent>(); };
+        m["Sprite"]            = [](auto go) { return WeakRef{ go->AddComponent<Sprite>()            }.Cast<IComponent>(); };
         m["StaticBoxCollider"] = [](auto go) { return WeakRef{ go->AddComponent<StaticBoxCollider>() }.Cast<IComponent>(); };
         m["Tag"]               = [](auto go) { return WeakRef{ go->AddComponent<Tag>()               }.Cast<IComponent>(); };
         m["UiButton"]          = [](auto go) { return WeakRef{ go->AddComponent<UiButton>()          }.Cast<IComponent>(); };

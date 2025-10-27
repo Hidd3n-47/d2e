@@ -17,6 +17,8 @@ public:
     void Update(const float dt) override;
     void Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera) override;
 
+    [[nodiscard]] Vec2 GetHalfExtentsWorldSpace();
+
     D2E_COMPONENT("Sprite")
 private:
     spriteId mSpriteId{ 0 };

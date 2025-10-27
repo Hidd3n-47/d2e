@@ -7,7 +7,6 @@
 #include <d2e/ES/Components/Transform.h>
 #include <d2e/ES/Components/BattleTimer.h>
 #include <d2e/ES/Components/PingDisplay.h>
-#include <d2e/ES/Components/RectangleSprite.h>
 #include <d2e/ES/Components/StaticBoxCollider.h>
 
 #include <d2eNet/Core/Packet.h>
@@ -28,32 +27,14 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
     d2e::WeakRef<d2eNet::Client> client = d2e::Engine::Instance()->GetClient();
     bool uploadLevelData = client->GetId() == 1;
 
-    // Testing floor.
-    {
-        d2eNet::Packet packet;
-
-        d2e::WeakRef<d2e::GameObject> floorObject = scene->CreateGameObject();
-        const d2e::Ulid id = floorObject->GetId();
-        packet.AddLineWithId(id);
-
-        d2e::WeakRef<d2e::RectangleSprite> floorSprite = floorObject->AddComponent<d2e::RectangleSprite>();
-        floorSprite->SetHalfExtents(d2e::Vec2{ 2.0f, 0.5f });
-        floorSprite->SetColor(sf::Color::Blue);
-        packet.AddType<d2e::RectangleSprite>(id, floorSprite->Serialize());
-
-        d2e::WeakRef<d2e::Transform> transform = floorObject->GetComponent<d2e::Transform>();
-        transform->translation = d2e::Vec2{ -5.5f, 0.0f };
-        packet.AddType<d2e::Transform>(id, transform->Serialize());
-
-        d2e::WeakRef<d2e::StaticBoxCollider> bc = floorObject->AddComponent<d2e::StaticBoxCollider>();
-        bc->SetHalfExtents(floorSprite->GetHalfExtents());
-        packet.AddType<d2e::StaticBoxCollider>(id, bc->Serialize());
-
-        if (uploadLevelData)
-        {
-            client->AddPacketToSend(packet);
-        }
-    }
+    // Floors.
+    constexpr d2e::Vec2 smallFloorScale{ 0.4f, 0.4f };
+    constexpr d2e::Vec2 largeFloorScale{ 0.4f, 0.4f };
+    CreateFloor(client, d2e::Vec2{ -4.5f,  2.5f }, smallFloorScale);
+    CreateFloor(client, d2e::Vec2{ -4.5f, -2.5f }, smallFloorScale);
+    CreateFloor(client, d2e::Vec2{  0.0f,  0.0f }, largeFloorScale);
+    CreateFloor(client, d2e::Vec2{  4.5f, -2.5f }, smallFloorScale);
+    CreateFloor(client, d2e::Vec2{  4.5f,  2.5f }, smallFloorScale);
 
     // Wall boundaries.
     CreateWall(client, d2e::Vec2{  0.0f,  4.5f }, d2e::Vec2{ 16.0f, 0.1f });
@@ -73,7 +54,7 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
         d2e::WeakRef<d2e::Transform> transform = ping->GetComponent<d2e::Transform>();
         transform->translation = d2e::Vec2{ -7.8f, 4.38f };
 
-        if (client->GetId() == 1)
+        if (uploadLevelData)
         {
             d2eNet::Packet packet;
             packet.AddLineWithId(id);
@@ -93,7 +74,7 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
         d2e::WeakRef<d2e::BattleTimer> timer = ping->AddComponent<d2e::BattleTimer>();
         timer->SetSyncValuesOnUpdate(true);
 
-        if (client->GetId() == 1)
+        if (uploadLevelData)
         {
             d2eNet::Packet packet;
             packet.AddLineWithId(id);
@@ -103,7 +84,7 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
         }
     }
 
-    if (d2e::Engine::Instance()->GetClient()->GetId() != 1)
+    if (!uploadLevelData)
     {
         d2e::WeakRef<GameScene> gameScene = scene.Cast<GameScene>();
         gameScene->GetPlayer().CreatePrefab(scene, false);
@@ -134,26 +115,50 @@ void LoadingLevelState::Update()
 
 void LoadingLevelState::CreateWall(d2e::WeakRef<d2eNet::Client> client, const d2e::Vec2 translation, const d2e::Vec2 halfExtents)
 {
-    d2eNet::Packet packet;
-
     d2e::WeakRef<d2e::GameObject> wall = mParent->CreateGameObject();
     const d2e::Ulid id = wall->GetId();
-    packet.AddLineWithId(id);
 
     d2e::WeakRef<d2e::Transform> transform = wall->GetComponent<d2e::Transform>();
     transform->translation = translation;
-    packet.AddType<d2e::Transform>(id, transform->Serialize());
 
     d2e::WeakRef<d2e::StaticBoxCollider> bc = wall->AddComponent<d2e::StaticBoxCollider>();
     bc->SetHalfExtents(halfExtents);
-    packet.AddType<d2e::StaticBoxCollider>(id, bc->Serialize());
 
     d2e::WeakRef<d2e::Tag> tag = wall->AddComponent<d2e::Tag>();
     tag->tag = d2e::ComponentTag::WALL;
-    packet.AddType<d2e::Tag>(id, tag->Serialize());
 
     if (client->GetId() == 1)
     {
+        d2eNet::Packet packet;
+        packet.AddLineWithId(id);
+        packet.AddType<d2e::Transform>(id, transform->Serialize());
+        packet.AddType<d2e::StaticBoxCollider>(id, bc->Serialize());
+        packet.AddType<d2e::Tag>(id, tag->Serialize());
+        client->AddPacketToSend(packet);
+    }
+}
+
+void LoadingLevelState::CreateFloor(d2e::WeakRef<d2eNet::Client> client, const d2e::Vec2 translation, const d2e::Vec2 scale)
+{
+    d2e::WeakRef<d2e::GameObject> floorObject = mParent->CreateGameObject();
+    const d2e::Ulid id = floorObject->GetId();
+
+    d2e::WeakRef<d2e::Sprite> floorSprite = floorObject->AddComponent<d2e::Sprite>("E:/Programming/d2e/d2eGameProject/d2eGame/Assets/Floor.png");
+
+    d2e::WeakRef<d2e::Transform> transform = floorObject->GetComponent<d2e::Transform>();
+    transform->translation = translation;
+    transform->scale = scale;
+
+    d2e::WeakRef<d2e::StaticBoxCollider> box = floorObject->AddComponent<d2e::StaticBoxCollider>();
+    box->SetHalfExtents(floorSprite->GetHalfExtentsWorldSpace());
+
+    if (client->GetId() == 1)
+    {
+        d2eNet::Packet packet;
+        packet.AddLineWithId(id);
+        packet.AddType<d2e::Sprite>(id, floorSprite->Serialize());
+        packet.AddType<d2e::Transform>(id, transform->Serialize());
+        packet.AddType<d2e::StaticBoxCollider>(id, box->Serialize());
         client->AddPacketToSend(packet);
     }
 }

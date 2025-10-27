@@ -40,4 +40,17 @@ void Sprite::Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera)
     window->draw(sprite->sprite);
 }
 
+Vec2 Sprite::GetHalfExtentsWorldSpace()
+{
+    const WeakRef<Transform>  transform   = mParent->GetComponent<Transform>();
+    const WeakRef<SpriteInfo> sprite      = SpriteManager::Instance()->GetSprite(mSpriteId);
+    const sf::Vector2u        textureSize = sprite->texture.getSize();
+
+    const OrthoCamera camera = Engine::Instance()->GetCamera();
+
+    const Vec2 screenScale{ static_cast<float>(textureSize.x) * 0.5f * transform->scale.x,  static_cast<float>(textureSize.y) * 0.5f * transform->scale.y };
+
+    return camera.ScreenSizeToWorldSize(screenScale);
+}
+
 } // Namespace d2e.

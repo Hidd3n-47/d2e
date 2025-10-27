@@ -30,7 +30,7 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1)
     constexpr float PLAYER_RADIUS = 0.2f;
 
     d2e::WeakRef<d2e::Transform> transform = mGameObject->GetComponent<d2e::Transform>();
-    transform->translation = isPlayer1 ? d2e::Vec2{ -6.0f, 3.0f } : d2e::Vec2{ 6.0f, 3.0f };
+    transform->translation = isPlayer1 ? d2e::Vec2{ -4.5f, -1.5f } : d2e::Vec2{ 4.5f, 3.5f };
     transform->SetSyncValuesOnUpdate(true);
 
     d2e::WeakRef<d2e::CircleSprite> visual = mGameObject->AddComponent<d2e::CircleSprite>();
