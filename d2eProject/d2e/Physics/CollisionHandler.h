@@ -23,7 +23,7 @@ private:
     std::vector<WeakRef<GameObject>> mStaticBoxColliders;
     std::vector<WeakRef<GameObject>> mCircleColliders;
 
-    static void ResolveCollisionBetweenCircles(WeakRef<GameObject> circle1, WeakRef<GameObject> circle2);
+    static void ResolveCollisionBetweenCircles(std::vector<CollisionInfo>& collisionInfos, WeakRef<GameObject> circle1, WeakRef<GameObject> circle2);
     static void ResolveCollisionBetweenBoxAndCircle(std::vector<CollisionInfo>& collisionInfos, WeakRef<GameObject> box, 
                                                     WeakRef<GameObject> circle, WeakRef<CircleCollider> circleCollider);
 };

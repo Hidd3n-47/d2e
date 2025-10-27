@@ -48,8 +48,6 @@ void BulletManager::Init(d2e::WeakRef<d2e::Scene> scene, const d2e::WeakRef<d2e:
         {
             if (auto tag = info.other->GetComponent<d2e::Tag>(); !tag.IsRefValid() || tag->tag != d2e::ComponentTag::PLAYER)
             {
-                GAME_LOG("Bullet collided, disabling");
-
                 info.instance->GetComponent<d2e::RigidBody>()->SetEnabled(false);
                 info.instance->GetComponent<d2e::CircleSprite>()->SetEnabled(false);
                 info.instance->GetComponent<d2e::CircleCollider>()->SetEnabled(false);
