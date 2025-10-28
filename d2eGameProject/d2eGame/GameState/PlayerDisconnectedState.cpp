@@ -23,6 +23,7 @@ void PlayerDisconnectedState::Init(d2e::WeakRef<d2e::Scene> scene)
     std::string string = std::format("Player disconnected!\nFinal score: {} - {}", player1Score, player2Score);
 
     text->SetText(string);
+    text->SetTextSize(200);
 
     mTimer = TIME_TILL_MAIN_MENU;
 }

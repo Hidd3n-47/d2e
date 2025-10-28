@@ -26,8 +26,8 @@ void GameManager::Init()
 {
     ChangeState(ApplicationState::MAIN_MENU);
 
-    d2e::Engine::Instance()->SetOnPlayerTwoJoinedCallback([] { Instance()->OnPlayerTwoJoined(); });
-    d2e::Engine::Instance()->SetOnPlayerTwoJoinedCallback([] { Instance()->OnPlayerDisconnected(); });
+    d2e::Engine::Instance()->SetOnPlayerTwoJoinedCallback([]    { Instance()->OnPlayerTwoJoined(); });
+    d2e::Engine::Instance()->SetOnPlayerDisconnectedCallback([] { Instance()->OnPlayerDisconnected(); });
 
     GAME_LOG("Game initialized.");
 }

@@ -20,7 +20,7 @@ void Text::Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& camera)
     sf::FloatRect bounds = mText.getLocalBounds();
 
     mText.setPosition({ position.x - bounds.size.x * 0.5f, position.y - bounds.size.y });
-    mText.setCharacterSize(500);
+    mText.setCharacterSize(mTextSize);
 
     window->draw(mText);
 }
