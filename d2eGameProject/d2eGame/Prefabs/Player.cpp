@@ -22,18 +22,20 @@ namespace d2eGame
 
 void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1)
 {
-    const sf::Color playerColor = isPlayer1 ? PLAYER_1_COLOR : PLAYER_2_COLOR;
+    mPlayer1 = isPlayer1;
+
+    const sf::Color playerColor = mPlayer1 ? PLAYER_1_COLOR : PLAYER_2_COLOR;
 
     mGameObject = scene->CreateGameObject();
-    mGameObject->SetId(isPlayer1 ? d2e::Engine::PLAYER_ONE_ULID : d2e::Engine::PLAYER_TWO_ULID);
+    mGameObject->SetId(mPlayer1 ? d2e::Engine::PLAYER_ONE_ULID : d2e::Engine::PLAYER_TWO_ULID);
 
     constexpr float PLAYER_RADIUS = 0.2f;
 
     mGameObject->AddComponent<d2e::Tag>()->tag = d2e::ComponentTag::PLAYER;
 
     d2e::WeakRef<d2e::Transform> transform = mGameObject->GetComponent<d2e::Transform>();
-    transform->translation = isPlayer1 ? d2e::Vec2{ -4.5f, -1.5f } : d2e::Vec2{ 4.5f, 3.5f };
     transform->SetSyncValuesOnUpdate(true);
+    ResetPosition();
 
     d2e::WeakRef<d2e::CircleSprite> visual = mGameObject->AddComponent<d2e::CircleSprite>();
     visual->SetColor(playerColor);
@@ -86,4 +88,11 @@ void Player::SyncPlayer()
 
     d2e::Engine::Instance()->GetClient()->AddPacketToSend(packet);
 }
+
+void Player::ResetPosition()
+{
+    d2e::WeakRef<d2e::Transform> transform = mGameObject->GetComponent<d2e::Transform>();
+    transform->translation = mPlayer1 ? d2e::Vec2{ -4.5f, -1.5f } : d2e::Vec2{ 4.5f, 3.5f };
+}
+
 } // Namespace d2eGame.
