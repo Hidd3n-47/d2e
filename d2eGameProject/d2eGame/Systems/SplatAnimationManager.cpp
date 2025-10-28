@@ -31,13 +31,14 @@ void SplatAnimationManager::AddSplatAnimation(const d2e::Vec2 collisionPosition,
 {
     const sf::Color color = playerOne ? Player::PLAYER_1_COLOR : Player::PLAYER_2_COLOR;
 
-
     d2e::WeakRef<d2e::GameObject> object = mPool[mCurrentIndex];
     if (d2e::WeakRef<d2e::Animation> anim = object->GetComponent<d2e::Animation>(); anim.IsRefValid())
     {
         anim->RestartAnimation();
 
         SetTransformForAnimation(object, collisionPosition);
+
+        mCurrentIndex = (mCurrentIndex + 1) % POOL_SIZE;
 
         return;
     }

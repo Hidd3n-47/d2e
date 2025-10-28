@@ -1,6 +1,8 @@
 #include "d2ePch.h"
 #include "CollisionHandler.h"
 
+#include "Core/WeakRefHash.h"
+
 #include "ES/GameObject.h"
 #include "Physics/CollisionInfo.h"
 #include "Es/Components/Transform.h"
@@ -14,9 +16,10 @@ namespace d2e
 
 void CollisionHandler::Update() const
 {
+    std::unordered_map<WeakRef<GameObject>, std::vector<CollisionInfo>> collisionInfoMap;
+
     for (const WeakRef<GameObject> circle1 : mCircleColliders)
     {
-        std::vector<CollisionInfo> collisionInfos;
         for (const WeakRef<GameObject> circle2 : mCircleColliders)
         {
             if (circle1 == circle2)
@@ -24,9 +27,8 @@ void CollisionHandler::Update() const
                 continue;
             }
 
-            ResolveCollisionBetweenCircles(collisionInfos, circle1, circle2);
+            ResolveCollisionBetweenCircles(collisionInfoMap[circle1], circle1, circle2);
         }
-        circle1->GetComponent<CircleCollider>()->UpdateObjectsCollidedWith(collisionInfos);
     }
 
     for (const WeakRef<GameObject> circle : mCircleColliders)
@@ -36,9 +38,15 @@ void CollisionHandler::Update() const
         std::vector<CollisionInfo> collisionInfos;
         for (const WeakRef<GameObject> box : mStaticBoxColliders)
         {
-            ResolveCollisionBetweenBoxAndCircle(collisionInfos, box, circle, circleCollider);
+            ResolveCollisionBetweenBoxAndCircle(collisionInfoMap[circle], box, circle, circleCollider);
         }
-        circleCollider->UpdateObjectsCollidedWith(collisionInfos);
+        circleCollider->UpdateObjectsCollidedWith(collisionInfoMap[circle]);
+        collisionInfoMap.erase(circle);
+    }
+
+    for (const auto& [circle, collisionInfo] : collisionInfoMap)
+    {
+        circle->GetComponent<CircleCollider>()->UpdateObjectsCollidedWith(collisionInfo);
     }
 }
 

@@ -46,20 +46,20 @@ void BulletManager::Init(d2e::WeakRef<d2e::Scene> scene, const d2e::WeakRef<d2e:
 
         collider->SetOnCollisionEnterCallback([](const d2e::CollisionInfo& info)
         {
-            if (auto tag = info.other->GetComponent<d2e::Tag>(); !tag.IsRefValid() || tag->tag != d2e::ComponentTag::PLAYER)
+            if (auto tag = info.other->GetComponent<d2e::Tag>(); tag.IsRefValid() && tag->tag == d2e::ComponentTag::PLAYER)
             {
-                info.instance->GetComponent<d2e::RigidBody>()->SetEnabled(false);
-                info.instance->GetComponent<d2e::CircleSprite>()->SetEnabled(false);
-                info.instance->GetComponent<d2e::CircleCollider>()->SetEnabled(false);
+                // Player shot the other player.
+                GAME_LOG("Player shot the other player");
+
+                d2e::WeakRef<GameScene> gameScene = GameManager::Instance()->GetScene().Cast<GameScene>();
+                gameScene->IncreaseScore(info.other->GetId());
+                gameScene->ChangeGameState(GameState::PLAYER_KILLED);
                 return;
             }
 
-            // Player shot the other player.
-            GAME_LOG("Player shot the other player");
-
-            d2e::WeakRef<GameScene> gameScene = GameManager::Instance()->GetScene().Cast<GameScene>();
-            gameScene->IncreaseScore(info.other->GetId());
-            gameScene->ChangeGameState(GameState::PLAYER_KILLED);
+            info.instance->GetComponent<d2e::RigidBody>()->SetEnabled(false);
+            info.instance->GetComponent<d2e::CircleSprite>()->SetEnabled(false);
+            info.instance->GetComponent<d2e::CircleCollider>()->SetEnabled(false);
         });
 
         d2e::WeakRef<d2eNet::Client> client = d2e::Engine::Instance()->GetClient();

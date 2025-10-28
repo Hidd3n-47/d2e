@@ -28,8 +28,8 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
     bool uploadLevelData = client->GetId() == 1;
 
     // Floors.
-    constexpr d2e::Vec2 smallFloorScale{ 0.4f, 0.4f };
-    constexpr d2e::Vec2 largeFloorScale{ 0.4f, 0.4f };
+    constexpr d2e::Vec2 smallFloorScale{  0.4f, 0.4f };
+    constexpr d2e::Vec2 largeFloorScale{ 0.55f, 0.5f };
     CreateFloor(client, d2e::Vec2{ -4.5f,  2.5f }, smallFloorScale);
     CreateFloor(client, d2e::Vec2{ -4.5f, -2.5f }, smallFloorScale);
     CreateFloor(client, d2e::Vec2{  0.0f,  0.0f }, largeFloorScale);
