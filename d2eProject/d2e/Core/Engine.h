@@ -76,7 +76,7 @@ public:
     static constexpr Ulid BULLET_POOL_STARTING_ULID{ 100 };
 
     const Vec2 DEFAULT_SCREEN_SIZE{ 1920.0f, 1080.0f };
-    inline static sf::Font GAME_FONT{ "E:/Programming/d2e/d2eGameProject/d2eGame/Assets/Fonts/Liquidism/Liquidism.ttf" };
+    inline static sf::Font GAME_FONT{ "Assets/Fonts/Liquidism/Liquidism.ttf" };
 private:
     static std::unique_ptr<Engine>      mInstance;
 

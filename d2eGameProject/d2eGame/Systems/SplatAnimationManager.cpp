@@ -24,7 +24,7 @@ void SplatAnimationManager::InitPool(d2e::WeakRef<d2e::Scene> scene)
         mPool.emplace_back(scene->CreateGameObject());
     }
 
-    mSpriteId = d2e::SpriteManager::Instance()->LoadTexture("E:/Programming/d2e/d2eGameProject/d2eGame/Assets/SplatAnim/SplatSpritesheet.png");
+    mSpriteId = d2e::SpriteManager::Instance()->LoadTexture("Assets/SplatSpritesheet.png");
 }
 
 void SplatAnimationManager::AddSplatAnimation(const d2e::Vec2 collisionPosition, const bool playerOne)
@@ -60,7 +60,7 @@ void SplatAnimationManager::AddSplatAnimation(const d2e::Vec2 collisionPosition,
     mCurrentIndex = (mCurrentIndex + 1) % POOL_SIZE;
 }
 
-void SplatAnimationManager::SetTransformForAnimation(d2e::WeakRef<d2e::GameObject> gameObject, d2e::Vec2 position)
+void SplatAnimationManager::SetTransformForAnimation(d2e::WeakRef<d2e::GameObject> gameObject, const d2e::Vec2 position)
 {
     constexpr d2e::Vec2 offset{ 0.0f, -0.02f };
     constexpr d2e::Vec2 scale{ 0.13f,  0.13f };

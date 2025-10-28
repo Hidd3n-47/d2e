@@ -143,7 +143,7 @@ void LoadingLevelState::CreateFloor(d2e::WeakRef<d2eNet::Client> client, const d
     d2e::WeakRef<d2e::GameObject> floorObject = mParent->CreateGameObject();
     const d2e::Ulid id = floorObject->GetId();
 
-    d2e::WeakRef<d2e::Sprite> floorSprite = floorObject->AddComponent<d2e::Sprite>("E:/Programming/d2e/d2eGameProject/d2eGame/Assets/Floor.png");
+    d2e::WeakRef<d2e::Sprite> floorSprite = floorObject->AddComponent<d2e::Sprite>("Assets/Floor.png");
 
     d2e::WeakRef<d2e::Transform> transform = floorObject->GetComponent<d2e::Transform>();
     transform->translation = translation;
