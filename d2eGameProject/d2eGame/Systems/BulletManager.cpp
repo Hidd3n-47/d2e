@@ -31,6 +31,9 @@ void BulletManager::Init(d2e::WeakRef<d2e::Scene> scene, const d2e::WeakRef<d2e:
         d2e::WeakRef<d2e::GameObject> bullet = mPool.back();
         bullet->SetId(d2e::Ulid{ d2e::Engine::BULLET_POOL_STARTING_ULID * playerId + i});
 
+        d2e::WeakRef<d2e::Transform> transform = bullet->GetComponent<d2e::Transform>();
+        transform->SetSyncValuesOnUpdate(true);
+
         d2e::WeakRef<d2e::Tag> tag = bullet->AddComponent<d2e::Tag>();
         tag->tag = d2e::ComponentTag::BULLET;
 
@@ -49,6 +52,12 @@ void BulletManager::Init(d2e::WeakRef<d2e::Scene> scene, const d2e::WeakRef<d2e:
 
         collider->SetOnCollisionEnterCallback([](const d2e::CollisionInfo& info)
         {
+            // Prevent the bullet from colliding with the player that shot it.
+            if (info.instance->GetId() / 100u == info.other->GetId())
+            {
+                return;
+            }
+
             const uint64_t bulletId = info.instance->GetId();
             d2e::WeakRef<d2e::RigidBody> rigidBody = info.instance->GetComponent<d2e::RigidBody>();
 
@@ -64,12 +73,6 @@ void BulletManager::Init(d2e::WeakRef<d2e::Scene> scene, const d2e::WeakRef<d2e:
 
             if (auto tag = info.other->GetComponent<d2e::Tag>(); tag.IsRefValid() && tag->tag == d2e::ComponentTag::PLAYER)
             {
-                // Prevent the bullet from colliding with the player that shot it.
-                if (info.instance->GetId() / 100u == info.other->GetId())
-                {
-                    return;
-                }
-
                 // Player shot the other player.
                 GAME_LOG("Player shot the other player");
 
@@ -117,11 +120,12 @@ void BulletManager::ShootBullet(const d2e::Vec2 direction)
 
     d2e::WeakRef<d2e::RigidBody> rigidBody = bullet->GetComponent<d2e::RigidBody>();
     rigidBody->SetGravity(GRAVITY);
+    rigidBody->SetEnabled(true);
+
     //d2e::WeakRef<d2e::CircleCollider> collider = bullet->GetComponent<d2e::CircleCollider>();
 
     //bullet->GetComponent<d2e::CircleSprite>()->SetEnabled(true);
     //collider->SetEnabled(true);
-    //rigidBody->SetEnabled(true);
 
     bullet->GetComponent<d2e::Transform>()->translation = spawnPoint;
 
