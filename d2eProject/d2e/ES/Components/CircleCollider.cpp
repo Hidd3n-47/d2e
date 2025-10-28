@@ -50,16 +50,18 @@ void CircleCollider::UpdateObjectsCollidedWith(const std::vector<CollisionInfo>&
 
 std::string CircleCollider::Serialize() const
 {
-    return SerializeUtils::Serialize(mSyncValuesOnUpdate) +
+    return SerializeUtils::Serialize(mEnabled) +
+           SerializeUtils::Serialize(mSyncValuesOnUpdate) +
            SerializeUtils::Serialize(mCollidedLastFrame) +
            SerializeUtils::Serialize(mRadius);
 }
 
 void CircleCollider::Deserialize(const std::string& string)
 {
-    SerializeUtils::Deserialize(mSyncValuesOnUpdate, std::string{ string[0] });
-    SerializeUtils::Deserialize(mCollidedLastFrame, std::string{ string[1] });
-    SerializeUtils::Deserialize(mRadius, string.substr(2));
+    SerializeUtils::Deserialize(mEnabled, std::string{ string[0] });
+    SerializeUtils::Deserialize(mSyncValuesOnUpdate, std::string{ string[1] });
+    SerializeUtils::Deserialize(mCollidedLastFrame, std::string{ string[2] });
+    SerializeUtils::Deserialize(mRadius, string.substr(3));
 }
 
 #ifdef DEV_CONFIGURATION

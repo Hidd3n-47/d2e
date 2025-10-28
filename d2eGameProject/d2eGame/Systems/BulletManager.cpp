@@ -67,12 +67,17 @@ void BulletManager::Init(d2e::WeakRef<d2e::Scene> scene, const d2e::WeakRef<d2e:
             }
 
             d2e::WeakRef<d2e::RigidBody> rigidBody = info.instance->GetComponent<d2e::RigidBody>();
+            d2e::WeakRef<d2e::CircleCollider> collider = info.instance->GetComponent<d2e::CircleCollider>();
+
             rigidBody->SetEnabled(false);
             info.instance->GetComponent<d2e::CircleSprite>()->SetEnabled(false);
             info.instance->GetComponent<d2e::CircleCollider>()->SetEnabled(false);
 
+
+            const uint64_t bulletId = info.instance->GetId();
             d2eNet::Packet packet;
-            packet.UpdateType<d2e::RigidBody>(info.instance->GetId(), rigidBody->Serialize());
+            packet.UpdateType<d2e::CircleCollider>(bulletId, collider->Serialize());
+            packet.UpdateType<d2e::RigidBody>(bulletId, rigidBody->Serialize());
 
             d2e::WeakRef<d2eNet::Client> client = d2e::Engine::Instance()->GetClient();
             client->AddPacketToSend(packet);
@@ -100,9 +105,10 @@ void BulletManager::ShootBullet(const d2e::Vec2 direction)
     const d2e::Vec2 spawnPoint = mPlayer->GetComponent<d2e::Transform>()->translation + direction * OFFSET;
 
     d2e::WeakRef<d2e::RigidBody> rigidBody = bullet->GetComponent<d2e::RigidBody>();
+    d2e::WeakRef<d2e::CircleCollider> collider = bullet->GetComponent<d2e::CircleCollider>();
 
-    bullet->GetComponent<d2e::CircleCollider>()->SetEnabled(true);
     bullet->GetComponent<d2e::CircleSprite>()->SetEnabled(true);
+    collider->SetEnabled(true);
     rigidBody->SetEnabled(true);
 
     bullet->GetComponent<d2e::Transform>()->translation = spawnPoint;
@@ -110,8 +116,10 @@ void BulletManager::ShootBullet(const d2e::Vec2 direction)
     constexpr float impulse = 12.0f;
     rigidBody->AddVelocity(direction * impulse);
 
+    const uint64_t bulletId = bullet->GetId();
     d2eNet::Packet packet;
-    packet.UpdateType<d2e::RigidBody>(bullet->GetId(), rigidBody->Serialize());
+    packet.UpdateType<d2e::CircleCollider>(bulletId, collider->Serialize());
+    packet.UpdateType<d2e::RigidBody>(bulletId, rigidBody->Serialize());
 
     d2e::WeakRef<d2eNet::Client> client = d2e::Engine::Instance()->GetClient();
     client->AddPacketToSend(packet);
