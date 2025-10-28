@@ -168,6 +168,11 @@ void CollisionHandler::ResolveCollisionBetweenCircles(std::vector<CollisionInfo>
 void CollisionHandler::ResolveCollisionBetweenBoxAndCircle(std::vector<CollisionInfo>& collisionInfos, WeakRef<GameObject> box,
                                                            WeakRef<GameObject> circle, WeakRef<CircleCollider> circleCollider)
 {
+    if (!circleCollider->IsEnabled())
+    {
+        return;
+    }
+
     WeakRef<StaticBoxCollider> boxCollider    = box->GetComponent<StaticBoxCollider>();
     WeakRef<RigidBody>         rigidBody      = circle->GetComponent<RigidBody>();
 

@@ -18,7 +18,7 @@ void Bullet::Update(const float dt)
     WeakRef<CircleCollider> collider = mParent->GetComponent<CircleCollider>();
     WeakRef<CircleSprite> circleSprite = mParent->GetComponent<CircleSprite>();
 
-    const bool enabled = Math::IsEqualTo(rb->GetVelocity().MagnitudeSquared(), 0.0f);
+    const bool enabled = !Math::IsEqualTo(rb->GetVelocity().MagnitudeSquared(), 0.0f, 0.02f);
 
     collider->SetEnabled(enabled);
     circleSprite->SetEnabled(enabled);

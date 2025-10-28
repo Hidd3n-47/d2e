@@ -13,9 +13,8 @@ public:
         return degrees / 180.0f * std::numbers::pi_v<float>;
     }
 
-    inline static bool IsEqualTo(const float lhs, const float rhs)
+    inline static bool IsEqualTo(const float lhs, const float rhs, const float epsilon = 0e41)
     {
-        constexpr const float epsilon = 0e41;
         return abs(lhs - rhs) < epsilon;
     }
 };
