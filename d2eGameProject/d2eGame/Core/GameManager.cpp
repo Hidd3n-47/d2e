@@ -26,7 +26,8 @@ void GameManager::Init()
 {
     ChangeState(ApplicationState::MAIN_MENU);
 
-    d2e::Engine::Instance()->SetOnPlayerTwoJoinedCallback([] { Instance()->PlayerTwoJoined(); });
+    d2e::Engine::Instance()->SetOnPlayerTwoJoinedCallback([] { Instance()->OnPlayerTwoJoined(); });
+    d2e::Engine::Instance()->SetOnPlayerTwoJoinedCallback([] { Instance()->OnPlayerDisconnected(); });
 
     GAME_LOG("Game initialized.");
 }
@@ -72,7 +73,7 @@ void GameManager::JoinOnlineGame()
     ChangeState(ApplicationState::GAME);
 }
 
-void GameManager::PlayerTwoJoined() const
+void GameManager::OnPlayerTwoJoined() const
 {
     if (d2e::Engine::Instance()->GetClient()->GetId() == 1)
     {
@@ -80,6 +81,12 @@ void GameManager::PlayerTwoJoined() const
         gameScene->GetOtherPlayer().CreatePrefab(d2e::WeakRef{ mCurrentScene }.Cast<d2e::Scene>(), false);
         gameScene->ChangeGameState(GameState::BATTLE_COUNTDOWN);
     }
+}
+
+void GameManager::OnPlayerDisconnected() const
+{
+    GameScene* gameScene = dynamic_cast<GameScene*>(mCurrentScene);
+    gameScene->ChangeGameState(GameState::PLAYER_DISCONNECTED);
 }
 
 } // Namespace d2eGame.

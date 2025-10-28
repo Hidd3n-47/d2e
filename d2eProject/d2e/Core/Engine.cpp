@@ -233,6 +233,12 @@ void Engine::ProcessNetworkPackets() const
                 mClient->ServerHandledPacketQuery(std::stoul(packetString));
                 break;
             }
+            case d2eNet::PacketLineType::PLAYER_DISCONNECTED:
+                if (mOnPlayerDisconnected)
+                {
+                    mOnPlayerDisconnected();
+                }
+                break;
             case d2eNet::PacketLineType::ADD_COMPONENT:
             case d2eNet::PacketLineType::ADD_GAME_OBJECT:
             case d2eNet::PacketLineType::SYNC_GAME_OBJECT_ACROSS_NETWORK:

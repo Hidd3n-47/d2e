@@ -36,7 +36,8 @@ public:
     void ChangeState(const ApplicationState newState);
 
     void JoinOnlineGame();
-    void PlayerTwoJoined() const;
+    void OnPlayerTwoJoined() const;
+    void OnPlayerDisconnected() const;
 
     [[nodiscard]] inline d2e::WeakRef<d2e::Scene> GetScene() const { return d2e::WeakRef{ mCurrentScene }; }
 private:

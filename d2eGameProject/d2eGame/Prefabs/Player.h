@@ -14,6 +14,8 @@ public:
     void CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1 = false);
     void SyncPlayer();
 
+    void ResetPosition()
+
     [[nodiscard]] inline d2e::WeakRef<d2e::GameObject> GetGameObject() const { return mGameObject; }
     [[nodiscard]] inline BulletManager& GetBulletManager() { return mBulletManager; }
 
@@ -21,6 +23,7 @@ public:
     static constexpr sf::Color PLAYER_2_COLOR{  31, 160, 200, 255 };
 private:
     d2e::WeakRef<d2e::GameObject> mGameObject;
+    bool mPlayer1 = false;
 
     BulletManager mBulletManager;
 };

@@ -216,6 +216,10 @@ void ServerManager::OnClientDisconnected(const uint32_t id)
 {
     mLog.Debug("Client with ID '{}' disconnected.", id);
 
+    d2eNet::Packet packet;
+    packet.AddStringToPacket(d2eNet::PacketLineType::PLAYER_DISCONNECTED, "");
+    mHost->AddPacketToBroadcast(packet);
+
     if (mHost->GetNumJoinedClients() == 0)
     {
         mLog.Debug("Destroyed game scene as no more players remain.");

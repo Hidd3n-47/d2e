@@ -52,7 +52,8 @@ public:
     void Render() const;
     void ProcessNetworkPackets() const;
 
-    inline void SetOnPlayerTwoJoinedCallback(const std::function<void()>& callback) { mOnPlayerTwoJoined = callback; }
+    inline void SetOnPlayerTwoJoinedCallback(const std::function<void()>& callback)    { mOnPlayerTwoJoined    = callback; }
+    inline void SetOnPlayerDisconnectedCallback(const std::function<void()>& callback) { mOnPlayerDisconnected = callback; }
 
     [[nodiscard]] inline const OrthoCamera&         GetCamera()         const { return mOrthoCamera; }
     [[nodiscard]] inline WeakRef<Scene>             GetActiveScene()    const { return WeakRef{ mActiveScene }; }
@@ -94,6 +95,7 @@ private:
     std::chrono::time_point<std::chrono::steady_clock> mFrameStart;
 
     std::function<void()> mOnPlayerTwoJoined;
+    std::function<void()> mOnPlayerDisconnected;
 };
 
 } // Namespace d2e.

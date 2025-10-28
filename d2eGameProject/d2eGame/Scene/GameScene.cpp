@@ -9,6 +9,7 @@
 #include "GameState/LoadingLevelState.h"
 #include "GameState/BattleCountdownState.h"
 #include "GameState/WaitingForPlayersState.h"
+#include "GameState/PlayerDisconnectedState.h"
 
 namespace d2eGame
 {
@@ -53,6 +54,10 @@ void GameScene::ChangeGameState(const GameState state)
     case GameState::PLAYER_KILLED:
         GAME_LOG("Changing game state: Killed Player.");
         mGameState = new PlayerKilledState();
+        break;
+    case GameState::PLAYER_DISCONNECTED:
+        GAME_LOG("Changing game state: Player disconnected.");
+        mGameState = new PlayerDisconnectedState();
         break;
     case GameState::NONE:
     default:

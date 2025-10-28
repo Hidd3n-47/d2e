@@ -19,7 +19,8 @@ enum class GameState
     WAITING_FOR_PLAYERS,
     BATTLE_COUNTDOWN,
     PLAYING,
-    PLAYER_KILLED
+    PLAYER_KILLED,
+    PLAYER_DISCONNECTED
 };
 
 class GameScene : public d2e::Scene
@@ -39,12 +40,13 @@ public:
     [[nodiscard]] inline d2e::WeakRef<d2e::GameObject> GetScoreObject() const { return mScoreObject; }
 
     void IncreaseScore(const d2e::Ulid playerWhoDiedUlid);
+    inline void GetPlayerScores(uint32_t& player1Score, uint32_t& player2Score) const { player1Score = mPlayer1Score; player2Score = mPlayer2Score; }
 private:
     Player mPlayer;
     Player mOtherPlayer;
 
-    uint32_t mPlayer1Score;
-    uint32_t mPlayer2Score;
+    uint32_t mPlayer1Score { 0 };
+    uint32_t mPlayer2Score { 0 };
 
     bool mPlayersSyncedAcrossNetwork = false;
 
