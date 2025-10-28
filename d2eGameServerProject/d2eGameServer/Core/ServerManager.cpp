@@ -99,7 +99,6 @@ void ServerManager::ProcessIncomingPackets(d2e::WeakRef<d2e::Scene> activeScene)
     std::optional<d2eNet::Packet> packet = mHost->GetPacket();
     while (packet)
     {
-        //mLog.Info("Processed Packet: {}", std::string{ packet->BufBegin(), packet->BufEnd() });
         for (d2eNet::Packet::Iterator it = packet->Begin(); it != packet->End(); ++it)
         {
             const std::string packetString = it.GetPacketLineString();
@@ -148,8 +147,6 @@ void ServerManager::ProcessIncomingPackets(d2e::WeakRef<d2e::Scene> activeScene)
 
                 activeScene->GetGameObject(d2e::Ulid{ id })->GetComponent(componentName)->Deserialize(componentValue);
 
-                if (componentName == d2e::RigidBody::GetNameStatic())
-                    mLog.Warn("Updated Component [{}] to game object with ID: {} | <{}>", componentName, id, componentValue);
                 break;
             }
             case d2eNet::PacketLineType::SERVER_HANDLED_PACKET_CONFIRM:
