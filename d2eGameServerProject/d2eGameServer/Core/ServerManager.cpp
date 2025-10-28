@@ -146,9 +146,6 @@ void ServerManager::ProcessIncomingPackets(d2e::WeakRef<d2e::Scene> activeScene)
                 const std::string componentValue = packetString.substr(secondDelimiter + 1);
 
                 activeScene->GetGameObject(d2e::Ulid{ id })->GetComponent(componentName)->Deserialize(componentValue);
-
-                if (componentName == d2e::RigidBody::GetNameStatic() || componentName == d2e::CircleCollider::GetNameStatic())
-                    mLog.Warn("Updated Component [{}] to game object with ID: {} | <{}>", componentName, id, componentValue);
                 break;
             }
             case d2eNet::PacketLineType::SERVER_HANDLED_PACKET_CONFIRM:

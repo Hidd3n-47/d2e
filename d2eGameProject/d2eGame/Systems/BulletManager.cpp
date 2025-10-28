@@ -65,11 +65,15 @@ void BulletManager::Init(d2e::WeakRef<d2e::Scene> scene, const d2e::WeakRef<d2e:
             rigidBody->SetGravity(d2e::Vec2{});
             rigidBody->SetVelocity(d2e::Vec2{});
 
-            d2eNet::Packet packet{ false };
-            packet.UpdateType<d2e::RigidBody>(bulletId, rigidBody->Serialize());
-
+            // Only update the bullet to the server if the client is responsible for shooting/colliding.
             d2e::WeakRef<d2eNet::Client> client = d2e::Engine::Instance()->GetClient();
-            client->AddPacketToSend(packet);
+            if (bulletId / 100 == client->GetId())
+            {
+                d2eNet::Packet packet{ false };
+                packet.UpdateType<d2e::RigidBody>(bulletId, rigidBody->Serialize());
+
+                client->AddPacketToSend(packet);
+            }
 
             if (auto tag = info.other->GetComponent<d2e::Tag>(); tag.IsRefValid() && tag->tag == d2e::ComponentTag::PLAYER)
             {
@@ -79,23 +83,7 @@ void BulletManager::Init(d2e::WeakRef<d2e::Scene> scene, const d2e::WeakRef<d2e:
                 d2e::WeakRef<GameScene> gameScene = GameManager::Instance()->GetScene().Cast<GameScene>();
                 gameScene->IncreaseScore(info.other->GetId());
                 gameScene->ChangeGameState(GameState::PLAYER_KILLED);
-                return;
             }
-
-            /*d2e::WeakRef<d2e::RigidBody> rigidBody = info.instance->GetComponent<d2e::RigidBody>();
-            d2e::WeakRef<d2e::CircleCollider> collider = info.instance->GetComponent<d2e::CircleCollider>();
-
-            rigidBody->SetEnabled(false);
-            info.instance->GetComponent<d2e::CircleSprite>()->SetEnabled(false);
-            info.instance->GetComponent<d2e::CircleCollider>()->SetEnabled(false);
-
-            const uint64_t bulletId = info.instance->GetId();
-            d2eNet::Packet packet { false };
-            packet.UpdateType<d2e::CircleCollider>(bulletId, collider->Serialize());
-            packet.UpdateType<d2e::RigidBody>(bulletId, rigidBody->Serialize());
-
-            d2e::WeakRef<d2eNet::Client> client = d2e::Engine::Instance()->GetClient();
-            client->AddPacketToSend(packet);*/
         });
 
         d2e::WeakRef<d2eNet::Client> client = d2e::Engine::Instance()->GetClient();
@@ -104,6 +92,7 @@ void BulletManager::Init(d2e::WeakRef<d2e::Scene> scene, const d2e::WeakRef<d2e:
             const uint64_t bulletId = bullet->GetId();
             d2eNet::Packet packet;
             packet.AddLineWithId(bulletId);
+            packet.AddType<d2e::Transform>(bulletId, transform->Serialize());
             packet.AddType<d2e::Tag>(bulletId, tag->Serialize());
             packet.AddType<d2e::RigidBody>(bulletId, rigidBody->Serialize());
             packet.AddSyncObject(bulletId);
@@ -122,22 +111,24 @@ void BulletManager::ShootBullet(const d2e::Vec2 direction)
     rigidBody->SetGravity(GRAVITY);
     rigidBody->SetEnabled(true);
 
-    //d2e::WeakRef<d2e::CircleCollider> collider = bullet->GetComponent<d2e::CircleCollider>();
-
-    //bullet->GetComponent<d2e::CircleSprite>()->SetEnabled(true);
-    //collider->SetEnabled(true);
-
-    bullet->GetComponent<d2e::Transform>()->translation = spawnPoint;
+    d2e::WeakRef<d2e::Transform> transform = bullet->GetComponent<d2e::Transform>();
+    transform->translation = spawnPoint;
 
     constexpr float impulse = 12.0f;
     rigidBody->AddVelocity(direction * impulse);
 
     const uint64_t bulletId = bullet->GetId();
-    d2eNet::Packet packet{ false };
-    packet.UpdateType<d2e::RigidBody>(bulletId, rigidBody->Serialize());
-
     d2e::WeakRef<d2eNet::Client> client = d2e::Engine::Instance()->GetClient();
-    client->AddPacketToSend(packet);
+
+    // Only update the bullet to the server if the client is responsible for shooting/colliding.
+    if (bulletId / 100 == client->GetId())
+    {
+        d2eNet::Packet packet{ false };
+        packet.UpdateType<d2e::Transform>(bulletId, transform->Serialize());
+        packet.UpdateType<d2e::RigidBody>(bulletId, rigidBody->Serialize());
+
+        client->AddPacketToSend(packet);
+    }
 
     mPoolIndex = (mPoolIndex + 1) % NUM_BULLETS_IN_POOL;
 }
