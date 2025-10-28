@@ -31,6 +31,8 @@ public:
     inline void SetVelocity(const Vec2 velocity)        { mVelocity = velocity; EnsureVelocityIsUnderMaxSpeed(); }
     inline void SetGravity(const Vec2 gravity)          { mGravity = gravity; }
 
+    inline void ResetForce() { mForce = Vec2{}; }
+
     [[nodiscard]] std::string Serialize() const override;
     void Deserialize(const std::string& string) override;
 

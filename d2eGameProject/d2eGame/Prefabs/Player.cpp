@@ -89,10 +89,24 @@ void Player::SyncPlayer()
     d2e::Engine::Instance()->GetClient()->AddPacketToSend(packet);
 }
 
-void Player::ResetPosition()
+void Player::ResetPosition(const bool uploadToServer)
 {
     d2e::WeakRef<d2e::Transform> transform = mGameObject->GetComponent<d2e::Transform>();
     transform->translation = mPlayer1 ? d2e::Vec2{ -4.5f, -1.5f } : d2e::Vec2{ 4.5f, 3.5f };
+
+    if (uploadToServer)
+    {
+        d2eNet::Packet packet;
+
+        d2e::WeakRef<d2e::RigidBody> rigidBody = mGameObject->GetComponent<d2e::RigidBody>();
+        rigidBody->SetVelocity(d2e::Vec2{});
+        rigidBody->ResetForce();
+
+        packet.UpdateType<d2e::RigidBody>(mGameObject->GetId(), rigidBody->Serialize());
+        packet.UpdateType<d2e::Transform>(mGameObject->GetId(), mGameObject->GetComponent<d2e::Transform>()->Serialize());
+
+        d2e::Engine::Instance()->GetClient()->AddPacketToSend(packet);
+    }
 }
 
 } // Namespace d2eGame.

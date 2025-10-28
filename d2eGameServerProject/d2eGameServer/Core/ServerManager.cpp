@@ -220,13 +220,14 @@ void ServerManager::OnClientDisconnected(const uint32_t id)
     packet.AddStringToPacket(d2eNet::PacketLineType::PLAYER_DISCONNECTED, "");
     mHost->AddPacketToBroadcast(packet);
 
+    mGameObjectsToSyncAcrossNetwork.clear();
+
     if (mHost->GetNumJoinedClients() == 0)
     {
         mLog.Debug("Destroyed game scene as no more players remain.");
         delete mGameScene;
         mGameScene = nullptr;
         d2e::Engine::Instance()->ChangeActiveScene(mGameScene);
-        mGameObjectsToSyncAcrossNetwork.clear();
     }
 }
 

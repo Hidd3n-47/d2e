@@ -14,7 +14,7 @@ public:
     void CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1 = false);
     void SyncPlayer();
 
-    void ResetPosition();
+    void ResetPosition(const bool uploadToServer = false);
 
     [[nodiscard]] inline d2e::WeakRef<d2e::GameObject> GetGameObject() const { return mGameObject; }
     [[nodiscard]] inline BulletManager& GetBulletManager() { return mBulletManager; }
