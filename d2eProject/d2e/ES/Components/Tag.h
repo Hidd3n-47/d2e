@@ -10,7 +10,8 @@ enum class ComponentTag : uint8_t
 {
     NONE,
     WALL,
-    PLAYER
+    PLAYER,
+    BULLET
 };
 
 struct Tag : public IComponent

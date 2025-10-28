@@ -30,6 +30,8 @@ void BulletManager::Init(d2e::WeakRef<d2e::Scene> scene, const d2e::WeakRef<d2e:
         d2e::WeakRef<d2e::GameObject> bullet = mPool.back();
         bullet->SetId(d2e::Ulid{ d2e::Engine::BULLET_POOL_STARTING_ULID * playerId + i});
 
+        bullet->AddComponent<d2e::Tag>()->tag = d2e::ComponentTag::BULLET;
+
         constexpr float radius = 0.05f;
         d2e::WeakRef<d2e::CircleSprite> sprite = bullet->AddComponent<d2e::CircleSprite>();
         sprite->SetRadius(radius);
@@ -48,6 +50,12 @@ void BulletManager::Init(d2e::WeakRef<d2e::Scene> scene, const d2e::WeakRef<d2e:
         {
             if (auto tag = info.other->GetComponent<d2e::Tag>(); tag.IsRefValid() && tag->tag == d2e::ComponentTag::PLAYER)
             {
+                // Prevent the bullet from colliding with the player that shot it.
+                if (info.instance->GetId() / 100u == info.other->GetId())
+                {
+                    return;
+                }
+
                 // Player shot the other player.
                 GAME_LOG("Player shot the other player");
 
