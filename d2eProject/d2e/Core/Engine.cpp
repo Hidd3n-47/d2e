@@ -216,7 +216,6 @@ void Engine::ProcessNetworkPackets() const
                 const std::string componentName  = packetString.substr(firstDelimiter + 1, secondDelimiter - firstDelimiter - 1);
                 const std::string componentValue = packetString.substr(secondDelimiter + 1);
 
-                auto before = mActiveScene->GetGameObject(Ulid{ id })->GetComponent(componentName)->Serialize();
                 mActiveScene->GetGameObject(Ulid{ id })->GetComponent(componentName)->Deserialize(componentValue);
                 break;
             }
