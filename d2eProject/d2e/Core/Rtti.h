@@ -4,6 +4,7 @@
 
 #include "d2e/ES/Components/Animation.h"
 #include "d2e/ES/Components/BattleTimer.h"
+#include "d2e/ES/Components/Bullet.h"
 #include "d2e/ES/Components/CircleCollider.h"
 #include "d2e/ES/Components/CircleSprite.h"
 #include "d2e/ES/Components/Movement.h"
@@ -26,6 +27,7 @@ inline static auto& GetComponentMap()
         std::unordered_map<std::string, std::function<WeakRef<IComponent>(WeakRef<GameObject>)>> m;
         m["Animation"]         = [](auto go) { return WeakRef{ go->AddComponent<Animation>()         }.Cast<IComponent>(); };
         m["BattleTimer"]       = [](auto go) { return WeakRef{ go->AddComponent<BattleTimer>()       }.Cast<IComponent>(); };
+        m["Bullet"]            = [](auto go) { return WeakRef{ go->AddComponent<Bullet>()            }.Cast<IComponent>(); };
         m["CircleCollider"]    = [](auto go) { return WeakRef{ go->AddComponent<CircleCollider>()    }.Cast<IComponent>(); };
         m["CircleSprite"]      = [](auto go) { return WeakRef{ go->AddComponent<CircleSprite>()      }.Cast<IComponent>(); };
         m["Movement"]          = [](auto go) { return WeakRef{ go->AddComponent<Movement>()          }.Cast<IComponent>(); };

@@ -19,6 +19,11 @@ public:
         return sqrt(x * x + y * y);
     }
 
+    [[nodiscard]] inline float MagnitudeSquared() const
+    {
+        return x * x + y * y;
+    }
+
     inline void Normalize()
     {
         if (const float len = sqrt(x * x + y * y); len != 0.0f)

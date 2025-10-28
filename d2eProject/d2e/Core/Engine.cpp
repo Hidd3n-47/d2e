@@ -1,6 +1,10 @@
 #include "d2ePch.h"
 #include "Engine.h"
 
+#include <iostream>
+#include <ES/Components/RigidBody.h>
+#include <ES/Components/CircleCollider.h>
+
 #include <d2eNet/Core/d2eNet.h>
 #include <d2eNet/Core/Client.h>
 
@@ -216,7 +220,14 @@ void Engine::ProcessNetworkPackets() const
                 const std::string componentName  = packetString.substr(firstDelimiter + 1, secondDelimiter - firstDelimiter - 1);
                 const std::string componentValue = packetString.substr(secondDelimiter + 1);
 
+                auto before = mActiveScene->GetGameObject(Ulid{ id })->GetComponent(componentName)->Serialize();
                 mActiveScene->GetGameObject(Ulid{ id })->GetComponent(componentName)->Deserialize(componentValue);
+
+                if (componentName == d2e::RigidBody::GetNameStatic() || componentName == d2e::CircleCollider::GetNameStatic())
+                {
+                    if (before != componentValue)
+                        std::cout << std::format("Updated Component [{}] to game object with ID: {} | <{}>\n", componentName, id, componentValue);
+                }
 
                 break;
             }

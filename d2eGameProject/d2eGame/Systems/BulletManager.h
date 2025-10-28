@@ -30,6 +30,7 @@ private:
     uint32_t mPoolIndex{ 0 };
 
     const float OFFSET{ 0.25f };
+    const d2e::Vec2 GRAVITY{ 0.0f, -0.8f };
 };
 
 } // Namespace d2eGame.
