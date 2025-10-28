@@ -25,7 +25,6 @@ public:
     [[nodiscard]] static inline d2e::WeakRef<SplatAnimationManager> Instance() { return d2e::WeakRef{ mInstance.get() }; }
 
     void InitPool(d2e::WeakRef<d2e::Scene> scene);
-    //todo a destroy/clean method.
 
     void AddSplatAnimation(const d2e::Vec2 collisionPosition, const bool playerOne);
 
@@ -38,7 +37,7 @@ private:
 
     d2e::spriteId mSpriteId{ 0 };
 
-    static void SetTransformForAnimation(d2e::WeakRef<d2e::GameObject> gameObject, d2e::Vec2 position);
+    static void SetTransformForAnimation(d2e::WeakRef<d2e::GameObject> gameObject, const d2e::Vec2 position);
 };
 
 } // Namespace d2eGame.

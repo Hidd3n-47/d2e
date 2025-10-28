@@ -53,8 +53,6 @@ void ServerManager::Run()
 {
     mLog.Debug("Server started.");
 
-    // todo need to handle a case of the game being simulated but then player being disconnected.
-
     while (mServerRunning)
     {
         d2e::Engine::Instance()->StartFrame();
@@ -156,6 +154,7 @@ void ServerManager::ProcessIncomingPackets(d2e::WeakRef<d2e::Scene> activeScene)
                 break;
             }
             case d2eNet::PacketLineType::PLAYER_TWO_JOINED:
+            case d2eNet::PacketLineType::PLAYER_DISCONNECTED:
             default:
                 mLog.Warn("Received packet that is not processed: <{}>", packetString);
                 break;
@@ -208,7 +207,7 @@ void ServerManager::OnClientConnected(const uint32_t id)
 
     // The second player has joined the server.
     d2eNet::Packet p;
-    p.AddLineWithId(0, d2eNet::PacketLineType::PLAYER_TWO_JOINED);
+    p.AddStringToPacket(d2eNet::PacketLineType::PLAYER_TWO_JOINED, "");
     mHost->AddPacketToBroadcast(p);
 }
 

@@ -80,6 +80,7 @@ void Client::Update(const uint32_t timeout)
             {
             case ENET_EVENT_TYPE_DISCONNECT:
                 mConnected = false;
+                mClientId  = 0;
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
             {

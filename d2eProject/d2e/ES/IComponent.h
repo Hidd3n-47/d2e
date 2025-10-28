@@ -11,6 +11,12 @@ namespace d2e
 
 class GameObject;
 
+/**
+ * @class IComponent: A class that gives components its bare functionality.
+ * @note All components should inherit from this.<br/>
+ *       All components should include the macro D2E_COMPONENT(X), where X=Component's name/type.<br/>
+ *       All components should then be added into the Component Map in Rtti.h
+ */
 class IComponent
 {
 public:
@@ -25,6 +31,10 @@ public:
     [[nodiscard]] virtual std::string Serialize() const { return ""; }
     virtual void Deserialize(const std::string& string) { }
 
+    /**
+     * @brief Get if the component's values are being synchronised with the server every frame.
+     * @return If the component's values are being synchronised with the server every frame.
+     */
     [[nodiscard]] inline bool SyncValuesOnUpdate() const { return mSyncValuesOnUpdate; }
     inline void SetSyncValuesOnUpdate(const bool sync) { mSyncValuesOnUpdate = sync; }
 

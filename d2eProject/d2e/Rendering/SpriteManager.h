@@ -19,7 +19,6 @@ public:
 
     [[nodiscard]] spriteId LoadTexture(const std::filesystem::path& path);
 
-    //todo make it return invalid texture if it doesn't exist.
     [[nodiscard]] WeakRef<SpriteInfo> GetSprite(const spriteId id) const;
 
 private:

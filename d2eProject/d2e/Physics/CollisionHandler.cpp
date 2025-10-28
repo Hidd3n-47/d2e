@@ -124,45 +124,6 @@ void CollisionHandler::ResolveCollisionBetweenCircles(std::vector<CollisionInfo>
 
     circle1->GetComponent<Transform>()->translation +=  delta * halfOverlap * -1.0f;
     circle2->GetComponent<Transform>()->translation +=  delta * halfOverlap;
-
-    //WeakRef<RigidBody> circleOneRigidBody = circle1->GetComponent<RigidBody>();
-    //WeakRef<RigidBody> circleTwoRigidBody = circle2->GetComponent<RigidBody>();
-
-    //// Correct the position slightly to prevent jittering.
-    //constexpr float PERCENT = 0.8f;
-    //constexpr float SLOP = 0.01f;
-    //{
-    //    circle1->GetComponent<Transform>()->translation += delta * (overlap - SLOP) * PERCENT;
-
-    //    const float velAlongNormal = Vec2::Dot(circleOneRigidBody->mVelocity, delta);
-
-    //    float j1 = -(1.0f + circleOneRigidBody->mRestitution) * velAlongNormal;
-    //    j1 /= 1.0f / circleOneRigidBody->mMass;
-
-    //    const Vec2 impulse = delta * j1;
-    //    circleOneRigidBody->AddVelocity(impulse * (1.0f / circleOneRigidBody->GetMass()));
-    //    if (abs(circleOneRigidBody->mVelocity.x) <= 0.02f)
-    //    {
-    //        circleOneRigidBody->SetVelocity(Vec2{ 0.0f, 0.0f });
-    //        return;
-    //    }
-    //}
-    //// todo check that the direction is correct, and it's not pushing both circles in the same direction.
-    //{
-    //    circle2->GetComponent<Transform>()->translation += delta * (overlap - SLOP) * PERCENT;
-
-    //    const float velAlongNormal = Vec2::Dot(circleTwoRigidBody->mVelocity, delta);
-
-    //    float j2 = -(1.0f + circleTwoRigidBody->mRestitution) * velAlongNormal;
-    //    j2 /= 1.0f / circleTwoRigidBody->mMass;
-
-    //    const Vec2 impulse = delta * j2;
-    //    circleTwoRigidBody->AddVelocity(impulse * (1.0f / circleTwoRigidBody->GetMass()));
-    //    if (abs(circleTwoRigidBody->mVelocity.x) <= 0.02f)
-    //    {
-    //        circleTwoRigidBody->SetVelocity(Vec2{ 0.0f, 0.0f });
-    //    }
-    //}
 }
 
 void CollisionHandler::ResolveCollisionBetweenBoxAndCircle(std::vector<CollisionInfo>& collisionInfos, WeakRef<GameObject> box,

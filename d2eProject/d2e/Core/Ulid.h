@@ -1,6 +1,5 @@
 #pragma once
 
-#include <set>
 #include <cstdint>
 
 namespace d2e
