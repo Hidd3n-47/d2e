@@ -43,7 +43,7 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1)
 
     d2e::WeakRef<d2e::CircleCollider> collider = mGameObject->AddComponent<d2e::CircleCollider>();
     collider->SetRadius(PLAYER_RADIUS);
-    collider->SetOnCollisionEnterCallback([](const d2e::CollisionInfo& info)
+    collider->SetOnCollisionEnterCallback([&](const d2e::CollisionInfo& info)
     {
         // If the player collides with the wall, we don't need to add the splat.
         if (auto tag = info.other->GetComponent<d2e::Tag>();
@@ -58,7 +58,7 @@ void Player::CreatePrefab(d2e::WeakRef<d2e::Scene> scene, const bool isPlayer1)
             return;
         }
 
-        SplatAnimationManager::Instance()->AddSplatAnimation(info.collisionPosition, info.instance->GetId() == d2e::Engine::PLAYER_ONE_ULID);
+        SplatAnimationManager::Instance()->AddSplatAnimation(info.collisionPosition, mPlayer1);
     });
 
     mGameObject->AddComponent<d2e::Movement>();

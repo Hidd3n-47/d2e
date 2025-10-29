@@ -12,15 +12,15 @@ void PlayerKilledState::Init(d2e::WeakRef<d2e::Scene> scene)
 {
     mGameScene = scene.Cast<GameScene>();
 
-    mGameScene->GetPlayer().ResetPosition(true);
-    mGameScene->GetOtherPlayer().ResetPosition(true);
-
     mTimer = TIME_TILL_REMATCH;
 }
 
 void PlayerKilledState::Update()
 {
     mTimer -= d2e::Engine::Instance()->GetDeltaTime();
+
+    mGameScene->GetPlayer().ResetPosition(true);
+    mGameScene->GetOtherPlayer().ResetPosition(true);
 
     if (mTimer <= 0.0f)
     {

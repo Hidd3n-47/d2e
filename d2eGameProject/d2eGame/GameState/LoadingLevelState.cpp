@@ -65,6 +65,8 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
         }
     }
 
+    SplatAnimationManager::Instance()->InitPool(scene);
+
     // Battle timer.
     {
         d2e::WeakRef<d2e::GameObject> ping = scene->CreateGameObject();
@@ -93,8 +95,6 @@ void LoadingLevelState::Init(d2e::WeakRef<d2e::Scene> scene)
     }
 
     client->ServerProcessedPacketsConfirmation([&] { LoadingCompleted(); });
-
-    SplatAnimationManager::Instance()->InitPool(scene);
 }
 
 void LoadingLevelState::Update()

@@ -28,7 +28,7 @@ public:
 
     void AddSplatAnimation(const d2e::Vec2 collisionPosition, const bool playerOne);
 
-    constexpr static uint32_t POOL_SIZE{ 100 };
+    constexpr static uint32_t POOL_SIZE{ 15 };
 private:
     static std::unique_ptr<SplatAnimationManager> mInstance;
 

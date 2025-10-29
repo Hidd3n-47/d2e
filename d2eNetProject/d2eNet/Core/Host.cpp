@@ -19,8 +19,15 @@ Host::~Host()
 bool Host::Init(const HostInitInfo& info)
 {
     const std::string ip = std::format("{}.{}.{}.{}", info.ip1, info.ip2, info.ip3, info.ip4);
+    if (ip == "0.0.0.0")
+    {
+        mAddress.host = ENET_HOST_ANY;
+    }
+    else
+    {
+        enet_address_set_host(&mAddress, ip.c_str());
+    }
 
-    enet_address_set_host(&mAddress, ip.c_str());
     mAddress.port = info.port;
 
     mHost = enet_host_create(&mAddress, NUMBER_OF_ALLOWED_CLIENTS, 2, 0, 0);

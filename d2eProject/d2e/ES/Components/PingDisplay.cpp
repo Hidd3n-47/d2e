@@ -32,19 +32,19 @@ void PingDisplay::Render(WeakRef<sf::RenderWindow> window, const OrthoCamera& ca
 
 std::string PingDisplay::Serialize() const
 {
-    const std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds> now = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
+    const std::chrono::time_point<std::chrono::steady_clock, std::chrono::milliseconds> now = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now());
     return SerializeUtils::Serialize(mSyncValuesOnUpdate) + SerializeUtils::Serialize(static_cast<uint64_t>(now.time_since_epoch().count()));
 }
 
 void PingDisplay::Deserialize(const std::string& string)
 {
     SerializeUtils::Deserialize(mSyncValuesOnUpdate, std::string{ string[0] });
-    const std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds> now = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
+    const std::chrono::time_point<std::chrono::steady_clock, std::chrono::milliseconds> now = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now());
 
     uint64_t sentTime;
     SerializeUtils::Deserialize(sentTime, string.substr(1));
 
-    const std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds> sentTimePoint{ std::chrono::milliseconds{sentTime} };
+    const std::chrono::time_point<std::chrono::steady_clock, std::chrono::milliseconds> sentTimePoint{ std::chrono::milliseconds{sentTime} };
 
     mPingCache[mPingIndex] = std::chrono::milliseconds(now - sentTimePoint).count();
     mPingIndex = (mPingIndex + 1) % PING_CACHE_COUNT;
